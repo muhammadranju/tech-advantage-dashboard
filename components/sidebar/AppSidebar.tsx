@@ -32,32 +32,32 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "/dashboard",
+          url: "/dashboard/overview",
           icon: <CircleDollarSign />,
         },
         {
           title: "Users",
-          url: "/users",
+          url: "/dashboard/users",
           icon: <PiUsersThree />,
         },
         {
           title: "Discover Strength",
-          url: "/discover-strength",
+          url: "/dashboard/discover-strength",
           icon: <PiPersonSimpleRunBold />,
         },
         {
           title: "Coaching",
-          url: "/coaching",
+          url: "/dashboard/coaching",
           icon: <PiGraduationCapBold />,
         },
         {
           title: "Boot Camp",
-          url: "/boot-camp",
+          url: "/dashboard/boot-camp",
           icon: <PiTentBold />,
         },
         {
           title: "Mock Interview",
-          url: "/mock-interview",
+          url: "/dashboard/mock-interview",
           icon: <PiStudentBold />,
         },
       ],

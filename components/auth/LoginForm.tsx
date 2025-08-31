@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
+import Link from "next/link";
+// import { Link } from "lucide-react";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -23,7 +25,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-xl mx-auto shadow-lg shadow-l-0 border-0">
+    <Card className="w-full max-w-xl mx-auto shadow-[5px_4px_4px_rgba(0,0,0,0.3)] border-0">
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
@@ -87,6 +89,7 @@ export function LoginForm() {
                   setRememberPassword(checked as boolean)
                 }
               />
+
               <Label
                 htmlFor="remember"
                 className="text-sm text-gray-600 cursor-pointer"
@@ -94,12 +97,14 @@ export function LoginForm() {
                 Remember Password
               </Label>
             </div>
-            <button
+
+            <Link
+              href="/forgot-password"
               type="button"
               className="text-sm text-gray-900 hover:text-gray-700 underline"
             >
               Forget Password?
-            </button>
+            </Link>
           </div>
 
           <Button

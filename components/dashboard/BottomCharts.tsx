@@ -131,16 +131,16 @@ export function BottomCharts() {
           </Select>
         </CardHeader>
         <CardContent>
-          <div className="h-64 flex items-center justify-center">
+          <div className="h-80 flex items-center justify-center">
             <div className="relative">
-              <ResponsiveContainer width={200} height={200}>
+              <ResponsiveContainer width={400} height={400}>
                 <PieChart>
                   <Pie
                     data={pieData}
-                    cx={100}
-                    cy={100}
-                    innerRadius={60}
-                    outerRadius={90}
+                    cx={200}
+                    cy={200}
+                    innerRadius={80}
+                    outerRadius={120}
                     paddingAngle={0}
                     dataKey="value"
                   >

@@ -1,4 +1,5 @@
 import { redirect, RedirectType } from "next/navigation";
+
 export default function Page() {
-  redirect("/dashboard", RedirectType.push);
+  redirect("/dashboard/overview", RedirectType.push);
 }

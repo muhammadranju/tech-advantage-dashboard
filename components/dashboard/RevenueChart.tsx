@@ -11,6 +11,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const data = [
   { month: "JAN", value: 2000 },
@@ -30,8 +37,17 @@ const data = [
 export function RevenueChart() {
   return (
     <Card className="bg-white">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold">Revenue</CardTitle>
+      <CardHeader className="flex justify-between items-center">
+        <CardTitle className="text-2xl font-bold">Revenue</CardTitle>
+
+        <Select defaultValue="monthly">
+          <SelectTrigger className="w-26 h-8 bg-black text-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="monthly">Yearly</SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
       <CardContent>
         <div className="h-80">

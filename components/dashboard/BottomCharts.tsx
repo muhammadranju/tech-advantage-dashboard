@@ -43,14 +43,24 @@ export function BottomCharts() {
           <CardTitle className="text-lg font-semibold">
             Coaching Application Rate
           </CardTitle>
-          <Select defaultValue="monthly">
-            <SelectTrigger className="w-26 h-8 bg-black text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="monthly">Monthly</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center space-x-2">
+            <Select defaultValue="yearly">
+              <SelectTrigger className="w-26 h-8 bg-black text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select defaultValue="monthly">
+              <SelectTrigger className="w-26 h-8 bg-black text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="monthly">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="h-64">
@@ -121,24 +131,16 @@ export function BottomCharts() {
           <CardTitle className="text-lg font-semibold">
             User Distributions
           </CardTitle>
-          <Select defaultValue="monthly">
-            <SelectTrigger className="w-26 h-8 bg-black text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="monthly">Monthly</SelectItem>
-            </SelectContent>
-          </Select>
         </CardHeader>
         <CardContent>
           <div className="h-80 flex items-center justify-center">
             <div className="relative">
-              <ResponsiveContainer width={400} height={400}>
+              <ResponsiveContainer width={500} height={500}>
                 <PieChart>
                   <Pie
                     data={pieData}
-                    cx={200}
-                    cy={200}
+                    cx={250}
+                    cy={250}
                     innerRadius={80}
                     outerRadius={120}
                     paddingAngle={0}

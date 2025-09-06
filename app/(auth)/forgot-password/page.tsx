@@ -75,7 +75,7 @@ export default function ResetPassword() {
             type="submit"
             className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
           >
-            Send Reset Password OTP
+            Continue
           </Button>
         </form>
       </CardContent>

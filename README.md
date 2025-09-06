@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TechAdvantage - Dashboard
+
+TechAdvantage - Dashboard is a dashboard application built using Next.js, Tailwind CSS, and Typescript. It provides a user-friendly interface for managing and tracking user data, applications, and other relevant information.
+
+## Features
+
+- User Management: Allows users to view, edit, and delete their own user profiles.
+- Application Management: Provides a dashboard for users to view and manage their applications.
+- Coaching Application Rate: Displays the rate of applications submitted by users.
+- User Distributions: Displays the distribution of users across different status.
 
 ## Getting Started
 
-First, run the development server:
+To get started with the project, follow these steps:
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/muhammadranju/tech-advantage-dashboard.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install the required dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bun install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run the development server:
 
-## Learn More
+```bash
+bun run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open your browser and navigate to `http://localhost:3000`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## TODO
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] Add more features and functionalities.
+- [ ] Improve the user interface and user experience.
+- [ ] Optimize the performance and efficiency of the application.
+- [ ] Add more testing and validation.
+- [ ] Document the code and provide clear instructions for usage.

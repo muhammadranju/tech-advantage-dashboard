@@ -76,7 +76,7 @@ export default function ResetPassword() {
             type="submit"
             className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
           >
-            Reset Password
+            Continue
           </Button>
         </form>
       </CardContent>

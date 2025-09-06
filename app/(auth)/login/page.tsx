@@ -1,5 +1,3 @@
-// import { LoginForm } from "@/components/login-form"
-
 import { LoginForm } from "@/components/auth/LoginForm";
 
 export default function LoginPage() {
@@ -7,5 +5,5 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <LoginForm />
     </div>
-  )
+  );
 }

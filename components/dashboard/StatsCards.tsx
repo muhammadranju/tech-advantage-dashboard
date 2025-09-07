@@ -12,7 +12,7 @@ interface StatsCardsProps {
 
 export function StatsCards({ stat }: StatsCardsProps) {
   return (
-    <Card key={stat.title} className="bg-white">
+    <Card key={stat.title} className="bg-white shadow-md">
       <CardContent className="p-6 space-y-2">
         <div className="flex items-center justify-between">
           <div className="w-10 h-10 bg-neutral-200 rounded-full flex items-center justify-center">

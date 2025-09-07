@@ -5,7 +5,6 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -74,7 +73,7 @@ export function RevenueChart() {
               />
 
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-black text-white px-3 py-2 rounded text-sm">

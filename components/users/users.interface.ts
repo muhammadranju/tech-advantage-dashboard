@@ -4,6 +4,7 @@ export interface IUsersTableProps {
   name: string;
   email: string;
   id: number;
+  map: string;
 }
 
 export interface IUsersTable {

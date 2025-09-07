@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Badge } from "../ui/badge";
 import {
@@ -11,62 +12,20 @@ import { PiCrownLight } from "react-icons/pi";
 import { FaCheck } from "react-icons/fa6";
 import { IUsersTableProps } from "./users.interface";
 
-const users = [
-  {
-    id: 1,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-  {
-    id: 2,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-  {
-    id: 3,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-  {
-    id: 4,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-  {
-    id: 5,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-  {
-    id: 6,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-  {
-    id: 7,
-    name: "John b",
-    email: "xyzhpc@gmail.com",
-    status: "premium",
-    joiningDate: "10/09/25",
-  },
-];
+const FilterUsers = ({ users }: any) => {
+  console.log(users);
 
-const PremiumUsers = () => {
+  const handelSwitchPremiumUser = (user: IUsersTableProps) => {
+    console.log(user);
+  };
+
+  const handelSwitchFreeUser = (user: IUsersTableProps) => {
+    console.log(user);
+  };
+
   return (
     <div className="divide-y divide-border px-3">
-      {users.map((user: IUsersTableProps) => (
+      {users()?.map((user: IUsersTableProps) => (
         <div
           key={user.id}
           className="grid grid-cols-5 gap-4 p-4 items-center hover:bg-muted/30 transition-colors"
@@ -76,7 +35,11 @@ const PremiumUsers = () => {
           <div>
             <Badge
               variant="secondary"
-              className="bg-muted text-muted-foreground hover:bg-muted"
+              className={`${
+                user.status === "Premium"
+                  ? "bg-green-500/20 hover:bg-green-500 text-green-600"
+                  : "bg-gray-500/20 hover:bg-gray-500 text-gray-600"
+              }`}
             >
               {user.status}
             </Badge>
@@ -92,12 +55,18 @@ const PremiumUsers = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="rounded-none p-0">
-                <DropdownMenuItem className="bg-green-500 hover:bg-green-700 text-white rounded-none focus:bg-green-700 focus:text-white">
+                <DropdownMenuItem
+                  onClick={() => handelSwitchPremiumUser(user)}
+                  className="bg-green-500 hover:bg-green-700 text-white rounded-none focus:bg-green-700 focus:text-white"
+                >
                   <PiCrownLight className="h-4 w-4 mr-2 text-white" />
                   Switch to Premium
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="bg-neutral-200 text-black rounded-none focus:bg-neutral-300">
+                <DropdownMenuItem
+                  onClick={() => handelSwitchFreeUser(user)}
+                  className="bg-neutral-200 text-black rounded-none focus:bg-neutral-300"
+                >
                   <FaCheck className="mr-2" />
                   Switch to Free
                 </DropdownMenuItem>
@@ -110,4 +79,4 @@ const PremiumUsers = () => {
   );
 };
 
-export default PremiumUsers;
+export default FilterUsers;

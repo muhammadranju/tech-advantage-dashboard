@@ -1,28 +1,27 @@
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { UserManagement } from "@/components/users/UserManagement";
-import { BadgeCheckIcon, CircleDollarSign, FileText } from "lucide-react";
-import { PiUsersThree } from "react-icons/pi";
+import { PiUsersThreeBold } from "react-icons/pi";
 const stats = [
   {
     title: "Total Users",
     value: "8,642",
     change: "+6.3%",
     changeType: "positive" as const,
-    icon: PiUsersThree,
+    icon: PiUsersThreeBold,
   },
   {
     title: "Total Free Users",
     value: "8,642",
     change: "+12.5%",
     changeType: "positive" as const,
-    icon: PiUsersThree,
+    icon: PiUsersThreeBold,
   },
   {
     title: "Total Premium User",
     value: "15,842",
     change: "+32.5%",
     changeType: "positive" as const,
-    icon: BadgeCheckIcon,
+    icon: PiUsersThreeBold,
   },
 ];
 const page = () => {

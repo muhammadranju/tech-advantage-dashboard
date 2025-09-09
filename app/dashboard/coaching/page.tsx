@@ -1,6 +1,5 @@
 import { CoachingComponent } from "@/components/coaching/CoachingComponent";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { UserManagement } from "@/components/users/UserManagement";
 import { FileText } from "lucide-react";
 
 const stats = [

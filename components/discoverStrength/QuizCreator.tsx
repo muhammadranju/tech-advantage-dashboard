@@ -2,9 +2,17 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ListCollapse,
+  Plus,
+  Save,
+} from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { IoMdAdd } from "react-icons/io";
 
 export const QuizCreator = () => {
   const [activeTab, setActiveTab] = useState("quiz");
@@ -93,7 +101,7 @@ export const QuizCreator = () => {
         {/* Question Section */}
         <div>
           <label className="block text-lg font-medium mb-3">
-            {currentQuestionIndex + 1}. Question
+            Quizzes Question
           </label>
           <Input
             placeholder="Enter your Quiz Question"
@@ -140,39 +148,22 @@ export const QuizCreator = () => {
           />
         </div>
 
-        {/* Navigation */}
-        <div className="flex justify-end items-center gap-8 py-6">
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2 text-neutral-600"
-            onClick={handlePreviousQuestion}
-            disabled={currentQuestionIndex === 0}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous Question
-          </Button>
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2 text-neutral-600"
-            onClick={handleNextQuestion}
-            disabled={currentQuestionIndex === 4}
-          >
-            Next Question
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
         {/* Action Buttons */}
-        <div className="flex gap-4 pt-4">
-          <Button variant="outline" className="flex-1 py-6 bg-transparent">
-            View Details
-          </Button>
+        <div className="flex gap-4 ">
+          <Link
+            className="flex-1"
+            href={"/dashboard/discover-strength/view-quizzes"}
+          >
+            <Button variant="outline" className=" py-6 bg-transparent w-full">
+              <ListCollapse /> View Details
+            </Button>
+          </Link>
           <Button
             className="flex-1 py-6 hover:bg-neutral-800"
             onClick={handleSave}
             disabled={!isCurrentQuestionValid()}
           >
-            Save
+            <Save /> Save
           </Button>
         </div>
       </div>

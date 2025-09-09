@@ -3,10 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { MdOutlineCloudUpload } from "react-icons/md";
-
-import { ImageIcon } from "lucide-react";
 
 export function VideoUploadComponent() {
   const [isDragOver, setIsDragOver] = useState(false);

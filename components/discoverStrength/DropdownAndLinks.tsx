@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,12 +10,15 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import { useRouter } from "next/router";
+interface DropdownAndLinksProps {
+  setActiveTab: string;
+}
 
-const DropdownAndLinks = ({ setActiveTab }: any) => {
+const DropdownAndLinks = ({ setActiveTab }: DropdownAndLinksProps) => {
+  console.log(setActiveTab);
   const [selectedOption, setSelectedOption] = useState(setActiveTab);
   const router = useRouter();
-  const handleSelect = (value: any) => {
+  const handleSelect = (value: string) => {
     if (value === "Admin’s Video") {
       router.push("/dashboard/discover-strength/upload-admin-videos");
     } else if (value === "Youtube’s Video") {
@@ -43,10 +45,7 @@ const DropdownAndLinks = ({ setActiveTab }: any) => {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            className="gap-2 bg-transparent rounded-none p-5"
-          >
+          <Button variant="outline" className="gap-2 bg-transparent  p-5">
             {selectedOption}
             <ChevronDown className="h-4 w-4" />
           </Button>

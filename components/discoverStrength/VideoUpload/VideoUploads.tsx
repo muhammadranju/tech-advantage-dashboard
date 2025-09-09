@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Cloud } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface VideoRange {
   label: string;
   videos: number;
+  videosData: any;
 }
 
 interface VideoUploadsProps {
@@ -23,27 +24,7 @@ interface VideoUploadsProps {
 }
 
 export const VideoUploads = ({ videoRanges, title }: VideoUploadsProps) => {
-  const VideoCard = ({
-    type,
-  }: {
-    type: "udemy" | "cloud" | "solid";
-    index: number;
-  }) => {
-    return (
-      <div className="h-52 rounded-lg bg-teal-600 flex items-center justify-center">
-        {type === "udemy" && (
-          <span className="text-white font-medium text-lg">udemy</span>
-        )}
-        {type === "cloud" && (
-          <Cloud className="w-12 h-12 text-white" fill="currentColor" />
-        )}
-        {type === "solid" && (
-          <div className="w-full h-full bg-teal-700 rounded-lg" />
-        )}
-      </div>
-    );
-  };
-
+  console.log(videoRanges);
   return (
     <div className="mx-auto mt-10 space-y-8 bg-white ">
       {/* Header */}
@@ -62,17 +43,33 @@ export const VideoUploads = ({ videoRanges, title }: VideoUploadsProps) => {
 
             <div className="grid grid-cols-3 gap-4">
               {Array.from({ length: range.videos }).map((_, videoIndex) => {
-                let cardType: "udemy" | "cloud" | "solid";
-                if (videoIndex === 0) cardType = "udemy";
-                else if (videoIndex === 1) cardType = "cloud";
-                else cardType = "solid";
-
                 return (
-                  <VideoCard
-                    key={videoIndex}
-                    type={cardType}
-                    index={videoIndex}
-                  />
+                  <div key={videoIndex}>
+                    <div className="relative" key={videoIndex}>
+                      <div>
+                        <img
+                          src={range.videosData[videoIndex].thumbnail}
+                          alt={range.videosData[videoIndex].title}
+                          className="w-full h-64 object-cover rounded-xl"
+                        />
+                        <p className="font-bold text-xl">
+                          {range.videosData[videoIndex].title}
+                        </p>
+                      </div>
+                      <a
+                        href={range.videosData[videoIndex].url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Button
+                          variant="outline"
+                          className="gap-2  absolute top-30 left-55  p-"
+                        >
+                          <Play className="h-8 w-8 text-2xl" />
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
                 );
               })}
             </div>

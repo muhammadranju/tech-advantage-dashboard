@@ -2,8 +2,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ListCollapseIcon,
+  Save,
+} from "lucide-react";
 import { useState } from "react";
 import { AssessmentComment } from "./AssessmentComment";
 
@@ -168,14 +172,14 @@ export const MockInterviewQuiz = () => {
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
             <Button variant="outline" className="flex-1 py-6 bg-transparent">
-              View Details
+              <ListCollapseIcon /> View Details
             </Button>
             <Button
               className="flex-1 py-6 hover:bg-neutral-800"
               onClick={handleSave}
               disabled={!isCurrentQuestionValid()}
             >
-              Save
+              <Save /> Save
             </Button>
           </div>
         </div>

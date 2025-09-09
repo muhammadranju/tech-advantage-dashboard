@@ -26,6 +26,7 @@ import {
 } from "react-icons/pi";
 import { Button } from "@/components/ui/button";
 import { FiSidebar } from "react-icons/fi";
+import { IoMdBusiness } from "react-icons/io";
 
 // This is sample data.
 const data = {
@@ -41,6 +42,11 @@ const data = {
           title: "Users",
           url: "/dashboard/users",
           icon: <PiUsersThreeBold />,
+        },
+        {
+          title: "Small Business",
+          url: "/dashboard/small-business",
+          icon: <IoMdBusiness />,
         },
         {
           title: "Discover Strength",
@@ -79,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props} className="text-white">
       <div
-        className="flex items-center gap-2 cursor-pointer absolute  -right-10 top-5  w-fit rounded-full"
+        className="flex items-center gap-2 cursor-pointer absolute  -right-[34px] top-5  w-fit rounded-full"
         onClick={toggleSidebar}
       >
         <FiSidebar className="text-black w-10 hover:text-gray-600 transition-colors  rounded-full" />

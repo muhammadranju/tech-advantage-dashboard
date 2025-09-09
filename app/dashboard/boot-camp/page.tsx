@@ -1,5 +1,5 @@
-const page = () => {
-  return <div>Users</div>;
+const BootCamp = () => {
+  return <div>BootCamp design coming soon......</div>;
 };
 
-export default page;
+export default BootCamp;

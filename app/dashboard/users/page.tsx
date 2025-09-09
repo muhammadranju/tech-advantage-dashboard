@@ -9,20 +9,6 @@ const stats = [
     changeType: "positive" as const,
     icon: PiUsersThreeBold,
   },
-  {
-    title: "Total Free Users",
-    value: "8,642",
-    change: "+12.5%",
-    changeType: "positive" as const,
-    icon: PiUsersThreeBold,
-  },
-  {
-    title: "Total Premium User",
-    value: "15,842",
-    change: "+32.5%",
-    changeType: "positive" as const,
-    icon: PiUsersThreeBold,
-  },
 ];
 const page = () => {
   return (

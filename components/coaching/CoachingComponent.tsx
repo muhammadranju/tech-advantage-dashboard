@@ -126,7 +126,7 @@ export function CoachingComponent() {
   const [statusFilter, setStatusFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const usersPerPage = 5; // Define how many users you want per page
+  const usersPerPage = 8; // Define how many users you want per page
 
   // Filter users by status and search query
   const filterCoachingByStatusAndSearch = () => {

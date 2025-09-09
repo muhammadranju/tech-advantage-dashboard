@@ -1,25 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { MoreVertical } from "lucide-react";
+import { ImBlocked } from "react-icons/im";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { MoreVertical } from "lucide-react";
-import { PiCrownLight } from "react-icons/pi";
-import { FaCheck } from "react-icons/fa6";
+
 import { IUsersTableProps } from "./users.interface";
 
 const FilterUsers = ({ users }: any) => {
-  console.log(users);
-
-  const handelSwitchPremiumUser = (user: IUsersTableProps) => {
-    console.log(user);
-  };
-
-  const handelSwitchFreeUser = (user: IUsersTableProps) => {
+  const handelBlockUser = (user: IUsersTableProps) => {
     console.log(user);
   };
 
@@ -36,12 +30,12 @@ const FilterUsers = ({ users }: any) => {
             <Badge
               variant="secondary"
               className={`${
-                user.status === "Premium"
+                user.status === "Newest"
                   ? "bg-green-500/20 hover:bg-green-500 text-green-600"
-                  : "bg-gray-500/20 hover:bg-gray-500 text-gray-600"
+                  : "bg-yellow-500/20 hover:bg-yellow-500 text-yellow-600"
               }`}
             >
-              {user.status}
+              {user.status === "Newest" ? "New" : "Old"}
             </Badge>
           </div>
           <div className="text-sm text-muted-foreground">
@@ -54,21 +48,13 @@ const FilterUsers = ({ users }: any) => {
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="rounded-none p-0">
+              <DropdownMenuContent align="end" className="p-0">
                 <DropdownMenuItem
-                  onClick={() => handelSwitchPremiumUser(user)}
-                  className="bg-green-500 hover:bg-green-700 text-white rounded-none focus:bg-green-700 focus:text-white"
+                  onClick={() => handelBlockUser(user)}
+                  className="bg-red-500 text-white focus:text-white  focus:bg-red-600"
                 >
-                  <PiCrownLight className="h-4 w-4 mr-2 text-white" />
-                  Switch to Premium
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onClick={() => handelSwitchFreeUser(user)}
-                  className="bg-neutral-200 text-black rounded-none focus:bg-neutral-300"
-                >
-                  <FaCheck className="mr-2" />
-                  Switch to Free
+                  <ImBlocked className="text-white" />
+                  Block User
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

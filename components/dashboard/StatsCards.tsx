@@ -4,7 +4,7 @@ interface StatsCardsProps {
   stat: {
     title: string;
     value: string;
-    change: string;
+    change?: string;
     changeType: "positive" | "negative";
     icon: React.FC<React.SVGProps<SVGSVGElement>>;
   };

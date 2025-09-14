@@ -6,21 +6,18 @@ const stats = [
   {
     title: "Total Application",
     value: "8,642",
-    change: "+6.3%",
     changeType: "positive" as const,
     icon: FileText,
   },
   {
     title: "Total Approve Application",
     value: "8,642",
-    change: "+12.5%",
     changeType: "positive" as const,
     icon: FileText,
   },
   {
-    title: "Total Premium User",
+    title: "Total Deny Application",
     value: "15,842",
-    change: "+32.5%",
     changeType: "positive" as const,
     icon: FileText,
   },

@@ -51,8 +51,10 @@ export function AssessmentComment() {
                     {comment.range}
                   </Badge>
                 </div>
-                <Link href={`/dashboard/mock-interview/${comment.id}`}>
-                  <button className="hover:bg-gray-100 cursor-pointer ">
+                <Link
+                  href={`/dashboard/assessment/${comment.id}?q=mock-interview`}
+                >
+                  <button className="hover:bg-gray-100 cursor-pointer p-3 rounded-full">
                     <PiPencilFill className="text-2xl font-bold text-gray-500" />
                   </button>
                 </Link>

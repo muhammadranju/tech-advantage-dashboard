@@ -109,6 +109,7 @@ const FilterCoaching = ({ filterCoachingByStatus }: any) => {
         ))}
       </div>
 
+
       {/* Dialog for Booking Information */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-sm w-full bg-white rounded-lg p-16 shadow-lg">

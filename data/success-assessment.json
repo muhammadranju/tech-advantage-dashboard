@@ -1,0 +1,143 @@
+{
+  "SmallBusiness": [
+    {
+      "range": "0-4",
+      "title": "You're Building the Basics",
+      "description": "You're just getting started with systems and processes. Now's the time to lay a strong foundation.",
+      "what_we_found": [
+        "You may not have a reliable system for managing clients.",
+        "Manual work is limiting your time.",
+        "You don't yet have consistent marketing processes."
+      ],
+      "recommended_next_steps": [
+        "Custom Starter CRM (basic contact tracking, reporting)",
+        "Marketing Basics (social media setup, lead capture)",
+        "SWOT + Strategy Session"
+      ]
+    },
+    {
+      "range": "5-7",
+      "title": "You're on the Growth Track!",
+      "description": "Your business has a solid foundation, but you need better systems and marketing to grow with confidence.",
+      "what_we_found": [
+        "Manual tasks are slowing you down.",
+        "Limited forecasting/reporting makes planning harder.",
+        "Marketing efforts may not be generating consistent leads."
+      ],
+      "recommended_next_steps": [
+        "Standard CRM + Automations - streamline invoicing, scheduling, and reminders.",
+        "Marketing Funnels + Campaigns - attract leads and nurture them automatically.",
+        "Quarterly SWOT & Strategy Coaching - align your growth plans with clear actions."
+      ]
+    },
+    {
+      "range": "8-10",
+      "title": "You're Ready to Scale",
+      "description": "Your systems are working, but now it's time to expand, optimize, and prepare for investors or funding.",
+      "what_we_found": [
+        "You have tools in place, but advanced integrations could save more time.",
+        "Reporting may not yet be compliance-ready for funders or boards.",
+        "Growth is possible with more automation and AI."
+      ],
+      "recommended_next_steps": [
+        "Advanced CRM + AI Integrations",
+        "Funding-Ready Reporting & Compliance Package",
+        "Growth Coaching + KPI Dashboard"
+      ]
+    }
+  ],
+
+  "AspiringEntrepreneur": [
+    {
+      "range": "0-4",
+      "title": "Time to Shape Your Idea",
+      "description": "You've got a dream — now let's turn it into a real business plan.",
+      "what_we_found": [
+        "You may not have a business plan written.",
+        "Unsure about systems and tools needed.",
+        "Documentation for investors not yet started."
+      ],
+      "recommended_next_steps": [
+        "Business Plan Coaching + Templates",
+        "SWOT Analysis Session",
+        "Tech Roadmap: Software Selection"
+      ]
+    },
+    {
+      "range": "5-7",
+      "title": "You're Ready to Launch!",
+      "description": "You've got a strong idea, but you need structure and the right tools to move from planning to execution.",
+      "what_we_found": [
+        "You have a business concept but not a full plan.",
+        "You may not know what systems you'll need to start smoothly.",
+        "Funding and investor documentation might be missing."
+      ],
+      "recommended_next_steps": [
+        "Launch with a plan to attract first customers with Go-to-Market Strategy & Funnel Setup.",
+        "MVP System Setup - build your starter CRM/website/forms to manage operations.",
+        "Investor/Funding Docs Prep - make sure you have what's needed to secure support."
+      ]
+    },
+    {
+      "range": "8-10",
+      "title": "Ready to Launch Big",
+      "description": "You're ready to not just start, but scale right away.",
+      "what_we_found": [
+        "You've got a plan and understand tech needs.",
+        "You're thinking about investors and growth from the start."
+      ],
+      "recommended_next_steps": [
+        "Custom System Build (CRM, automations)",
+        "Branding + Marketing Package",
+        "Ongoing Coaching & KPI Reviews"
+      ]
+    }
+  ],
+  "LookingToGetIntoTech": [
+    {
+      "range": "0-4",
+      "title": "Start Your Tech Journey",
+      "description": "You're exploring tech but need clarity, confidence, and a roadmap.",
+      "what_we_found": [
+        "Not sure what role fits your skills.",
+        "No résumé tailored for tech yet.",
+        "Missing certifications or practice."
+      ],
+      "recommended_next_steps": [
+        "Career Fit Assessment - can this go out to a Career Fit assessment page???",
+        "Résumé + LinkedIn Refresh",
+        "Intro Classes for your chosen role"
+      ]
+    },
+    {
+      "range": "5-7",
+      "title": "You're Almost Tech-Ready!",
+      "description": "You've started your journey, but now you need tools, practice, and guidance to land the role you want.",
+      "what_we_found": [
+        "Your résumé and experience may not yet align with tech roles.",
+        "You may not feel fully confident in interviews.",
+        "You may be missing certifications or a clear roadmap."
+      ],
+      "recommended_next_steps": [
+        "1:1 Coaching + Mock Interviews - practice real-world interview questions and get feedback",
+        "Portfolio/Project Guidance - build artifacts to showcase your skills",
+        "Targeted Certifications - identify and pursue the credentials that get noticed"
+      ]
+    },
+    {
+      "range": "8-10",
+      "title": "You're Job-Ready!",
+      "description": "You've got the basics down — now it's about excelling, networking, and landing opportunities.",
+      "what_we_found": [
+        "You may already have projects or a portfolio.",
+        "You're ready for advanced interview coaching.",
+        "You're prepared to grow in your career path."
+      ],
+      "recommended_next_steps": [
+        "Advanced Interview Coaching",
+        "Networking Strategy + Referral Plan",
+        "Continuous Learning Roadmap"
+      ]
+    }
+  ]
+}

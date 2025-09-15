@@ -11,10 +11,10 @@ import { PiPencilFill } from "react-icons/pi";
 
 export function Header() {
   return (
-    <header className="px-10 py-4 bg-white">
+    <header className="px-10 py-4 bg-white top-0 w-full">
       <div className="flex items-center justify-end space-x-4 ">
         <Link href={"/dashboard/notification"}>
-          <button className=" bg-transparent hover:bg-neutral-200 rounded-full p-2 cursor-pointer">
+          <button className="bg-transparent hover:bg-neutral-200 rounded-full p-2 cursor-pointer">
             <Bell className="w-6 h-6" />
           </button>
         </Link>
@@ -40,7 +40,7 @@ export function Header() {
                 </DropdownMenuItem>
               </Link>
               <Link href={"/profile/change-password"}>
-                <DropdownMenuItem className="flex items-center rounded-none gap-3  px-4 py-3 cursor-pointer hover:bg-neutral-50">
+                <DropdownMenuItem className="flex items-center rounded-none gap-3 px-4 py-3 cursor-pointer hover:bg-neutral-50">
                   <Lock className="w-5 h-5 text-neutral-900" />
                   <span className="text-neutral-700">Change Password</span>
                 </DropdownMenuItem>

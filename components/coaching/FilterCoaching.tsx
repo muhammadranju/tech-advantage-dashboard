@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Eye, MoreVertical, X } from "lucide-react";
 import { useState } from "react";
@@ -13,29 +14,30 @@ import {
 import { IUsersTableProps } from "../users/users.interface";
 import CoachingInformationModel from "./CoachingInformationModel";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const FilterCoaching = ({ filterCoachingByStatus }: any) => {
+interface FilterCoachingProps {
+  filterCoachingByStatus: () => any[];
+  onActionClick: (user: any, action: "approve" | "deny") => void;
+}
+
+const FilterCoaching = ({
+  filterCoachingByStatus,
+  onActionClick,
+}: FilterCoachingProps) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<IUsersTableProps | null>(null);
 
   const handleApproveUser = (coaching: IUsersTableProps) => {
-    console.log("approve", coaching);
+    onActionClick(coaching, "approve");
   };
 
   const handleDenyUser = (coaching: IUsersTableProps) => {
-    console.log("deny", coaching);
-  };
-
-  const handlePendingUser = (coaching: IUsersTableProps) => {
-    console.log("pending", coaching);
+    onActionClick(coaching, "deny");
   };
 
   const handleView = (coaching: IUsersTableProps) => {
     setSelected(coaching);
     setOpen(true);
   };
-
-  console.log(selected);
 
   return (
     <div>
@@ -78,21 +80,28 @@ const FilterCoaching = ({ filterCoachingByStatus }: any) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="rounded-none p-0">
-                  <DropdownMenuItem
-                    onClick={() => handleApproveUser(coaching)}
-                    className="bg-green-500 hover:bg-green-700 text-white rounded-none focus:bg-green-700 focus:text-white"
-                  >
-                    <FaCheck className="mr-2 text-white" />
-                    Approve
-                  </DropdownMenuItem>
+                  {/* Only show approve/deny options for pending users */}
+                  {coaching.status === "Pending" || "Deny" ? (
+                    <>
+                      <DropdownMenuItem
+                        onClick={() => handleApproveUser(coaching)}
+                        className="bg-green-500 hover:bg-green-700 text-white rounded-none focus:bg-green-700 focus:text-white"
+                      >
+                        <FaCheck className="mr-2 text-white" />
+                        Approve
+                      </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    onClick={() => handleDenyUser(coaching)}
-                    className="bg-red-500 hover:bg-red-700 text-white rounded-none focus:bg-red-700 focus:text-white"
-                  >
-                    <X className="mr-2 font-bold text-white" />
-                    Deny
-                  </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDenyUser(coaching)}
+                        className="bg-red-500 hover:bg-red-700 text-white rounded-none focus:bg-red-700 focus:text-white"
+                      >
+                        <X className="mr-2 font-bold text-white" />
+                        Deny
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    ""
+                  )}
 
                   <DropdownMenuItem
                     onSelect={(e) => e.preventDefault()}
@@ -108,7 +117,6 @@ const FilterCoaching = ({ filterCoachingByStatus }: any) => {
           </div>
         ))}
       </div>
-
 
       {/* Dialog for Booking Information */}
       <Dialog open={open} onOpenChange={setOpen}>

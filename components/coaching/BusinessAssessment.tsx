@@ -6,8 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import data from "@/data/success-assessment.json";
+import { PiPencilFill } from "react-icons/pi";
 
 // Raw shapes coming from various sources
 type IncomingAssessment =
@@ -84,14 +85,23 @@ const BusinessAssessment = () => {
                 ) : null}
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="shrink-0"
-              aria-label="Edit"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <button
+                // onClick={() => handleEdit(comment.id)}
+                className="hover:bg-gray-100 cursor-pointer p-3 rounded-full"
+                type="button"
+              >
+                <PiPencilFill className="text-2xl font-bold " />
+              </button>
+
+              <button
+                // onClick={() => handleDelete(comment.id)}
+                className="hover:bg-red-100 cursor-pointer p-3 rounded-full"
+                type="button"
+              >
+                <Trash className="text-2xl font-bold text-red-500 " />
+              </button>
+            </div>
           </CardHeader>
 
           <CardContent className="space-y-6">

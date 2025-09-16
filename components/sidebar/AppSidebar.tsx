@@ -11,7 +11,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChartGantt, CircleDollarSign } from "lucide-react";
+import { ChartGantt, CircleDollarSign, Handshake } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,7 +46,7 @@ const data = {
         {
           title: "Small Business",
           url: "/dashboard/small-business",
-          icon: <IoMdBusiness />,
+          icon: <Handshake />,
         },
         {
           title: "Business Planning",

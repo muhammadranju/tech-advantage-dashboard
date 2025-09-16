@@ -87,8 +87,6 @@ interface DropdownAndLinksProps {
 const DropdownAndLinks = ({
   initialOption,
   options,
-  staticLabel,
-  staticLabel2,
 }: //
 DropdownAndLinksProps) => {
   const [selectedOption, setSelectedOption] = useState(initialOption);
@@ -101,8 +99,6 @@ DropdownAndLinksProps) => {
     }
     setSelectedOption(label);
   };
-
-  console.log(staticLabel2);
   return (
     <div className="flex justify-between gap-8 ">
       {/* <div className="flex gap-8 ">

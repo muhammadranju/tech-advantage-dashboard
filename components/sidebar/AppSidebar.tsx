@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
 import type * as React from "react";
 import { CgLogOut } from "react-icons/cg";
 import { FiSidebar } from "react-icons/fi";
-import { IoMdBusiness } from "react-icons/io";
+import { HiMiniUserGroup } from "react-icons/hi2";
 import { LuSettings } from "react-icons/lu";
 import {
   PiGraduationCapBold,
@@ -67,6 +67,11 @@ const data = {
           title: "Boot Camp",
           url: "/dashboard/boot-camp",
           icon: <PiTentBold />,
+        },
+        {
+          title: "Community",
+          url: "/dashboard/community",
+          icon: <HiMiniUserGroup />,
         },
         {
           title: "Mock Interview",

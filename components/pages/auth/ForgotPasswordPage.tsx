@@ -1,27 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import type React from "react";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
-// import { Link } from "lucide-react";
+import { useState } from "react";
 
-export function LoginForm() {
+export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberPassword, setRememberPassword] = useState(false);
+  // const [password, setPassword] = useState("");
+  // const [rememberPassword, setRememberPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle login logic here
-    console.log("Login attempt:", { email, password, rememberPassword });
+    console.log("Login attempt:", { email });
   };
 
   return (
@@ -59,48 +56,13 @@ export function LoginForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label
-              htmlFor="password"
-              className="text-sm font-medium text-gray-700"
-            >
-              Password
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 focus:bg-white rounded-xl"
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="remember"
-                checked={rememberPassword}
-                onCheckedChange={(checked: any) =>
-                  setRememberPassword(checked as boolean)
-                }
-              />
-
-              <Label
-                htmlFor="remember"
-                className="text-sm text-gray-600 cursor-pointer"
-              >
-                Remember Password
-              </Label>
-            </div>
-
+          <div className="flex items-center justify-end">
             <Link
-              href="/forgot-password"
+              href="/login"
               type="button"
               className="text-sm text-gray-900 hover:text-gray-700 underline"
             >
-              Forget Password?
+              Back to Login
             </Link>
           </div>
 
@@ -108,7 +70,7 @@ export function LoginForm() {
             type="submit"
             className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
           >
-            Login
+            Continue
           </Button>
         </form>
       </CardContent>

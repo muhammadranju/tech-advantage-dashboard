@@ -1,11 +1,10 @@
-
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import CoachBooking from "@/components/pages/Dashboard/Coaching/CoachBooking";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <CoachBooking />
     </div>
   );
 };

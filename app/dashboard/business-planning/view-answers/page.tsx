@@ -1,11 +1,11 @@
 
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
 import React from "react";
+import ViewAnswersPage from "../../mock-interview/view-answers/page";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <ViewAnswersPage />
     </div>
   );
 };

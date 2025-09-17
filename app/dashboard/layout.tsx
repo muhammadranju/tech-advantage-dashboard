@@ -1,9 +1,10 @@
-// import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/dashboard/Header";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,10 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-100`}
-      >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased bg-neutral-100">
         <SidebarProvider className="bg-neutral-100">
           <AppSidebar />
           <SidebarInset>
@@ -37,6 +36,7 @@ export default function RootLayout({
               <main className="flex-1 overflow-y-auto p-6 ">
                 <div className=" mx-auto space-y-6 bg-white p-6 rounded-xl shadow-[0_0px_8px_rgba(0,_0,_0,_0.4)]">
                   {children}
+                  <Toaster richColors />
                 </div>
               </main>
             </div>

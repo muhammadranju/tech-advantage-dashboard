@@ -1,11 +1,11 @@
 
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import SinglePlaylist from "@/components/pages/Dashboard/BootCamp/PlaylistID";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <SinglePlaylist />
     </div>
   );
 };

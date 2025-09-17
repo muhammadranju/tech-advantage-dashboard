@@ -1,11 +1,10 @@
-
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import GroupThread from "@/components/pages/Dashboard/Community/ReplyThread";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <GroupThread />
     </div>
   );
 };

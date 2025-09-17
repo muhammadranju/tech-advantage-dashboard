@@ -1,11 +1,12 @@
 
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+
+import CommunityPage from "@/components/pages/Dashboard/Community/Community";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <CommunityPage />
     </div>
   );
 };

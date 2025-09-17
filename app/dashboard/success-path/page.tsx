@@ -1,11 +1,10 @@
-
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import SuccessPathPage from "@/components/pages/Dashboard/SuccessPath/SuccessPath";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <SuccessPathPage />
     </div>
   );
 };

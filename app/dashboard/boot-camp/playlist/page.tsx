@@ -1,11 +1,10 @@
-
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import UploadPlaylist from "@/components/pages/Dashboard/BootCamp/Playlist";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <UploadPlaylist />
     </div>
   );
 };

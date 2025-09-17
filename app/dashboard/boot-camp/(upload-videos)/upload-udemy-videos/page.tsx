@@ -1,11 +1,10 @@
-
-import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import UdemyVideo from "@/components/pages/Dashboard/BootCamp/UploadUdemyVideos";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <OverviewPage />
+      <UdemyVideo />
     </div>
   );
 };

@@ -1,9 +1,12 @@
-import { LoginForm } from "@/components/auth/LoginForm";
+import LoginPage from "@/components/pages/auth/login";
+import React from "react";
 
-export default function LoginPage() {
+const page = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <LoginForm />
+    <div>
+      <LoginPage />
     </div>
   );
-}
+};
+
+export default page;

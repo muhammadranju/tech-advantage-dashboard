@@ -1,7 +1,22 @@
 "use client";
-import { Search, User, X, FolderOpen, Check } from "lucide-react";
+import { Search, User, X, FolderOpen, Check, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 interface NotificationItem {
   id: string;
@@ -82,16 +97,36 @@ const getNotificationBg = (type: string) => {
 };
 
 const NotificationsPage = () => {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle login logic here
+    console.log("Login attempt:", {
+      title: title,
+      body: body,
+    });
+
+    setOpen(false);
+    toast.success("Notification sent successfully!");
+
+    setTitle("");
+    setBody("");
+  };
   return (
     <div className="px-6 mx-auto ">
       {/* Header */}
       <div className="flex items-center justify-between px-6">
         <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+
         <Button
-          variant="link"
-          className="text-blue-600 hover:text-blue-700 p-0"
+          onClick={() => setOpen(true)}
+          variant="default"
+          className=" py-6"
         >
-          Mark all as read
+          <Send /> Send Custom Notification
         </Button>
       </div>
 
@@ -130,6 +165,61 @@ const NotificationsPage = () => {
           </div>
         ))}
       </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <form>
+          <DialogTrigger asChild>
+            {/* <Button variant="outline">Open Dialog</Button> */}
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Send Custom Notification </DialogTitle>
+              <DialogDescription>
+                <p className="text-sm text-gray-500">
+                  Enter the title and body of your notification.
+                </p>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4">
+              <div className="grid gap-3">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={title}
+                  placeholder="Enter your notification title"
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="rounded-md"
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="body">Body</Label>
+                {/* <Input
+                  
+                /> */}
+                <Textarea
+                  id="body"
+                  name="body"
+                  value={body}
+                  placeholder="Enter your notification body"
+                  onChange={(e) => setBody(e.target.value)}
+                  className="rounded-md"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">
+                  <X /> Cancel
+                </Button>
+              </DialogClose>
+              <Button onClick={handleSubmit} variant={"default"} type="submit">
+                <Send /> Send Notification{" "}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </form>
+      </Dialog>
     </div>
   );
 };

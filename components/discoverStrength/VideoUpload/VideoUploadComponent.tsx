@@ -25,7 +25,7 @@ export function VideoUploadComponent() {
   };
 
   return (
-    <div className="w-full  mx-auto">
+    <div className="w-full  mx-auto mt-20">
       <h2 className="text-lg font-medium  mb-3">Upload Video</h2>
 
       <div

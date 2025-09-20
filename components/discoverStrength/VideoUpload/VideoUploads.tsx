@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const VideoUploads = () => {
+export const VideoUploads = ({ inputTitle = " Video Link" }) => {
   return (
     <div className="mx-auto mt-10 space-y-8 bg-white ">
       {/* Form Controls */}
@@ -32,7 +32,7 @@ export const VideoUploads = () => {
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">
-            Video Link
+            {inputTitle}
           </label>
           <Input placeholder="Enter your video link" className="w-full py-6" />
         </div>

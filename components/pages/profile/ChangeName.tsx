@@ -24,18 +24,17 @@ export default function ChangeName() {
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
-            src="/logo.png"
-            className="invert w-52 h-52"
+            src="/T3-logo.svg"
+            className=" w-52 h-52"
             alt="logo"
-            width={100}
-            height={100}
+            width={500}
+            height={600}
           />
         </div>
-        <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight">T3CH</h1>
-          <p className="text-sm font-semibold  tracking-widest ">ADVANTAGE</p>
-        </div>
-        <h2 className="text-xl font-semibold  mt-8">Change Name</h2>
+
+        <h2 className="text-xl font-semibold  mt-8">
+          Tech Advantage Admin Access
+        </h2>
       </CardHeader>
 
       <CardContent className="px-8 pb-8">

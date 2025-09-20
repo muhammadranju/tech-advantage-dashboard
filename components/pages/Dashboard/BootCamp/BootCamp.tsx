@@ -94,8 +94,8 @@ const BootCamp = () => {
         />
       </div>
       <ShowVideos title={"Admin"} videoRanges={videoRanges} />
-      <VideoUploads />
       <VideoUploadComponent />
+      <VideoUploads inputTitle="Video Title" />
     </div>
   );
 };

@@ -28,6 +28,7 @@ const CommentUpdatePage = () => {
   };
   return (
     <div className="space-y-2">
+      <title>TechAdvantage - {queryName} View Answers</title>
       <div className="flex justify-end">
         <Button
           variant={"destructive"}

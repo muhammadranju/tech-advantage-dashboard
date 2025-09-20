@@ -4,6 +4,7 @@ import React from "react";
 const page = () => {
   return (
     <div>
+      <title>TechAdvantage - Success Path View Quizzes</title>
       <QuizzesPage />
     </div>
   );

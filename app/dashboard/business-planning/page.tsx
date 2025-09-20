@@ -4,6 +4,7 @@ import React from "react";
 const page = () => {
   return (
     <div>
+      <title>TechAdvantage - Business Planning</title>
       <BusinessPlanning />
     </div>
   );

@@ -34,7 +34,7 @@ export default function RootLayout({
             <div className="flex-1 flex flex-col overflow-hidden bg-neutral-100">
               <Header />
               <main className="flex-1 overflow-y-auto p-6 ">
-                <div className=" mx-auto space-y-6 bg-white p-6 rounded-xl shadow-[0_0px_8px_rgba(0,_0,_0,_0.4)]">
+                <div className=" mx-auto space-y-6  bg-white p-6 mt-16 rounded-xl shadow-[0_0px_8px_rgba(0,_0,_0,_0.4)]">
                   {children}
                   <Toaster richColors />
                 </div>

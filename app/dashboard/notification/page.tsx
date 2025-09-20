@@ -1,5 +1,4 @@
 import NotificationsPage from "@/components/pages/Dashboard/Notification/Notification";
-import React from "react";
 
 const page = () => {
   return (

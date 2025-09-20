@@ -1,5 +1,4 @@
 import CoachBooking from "@/components/pages/Dashboard/Coaching/CoachBooking";
-import React from "react";
 
 const page = () => {
   return (

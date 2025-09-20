@@ -1,5 +1,5 @@
+"use client";
 import LookingToGetIntoTech from "@/components/pages/Dashboard/SuccessPath/LookingTech";
-import React from "react";
 
 const page = () => {
   return (

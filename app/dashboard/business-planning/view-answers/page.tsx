@@ -1,4 +1,3 @@
-import React from "react";
 import ViewAnswersPage from "../../mock-interview/view-answers/page";
 
 const page = () => {

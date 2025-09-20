@@ -1,5 +1,5 @@
+"use client";
 import SuccessPathPage from "@/components/pages/Dashboard/SuccessPath/SuccessPath";
-import React from "react";
 
 const page = () => {
   return (

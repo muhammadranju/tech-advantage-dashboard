@@ -1,5 +1,4 @@
 import CoachingPage from "@/components/pages/Dashboard/Coaching/Coaching";
-import React from "react";
 
 const page = () => {
   return (

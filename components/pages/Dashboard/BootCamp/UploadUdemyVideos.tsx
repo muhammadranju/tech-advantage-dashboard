@@ -85,7 +85,7 @@ const UdemyVideo = () => {
             },
             {
               label: "Youtube’s Video",
-              route: "/dashboard/boot-camp/upload-udemy-videos",
+              route: "/dashboard/boot-camp/upload-youtube-videos",
             },
           ]}
           staticLabel="Upload Solo Video"

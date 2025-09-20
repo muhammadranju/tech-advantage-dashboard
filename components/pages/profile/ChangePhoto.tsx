@@ -1,10 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Save } from "lucide-react";
 import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ChangePhoto() {
   // const [firstName, setFirstName] = useState("");
@@ -33,8 +34,15 @@ export default function ChangePhoto() {
     // Handle file drop logic here
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle login logic here
+    console.log("submit attempt:");
+    toast.success("Photo saved successfully!");
+  };
+
   return (
-    <Card className="w-full mt-10 pb-14 max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
+    <Card className="w-full mt-10 pb-14 max-w-2xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
@@ -97,6 +105,12 @@ export default function ChangePhoto() {
           </div>
         </div>
       </div>
+      <Button
+        onClick={handleSubmit}
+        className="w-1/2 mx-auto h-12 bg-black hover:bg-neutral-800 text-white"
+      >
+        <Save /> Save
+      </Button>
     </Card>
   );
 }

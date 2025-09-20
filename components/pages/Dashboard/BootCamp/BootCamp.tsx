@@ -12,19 +12,19 @@ const BootCamp = () => {
       videos: 3,
       videosData: [
         {
-          thumbnail: "https://i.ytimg.com/vi/AMiX4ybJLDM/hqdefault.jpg",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
           title: "How to Build a Website",
           url: "https://www.youtube.com/watch?v=AMiX4ybJLDM",
         },
         {
-          thumbnail: "https://i.ytimg.com/vi/6FzGQfS4m3Q/hqdefault.jpg",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
           title: "Introduction to React",
-          url: "https://www.youtube.com/watch?v=6FzGQfS4m3Q",
+          url: "https://www.youtube.com/watch?v=ZLxOUw2ougo",
         },
         {
-          thumbnail: "https://i.ytimg.com/vi/V9P5lZhy1I8/hqdefault.jpg",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
           title: "Mastering JavaScript Basics",
-          url: "https://www.youtube.com/watch?v=V9P5lZhy1I8",
+          url: "https://www.youtube.com/watch?v=MG9tI5QCbtM",
         },
       ],
     },
@@ -34,19 +34,19 @@ const BootCamp = () => {
 
       videosData: [
         {
-          thumbnail: "https://i.ytimg.com/vi/tc6HkHXYFgQ/hqdefault.jpg",
-          title: "CSS Flexbox Explained",
-          url: "https://www.youtube.com/watch?v=tc6HkHXYFgQ",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          title: "Mastering JavaScript Basics",
+          url: "https://www.youtube.com/watch?v=iWuEpnTTD3k",
         },
         {
-          thumbnail: "https://i.ytimg.com/vi/sT1ftz89hFs/hqdefault.jpg",
-          title: "Building REST APIs with Node.js",
-          url: "https://www.youtube.com/watch?v=sT1ftz89hFs",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          title: "How to Build a Website",
+          url: "https://www.youtube.com/watch?v=AMiX4ybJLDM",
         },
         {
-          thumbnail: "https://i.ytimg.com/vi/5yRZrk3y9gY/hqdefault.jpg",
-          title: "Getting Started with TypeScript",
-          url: "https://www.youtube.com/watch?v=5yRZrk3y9gY",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          title: "Introduction to React",
+          url: "https://www.youtube.com/watch?v=fqySz1Me2pI",
         },
       ],
     },
@@ -55,19 +55,19 @@ const BootCamp = () => {
       videos: 3,
       videosData: [
         {
-          thumbnail: "https://i.ytimg.com/vi/hbQs1rYggtM/hqdefault.jpg",
-          title: "Understanding Git and GitHub",
-          url: "https://www.youtube.com/watch?v=hbQs1rYggtM",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          title: "How to Build a Website",
+          url: "https://www.youtube.com/watch?v=WhIN4umuWpg",
         },
         {
-          thumbnail: "https://i.ytimg.com/vi/xZ5xZkJ4Jzg/hqdefault.jpg",
-          title: "Responsive Web Design with Bootstrap",
-          url: "https://www.youtube.com/watch?v=xZ5xZkJ4Jzg",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          title: "Mastering JavaScript Basics",
+          url: "https://www.youtube.com/watch?v=K2hHOAtkwwk",
         },
         {
-          thumbnail: "https://i.ytimg.com/vi/jjQ2H5dPYak/hqdefault.jpg",
-          title: "Advanced JavaScript Techniques",
-          url: "https://www.youtube.com/watch?v=jjQ2H5dPYak",
+          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          title: "Introduction to React",
+          url: "https://www.youtube.com/watch?v=ZLxOUw2ougo",
         },
       ],
     },

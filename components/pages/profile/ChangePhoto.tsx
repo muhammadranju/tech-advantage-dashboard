@@ -1,20 +1,20 @@
 "use client";
-import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
+import type React from "react";
 import { useState } from "react";
 
 export default function ChangePhoto() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  // const [firstName, setFirstName] = useState("");
+  // const [lastName, setLastName] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt:", { firstName, lastName });
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // Handle login logic here
+  //   // console.log("Login attempt:", { firstName, lastName });
+  // };
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -34,7 +34,7 @@ export default function ChangePhoto() {
   };
 
   return (
-    <Card className="w-full mt-10 pb-14 max-w-xl mx-auto shadow-[5px_4px_4px_rgba(0,0,0,0.3)] border-0">
+    <Card className="w-full mt-10 pb-14 max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
@@ -90,9 +90,9 @@ export default function ChangePhoto() {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => {
-                // Handle file selection logic here
-              }}
+              // onChange={(e) => {
+              //   // Handle file selection logic here
+              // }}
             />
           </div>
         </div>

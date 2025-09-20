@@ -20,7 +20,7 @@ export default function ChangeName() {
   };
 
   return (
-    <Card className="w-full mt-20 max-w-xl mx-auto shadow-[5px_4px_4px_rgba(0,0,0,0.3)] border-0">
+    <Card className="w-full mt-20 max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image

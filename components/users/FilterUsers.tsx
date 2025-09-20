@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { MoreVertical } from "lucide-react";
+import { Check, MoreVertical } from "lucide-react";
 import { ImBlocked } from "react-icons/im";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -48,10 +48,17 @@ const FilterUsers = ({ users }: any) => {
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="p-0">
+              <DropdownMenuContent align="end" className="p-0   rounded-none">
                 <DropdownMenuItem
                   onClick={() => handelBlockUser(user)}
-                  className="bg-red-500 text-white focus:text-white  focus:bg-red-600"
+                  className="bg-green-500 text-white rounded-none focus:text-white  focus:bg-green-600"
+                >
+                  <Check className="text-white" />
+                  Approve User
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handelBlockUser(user)}
+                  className="bg-red-500 text-white focus:text-white  rounded-none  focus:bg-red-600"
                 >
                   <ImBlocked className="text-white" />
                   Block User

@@ -164,7 +164,12 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChartGantt, CircleDollarSign, Handshake } from "lucide-react";
+import {
+  BellRing,
+  ChartGantt,
+  CircleDollarSign,
+  Handshake,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -172,7 +177,7 @@ import type * as React from "react";
 import { CgLogOut } from "react-icons/cg";
 import { FiSidebar } from "react-icons/fi";
 import { HiMiniUserGroup } from "react-icons/hi2";
-import { LuSettings } from "react-icons/lu";
+import { MdOutlinePolicy } from "react-icons/md";
 import {
   PiGraduationCapBold,
   PiPersonSimpleRunBold,
@@ -234,7 +239,12 @@ const data = {
         {
           title: "Notification",
           url: "/dashboard/notification",
-          icon: <LuSettings />,
+          icon: <BellRing />,
+        },
+        {
+          title: "Terms & Conditions",
+          url: "/dashboard/terms-conditions",
+          icon: <MdOutlinePolicy />,
         },
       ],
     },
@@ -279,7 +289,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild
                       isActive={pathname === item.url}
                     >
-                      <Link className="p-6 my-2" href={item.url}>
+                      <Link className="p-6 my-1" href={item.url}>
                         <span className="mr-2 text-lg"> {item.icon}</span>{" "}
                         {item.title}
                       </Link>

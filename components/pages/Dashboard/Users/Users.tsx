@@ -91,7 +91,7 @@ const UserPage = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
           <Input
             placeholder="Search here......"
-            className="pl-10 bg-background border-border max-w-2xl py-6"
+            className="pl-10 border-border max-w-2xl py-6"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

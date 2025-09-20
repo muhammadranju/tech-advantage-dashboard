@@ -1,8 +1,8 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { MessageCircle, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { GrGroup } from "react-icons/gr";

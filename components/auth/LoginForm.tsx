@@ -25,7 +25,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-xl mx-auto shadow-[5px_4px_4px_rgba(0,0,0,0.3)] border-0">
+    <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
@@ -54,7 +54,7 @@ export function LoginForm() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 focus:bg-white rounded-xl"
+              className="h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl"
               required
             />
           </div>
@@ -62,7 +62,7 @@ export function LoginForm() {
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-neutral-700"
             >
               Password
             </Label>
@@ -72,7 +72,7 @@ export function LoginForm() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 focus:bg-white rounded-xl"
+              className="h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl"
               required
             />
           </div>
@@ -89,7 +89,7 @@ export function LoginForm() {
 
               <Label
                 htmlFor="remember"
-                className="text-sm text-gray-600 cursor-pointer"
+                className="text-sm text-neutral-600 cursor-pointer"
               >
                 Remember Password
               </Label>
@@ -98,7 +98,7 @@ export function LoginForm() {
             <Link
               href="/forgot-password"
               type="button"
-              className="text-sm text-gray-900 hover:text-gray-700 underline"
+              className="text-sm text-neutral-900 hover:text-neutral-700 underline"
             >
               Forget Password?
             </Link>
@@ -106,7 +106,7 @@ export function LoginForm() {
 
           <Button
             type="submit"
-            className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
+            className="w-full h-12 bg-black hover:bg-neutral-800 text-white font-medium"
           >
             Login
           </Button>

@@ -1,8 +1,5 @@
 "use client";
-import { Search, User, X, FolderOpen, Check, Send } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {
   Dialog,
   DialogClose,
@@ -13,9 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { Check, FolderOpen, Search, Send, User, X } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface NotificationItem {
@@ -136,7 +135,7 @@ const NotificationsPage = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search here......"
-            className="pl-10 bg-gray-50 py-6 rounded-md border-gray-200"
+            className="pl-10 bg-gray-50 py-6  border-gray-200"
           />
         </div>
       </div>
@@ -189,7 +188,7 @@ const NotificationsPage = () => {
                   value={title}
                   placeholder="Enter your notification title"
                   onChange={(e) => setTitle(e.target.value)}
-                  className="rounded-md"
+                  
                 />
               </div>
               <div className="grid gap-3">
@@ -203,7 +202,7 @@ const NotificationsPage = () => {
                   value={body}
                   placeholder="Enter your notification body"
                   onChange={(e) => setBody(e.target.value)}
-                  className="rounded-md"
+                  
                 />
               </div>
             </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 import {
   Area,
   AreaChart,
@@ -10,22 +12,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
 
 const data = [
   { month: "JAN", value: 2000 },

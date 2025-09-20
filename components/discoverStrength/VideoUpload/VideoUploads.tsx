@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FaCloudUploadAlt } from "react-icons/fa";
 
 export const VideoUploads = ({ inputTitle = " Video Link" }) => {
   return (
@@ -19,7 +20,7 @@ export const VideoUploads = ({ inputTitle = " Video Link" }) => {
             Mark Range
           </label>
           <Select>
-            <SelectTrigger className="w-full py-6">
+            <SelectTrigger className="w-full py-6 bg-neutral-50">
               <SelectValue placeholder="Select mark range" />
             </SelectTrigger>
             <SelectContent>
@@ -34,11 +35,15 @@ export const VideoUploads = ({ inputTitle = " Video Link" }) => {
           <label className="text-sm font-medium text-gray-700">
             {inputTitle}
           </label>
-          <Input placeholder="Enter your video link" className="w-full py-6" />
+          <Input
+            placeholder={`Enter your ${inputTitle.toLowerCase()}`}
+            className="w-full py-6"
+          />
         </div>
 
         <div className="max-w-4xl mx-auto flex  justify-center items-center">
           <Button className="w-full  bg-black hover:bg-gray-800 py-6 text-white">
+            <FaCloudUploadAlt />
             Upload
           </Button>
         </div>

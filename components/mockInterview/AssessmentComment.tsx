@@ -38,11 +38,11 @@ interface Comment {
 
 export function AssessmentComment() {
   const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
 
   const handleEditClick = (comment: Comment) => {
-    setEditingId(comment?.id);
+    setEditingId(comment.id);
     setEditContent(comment.content);
   };
 
@@ -89,7 +89,7 @@ export function AssessmentComment() {
                 {editingId === comment.id ? (
                   <div className="flex gap-1">
                     <button
-                      onClick={() => handleSaveClick(comment.id as number)}
+                      onClick={() => handleSaveClick(comment.id)}
                       className="hover:bg-green-100 cursor-pointer p-3 rounded-full"
                     >
                       <PiCheckBold className="text-xl font-bold text-green-500" />

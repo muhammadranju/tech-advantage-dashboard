@@ -271,7 +271,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarHeader className="text-white relative ">
         <div className="flex items-center ">
-          <Image src="/logo.png" alt="logo" width={45} height={61} />
+          <Image
+            src="/dashboard-logo.png"
+            alt="logo"
+            className="rounded mr-2"
+            width={45}
+            height={61}
+          />
           <h1 className="font-bold text-lg text-white">TECH ADVANTAGE</h1>
         </div>
       </SidebarHeader>

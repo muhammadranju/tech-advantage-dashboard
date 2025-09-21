@@ -24,7 +24,7 @@ export default function OverviewPage() {
   return (
     <div className="lg:px-10 py-4 space-y-10">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <StatsCards stat={stat} key={stat.title} />
         ))}

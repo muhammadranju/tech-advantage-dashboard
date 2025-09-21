@@ -274,7 +274,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <Image
             src="/dashboard-logo.png"
             alt="logo"
-            className="rounded mr-2"
+            className="mr-2"
             width={45}
             height={61}
           />

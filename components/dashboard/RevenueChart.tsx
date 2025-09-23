@@ -82,13 +82,14 @@ export function RevenueChart() {
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                className="text-xs text-gray-500 px-10"
+                className="text-xs text-gray-500 px-10 mt-10"
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                className="text-xs text-gray-500"
+                className="text-xs  text-gray-500 mr-10"
                 tickFormatter={(value) => `${value / 1000}k`}
+                orientation="right"
               />
 
               <Tooltip

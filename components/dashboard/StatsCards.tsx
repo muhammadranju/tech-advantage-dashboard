@@ -3,9 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 interface StatsCardsProps {
   stat: {
     title: string;
-    value: string;
+    value: number;
     change?: string;
-    changeType: "positive" | "negative";
+    changeType?: "positive" | "negative";
     icon: React.FC<React.SVGProps<SVGSVGElement>>;
   };
 }

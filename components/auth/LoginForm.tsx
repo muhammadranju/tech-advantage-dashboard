@@ -3,29 +3,41 @@
 
 import type React from "react";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useLoginMutation } from "@/lib/redux/features/api/authApiSlice";
 import Image from "next/image";
 import Link from "next/link";
-// import { Link } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+// import { toast } from "sonner";
+import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberPassword, setRememberPassword] = useState(false);
+  const router = useRouter();
+  const [login, { isLoading }] = useLoginMutation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle login logic here
-    console.log("Login attempt:", { email, password, rememberPassword });
+    // console.log("Login attempt:", { email, password, rememberPassword });
+    try {
+      await login({ email, password, rememberPassword }).unwrap();
+      router.push("/dashboard/overview");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
+      <RedirectIfAuthenticated />
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
@@ -37,9 +49,8 @@ export function LoginForm() {
           />
         </div>
 
-        <h2 className="text-xl font-semibold  mt-8">
-          Tech Advantage Admin Access
-        </h2>
+        <h2 className="text-xl font-semibold  mt-8">Welcome to back</h2>
+        <p>Tech Advantage Admin Access</p>
       </CardHeader>
 
       <CardContent className="px-8 pb-8">
@@ -106,9 +117,10 @@ export function LoginForm() {
 
           <Button
             type="submit"
-            className="w-full h-12 bg-black hover:bg-neutral-800 text-white font-medium"
+            className={`w-full h-12 bg-black hover:bg-neutral-800 text-white font-medium`}
+            disabled={isLoading}
           >
-            Login
+            {isLoading ? "Loading..." : "Login"}
           </Button>
         </form>
       </CardContent>

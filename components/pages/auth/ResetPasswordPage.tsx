@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { useState } from "react";
+import RedirectIfAuthenticated from "@/components/auth/RedirectIfAuthenticated";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -19,6 +20,7 @@ export default function ResetPassword() {
 
   return (
     <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
+      <RedirectIfAuthenticated />
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image

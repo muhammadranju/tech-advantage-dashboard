@@ -2,6 +2,7 @@
 
 import type React from "react";
 
+import RedirectIfAuthenticated from "@/components/auth/RedirectIfAuthenticated";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ export default function ForgotPassword() {
 
   return (
     <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
+      <RedirectIfAuthenticated />
       <CardHeader className="text-center pb-8 pt-8">
         <div className="flex justify-center">
           <Image
@@ -38,7 +40,6 @@ export default function ForgotPassword() {
           Tech Advantage Admin Access
         </h2>
       </CardHeader>
-
       <CardContent className="px-8 pb-8">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">

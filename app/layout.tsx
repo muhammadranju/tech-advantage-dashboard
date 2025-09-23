@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google"; // Importing Inter and Source Code Pro
 import "./globals.css";
+import StoreProvider from "@/lib/redux/provider";
 
 // Importing the Inter font
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -26,7 +27,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceCodePro.variable} antialiased`}
       >
-        {children}
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );

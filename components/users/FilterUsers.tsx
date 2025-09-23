@@ -1,6 +1,7 @@
 // /* eslint-disable @typescript-eslint/no-explicit-any */
+// import { useState } from "react";
 // import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-// import { Check, MoreVertical } from "lucide-react";
+// import { Check, MoreVertical, X } from "lucide-react";
 // import { ImBlocked } from "react-icons/im";
 // import { Badge } from "../ui/badge";
 // import { Button } from "../ui/button";
@@ -9,71 +10,206 @@
 //   DropdownMenuContent,
 //   DropdownMenuItem,
 // } from "../ui/dropdown-menu";
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogDescription,
+//   AlertDialogFooter,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+// } from "../ui/alert-dialog";
+// import { parseISO, format } from "date-fns"; // Import date-fns for date parsing and formatting
 
 // import { IUsersTableProps } from "./users.interface";
+// import {
+//   useBlockedUserMutation,
+//   useGetAllUsersQuery,
+//   useUnblockUserMutation,
+// } from "@/lib/redux/features/api/users/userApiSlice";
 
 // const FilterUsers = ({ users }: any) => {
-//   const handelBlockUser = (user: IUsersTableProps) => {
-//     console.log(user);
+//   const [modalState, setModalState] = useState<{
+//     isOpen: boolean;
+//     action: "active" | "blocked" | null;
+//     user: IUsersTableProps | null;
+//   }>({
+//     isOpen: false,
+//     action: null,
+//     user: null,
+//   });
+
+//   const [blockUser] = useBlockedUserMutation();
+//   const [unblockUser] = useUnblockUserMutation();
+//   const { refetch } = useGetAllUsersQuery(null);
+
+//   const handleApproveUser = async (user: IUsersTableProps) => {
+//     await blockUser(user._id);
+//     setModalState({
+//       isOpen: true,
+//       action: "active",
+//       user: user,
+//     });
+//   };
+
+//   const handleBlockUser = async (user: IUsersTableProps) => {
+//     setModalState({
+//       isOpen: true,
+//       action: "blocked",
+//       user: user,
+//     });
+//   };
+
+//   const confirmAction = async () => {
+//     if (modalState.user && modalState.action) {
+//       await unblockUser(modalState.user?._id);
+
+//       if (modalState.action === "active") {
+//       } else if (modalState.action === "blocked") {
+//         await blockUser(modalState.user?._id);
+//       }
+//     }
+//     refetch();
+//     closeModal();
+//   };
+
+//   const closeModal = () => {
+//     setModalState({
+//       isOpen: false,
+//       action: null,
+//       user: null,
+//     });
+//   };
+
+//   // Format createdAt date using date-fns
+//   const formatDate = (isoDate: string) => {
+//     const date = parseISO(isoDate); // Parse ISO string to Date
+//     return format(date, "MM/dd/yyyy"); // Format the date
 //   };
 
 //   return (
-//     <div className="divide-y divide-border px-3">
-//       {users()?.map((user: IUsersTableProps) => (
-//         <div
-//           key={user.id}
-//           className="grid grid-cols-5 gap-4 p-4 items-center hover:bg-muted/30 transition-colors"
-//         >
-//           <div className="text-sm font-medium text-foreground">{user.name}</div>
-//           <div className="text-sm text-muted-foreground">{user.email}</div>
-//           <div>
-//             <Badge
-//               variant="secondary"
+//     <>
+//       <div className="divide-y divide-border px-3">
+//         {users()?.map((user: IUsersTableProps) => (
+//           <div
+//             key={user._id}
+//             className="grid grid-cols-5 gap-4 p-4 items-center hover:bg-muted/30 transition-colors"
+//           >
+//             <div className="text-sm font-medium text-foreground">
+//               {user.name}
+//             </div>
+//             <div className="text-sm text-muted-foreground">{user.email}</div>
+//             <div>
+//               <Badge
+//                 variant="secondary"
+//                 className={`${
+//                   user.userStatus === "active"
+//                     ? "bg-green-500/20 hover:bg-green-500 hover:text-green-50 text-green-600"
+//                     : "bg-red-500/20 hover:bg-red-500 hover:text-red-50 text-red-600"
+//                 }`}
+//               >
+//                 {user.userStatus === "blocked" ? "Blocked" : "Active"}
+//               </Badge>
+//             </div>
+//             <div className="text-sm text-muted-foreground">
+//               {formatDate(user.createdAt as unknown as string)}
+//             </div>
+//             <div>
+//               <DropdownMenu>
+//                 <DropdownMenuTrigger asChild>
+//                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+//                     <MoreVertical className="h-4 w-4" />
+//                   </Button>
+//                 </DropdownMenuTrigger>
+//                 <DropdownMenuContent align="end" className="p-0 rounded-none">
+//                   <DropdownMenuItem
+//                     onClick={() => handleApproveUser(user)}
+//                     className="bg-green-500 text-white rounded-none focus:text-white focus:bg-green-600"
+//                   >
+//                     <Check className="text-white" />
+//                     Active User
+//                   </DropdownMenuItem>
+//                   <DropdownMenuItem
+//                     onClick={() => handleBlockUser(user)}
+//                     className="bg-red-500 text-white focus:text-white rounded-none focus:bg-red-600"
+//                   >
+//                     <ImBlocked className="text-white" />
+//                     Block User
+//                   </DropdownMenuItem>
+//                 </DropdownMenuContent>
+//               </DropdownMenu>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Confirmation Modal */}
+//       <AlertDialog open={modalState.isOpen} onOpenChange={closeModal}>
+//         <AlertDialogContent>
+//           <AlertDialogHeader>
+//             <AlertDialogTitle className="flex items-center gap-2">
+//               {modalState.action === "active" ? (
+//                 <>
+//                   <Check className="h-5 w-5 text-green-600" />
+//                   Approve User
+//                 </>
+//               ) : (
+//                 <>
+//                   <ImBlocked className="h-5 w-5 text-red-600" />
+//                   Block User
+//                 </>
+//               )}
+//             </AlertDialogTitle>
+//             <AlertDialogDescription>
+//               {modalState.action === "active" ? (
+//                 <>
+//                   Are you sure you want to approve{" "}
+//                   <strong>{modalState.user?.name}</strong>? This will grant them
+//                   access to the system.
+//                 </>
+//               ) : (
+//                 <>
+//                   Are you sure you want to block{" "}
+//                   <strong>{modalState.user?.name}</strong>? This will prevent
+//                   them from accessing the system.
+//                 </>
+//               )}
+//             </AlertDialogDescription>
+//           </AlertDialogHeader>
+//           <AlertDialogFooter>
+//             <AlertDialogCancel onClick={closeModal}>
+//               <X className="h-4 w-4 mr-2" />
+//               Cancel
+//             </AlertDialogCancel>
+//             <AlertDialogAction
+//               onClick={confirmAction}
 //               className={`${
-//                 user.status === "Newest"
-//                   ? "bg-green-500/20 hover:bg-green-500 text-green-600"
-//                   : "bg-yellow-500/20 hover:bg-yellow-500 text-yellow-600"
+//                 modalState.action === "active"
+//                   ? "bg-green-600 hover:bg-green-700"
+//                   : "bg-red-600 hover:bg-red-700"
 //               }`}
 //             >
-//               {user.status === "Newest" ? "New" : "Old"}
-//             </Badge>
-//           </div>
-//           <div className="text-sm text-muted-foreground">
-//             {user.joiningDate}
-//           </div>
-//           <div>
-//             <DropdownMenu>
-//               <DropdownMenuTrigger asChild>
-//                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-//                   <MoreVertical className="h-4 w-4" />
-//                 </Button>
-//               </DropdownMenuTrigger>
-//               <DropdownMenuContent align="end" className="p-0   rounded-none">
-//                 <DropdownMenuItem
-//                   onClick={() => handelBlockUser(user)}
-//                   className="bg-green-500 text-white rounded-none focus:text-white  focus:bg-green-600"
-//                 >
-//                   <Check className="text-white" />
-//                   Approve User
-//                 </DropdownMenuItem>
-//                 <DropdownMenuItem
-//                   onClick={() => handelBlockUser(user)}
-//                   className="bg-red-500 text-white focus:text-white  rounded-none  focus:bg-red-600"
-//                 >
-//                   <ImBlocked className="text-white" />
-//                   Block User
-//                 </DropdownMenuItem>
-//               </DropdownMenuContent>
-//             </DropdownMenu>
-//           </div>
-//         </div>
-//       ))}
-//     </div>
+//               {modalState.action === "active" ? (
+//                 <>
+//                   <Check className="h-4 w-4 mr-2" />
+//                   Approve
+//                 </>
+//               ) : (
+//                 <>
+//                   <ImBlocked className="h-4 w-4 mr-2" />
+//                   Block
+//                 </>
+//               )}
+//             </AlertDialogAction>
+//           </AlertDialogFooter>
+//         </AlertDialogContent>
+//       </AlertDialog>
+//     </>
 //   );
 // };
 
 // export default FilterUsers;
-
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
@@ -97,13 +233,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { parseISO, format } from "date-fns";
 
 import { IUsersTableProps } from "./users.interface";
+import {
+  useBlockedUserMutation,
+  useGetAllUsersQuery,
+  useUnblockUserMutation,
+} from "@/lib/redux/features/api/users/userApiSlice";
 
 const FilterUsers = ({ users }: any) => {
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    action: 'approve' | 'block' | null;
+    action: "activate" | "block" | null;
     user: IUsersTableProps | null;
   }>({
     isOpen: false,
@@ -111,10 +253,14 @@ const FilterUsers = ({ users }: any) => {
     user: null,
   });
 
-  const handleApproveUser = (user: IUsersTableProps) => {
+  const [blockUser, { isLoading: isBlocking }] = useBlockedUserMutation();
+  const [unblockUser, { isLoading: isUnblocking }] = useUnblockUserMutation();
+  const { refetch } = useGetAllUsersQuery(null);
+
+  const handleActivateUser = (user: IUsersTableProps) => {
     setModalState({
       isOpen: true,
-      action: 'approve',
+      action: "activate",
       user: user,
     });
   };
@@ -122,24 +268,29 @@ const FilterUsers = ({ users }: any) => {
   const handleBlockUser = (user: IUsersTableProps) => {
     setModalState({
       isOpen: true,
-      action: 'block',
+      action: "block",
       user: user,
     });
   };
 
-  const confirmAction = () => {
-    if (modalState.user && modalState.action) {
-      console.log(`${modalState.action} user:`, modalState.user);
-      // Add your actual approve/block logic here
-      if (modalState.action === 'approve') {
-        // Handle approve user logic
-        console.log('User approved:', modalState.user.name);
-      } else if (modalState.action === 'block') {
-        // Handle block user logic
-        console.log('User blocked:', modalState.user.name);
+  const confirmAction = async () => {
+    if (!modalState.user || !modalState.action) return;
+
+    try {
+      if (modalState.action === "activate") {
+        await unblockUser(modalState.user._id).unwrap();
+      } else if (modalState.action === "block") {
+        await blockUser(modalState.user._id).unwrap();
       }
+
+      // Refetch the data to update the UI
+      await refetch();
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      // You might want to show an error toast here
+    } finally {
+      closeModal();
     }
-    closeModal();
   };
 
   const closeModal = () => {
@@ -150,53 +301,77 @@ const FilterUsers = ({ users }: any) => {
     });
   };
 
+  // Format createdAt date using date-fns
+  const formatDate = (isoDate: string) => {
+    try {
+      const date = parseISO(isoDate);
+      return format(date, "MM/dd/yyyy");
+    } catch (error) {
+      return "Invalid Date";
+    }
+  };
+
+  const isLoading = isBlocking || isUnblocking;
+
   return (
     <>
       <div className="divide-y divide-border px-3">
         {users()?.map((user: IUsersTableProps) => (
           <div
-            key={user.id}
+            key={user._id}
             className="grid grid-cols-5 gap-4 p-4 items-center hover:bg-muted/30 transition-colors"
           >
-            <div className="text-sm font-medium text-foreground">{user.name}</div>
+            <div className="text-sm font-medium text-foreground">
+              {user.name}
+            </div>
             <div className="text-sm text-muted-foreground">{user.email}</div>
             <div>
               <Badge
                 variant="secondary"
                 className={`${
-                  user.status === "Newest"
-                    ? "bg-green-500/20 hover:bg-green-500 text-green-600"
-                    : "bg-yellow-500/20 hover:bg-yellow-500 text-yellow-600"
+                  user.userStatus === "active"
+                    ? "bg-green-500/20 hover:bg-green-500 hover:text-green-50 text-green-600"
+                    : "bg-red-500/20 hover:bg-red-500 hover:text-red-50 text-red-600"
                 }`}
               >
-                {user.status === "Newest" ? "New" : "Old"}
+                {user.userStatus === "blocked" ? "Blocked" : "Active"}
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground">
-              {user.joiningDate}
+              {formatDate(user.createdAt as unknown as string)}
             </div>
             <div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    disabled={isLoading}
+                  >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="p-0 rounded-none">
-                  <DropdownMenuItem
-                    onClick={() => handleApproveUser(user)}
-                    className="bg-green-500 text-white rounded-none focus:text-white focus:bg-green-600"
-                  >
-                    <Check className="text-white" />
-                    Approve User
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleBlockUser(user)}
-                    className="bg-red-500 text-white focus:text-white rounded-none focus:bg-red-600"
-                  >
-                    <ImBlocked className="text-white" />
-                    Block User
-                  </DropdownMenuItem>
+                  {user.userStatus === "blocked" ? (
+                    <DropdownMenuItem
+                      onClick={() => handleActivateUser(user)}
+                      className="bg-green-500 text-white rounded-none focus:text-white focus:bg-green-600"
+                      disabled={isLoading}
+                    >
+                      <Check className="text-white mr-2 h-4 w-4" />
+                      Activate User
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={() => handleBlockUser(user)}
+                      className="bg-red-500 text-white focus:text-white rounded-none focus:bg-red-600"
+                      disabled={isLoading}
+                    >
+                      <ImBlocked className="text-white mr-2 h-4 w-4" />
+                      Block User
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -209,10 +384,10 @@ const FilterUsers = ({ users }: any) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              {modalState.action === 'approve' ? (
+              {modalState.action === "activate" ? (
                 <>
                   <Check className="h-5 w-5 text-green-600" />
-                  Approve User
+                  Activate User
                 </>
               ) : (
                 <>
@@ -222,36 +397,44 @@ const FilterUsers = ({ users }: any) => {
               )}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {modalState.action === 'approve' ? (
+              {modalState.action === "activate" ? (
                 <>
-                  Are you sure you want to approve <strong>{modalState.user?.name}</strong>? 
-                  This will grant them access to the system.
+                  Are you sure you want to activate{" "}
+                  <strong>{modalState.user?.name}</strong>? This will grant them
+                  access to the system.
                 </>
               ) : (
                 <>
-                  Are you sure you want to block <strong>{modalState.user?.name}</strong>? 
-                  This will prevent them from accessing the system.
+                  Are you sure you want to block{" "}
+                  <strong>{modalState.user?.name}</strong>? This will prevent
+                  them from accessing the system.
                 </>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={closeModal}>
+            <AlertDialogCancel onClick={closeModal} disabled={isLoading}>
               <X className="h-4 w-4 mr-2" />
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmAction}
+              disabled={isLoading}
               className={`${
-                modalState.action === 'approve'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                modalState.action === "activate"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-red-600 hover:bg-red-700"
               }`}
             >
-              {modalState.action === 'approve' ? (
+              {isLoading ? (
+                <>
+                  <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Processing...
+                </>
+              ) : modalState.action === "activate" ? (
                 <>
                   <Check className="h-4 w-4 mr-2" />
-                  Approve
+                  Activate
                 </>
               ) : (
                 <>

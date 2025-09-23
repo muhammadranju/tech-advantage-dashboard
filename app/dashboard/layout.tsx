@@ -1,3 +1,4 @@
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { Header } from "@/components/dashboard/Header";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -35,7 +36,7 @@ export default function RootLayout({
               <Header />
               <main className="flex-1 overflow-y-auto p-6 ">
                 <div className=" mx-auto space-y-6  bg-white p-6 mt-16 rounded-xl shadow-[0_0px_8px_rgba(0,_0,_0,_0.4)]">
-                  {children}
+                  <ProtectedRoute>{children}</ProtectedRoute>
                   <Toaster richColors />
                 </div>
               </main>

@@ -1,6 +1,7 @@
 "use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ApplicationRate } from "@/interface/dashboard.interface";
+import { useDashboardApplicationRateQuery } from "@/lib/redux/features/api/coaching/coachingApiSlice";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
@@ -20,25 +21,33 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const data = [
-  { month: "JAN", value: 2000 },
-  { month: "FEB", value: 2800 },
-  { month: "MAR", value: 2200 },
-  { month: "APR", value: 3200 },
-  { month: "MAY", value: 2900 },
-  { month: "JUN", value: 3800 },
-  { month: "JUL", value: 3348 },
-  { month: "AUG", value: 2800 },
-  { month: "SEP", value: 3200 },
-  { month: "OCT", value: 2900 },
-  { month: "NOV", value: 3100 },
-  { month: "DEC", value: 2700 },
-];
+// const data = [
+//   { month: "JAN", value: 2000 },
+//   { month: "FEB", value: 2800 },
+//   { month: "MAR", value: 2200 },
+//   { month: "APR", value: 3200 },
+//   { month: "MAY", value: 2900 },
+//   { month: "JUN", value: 3800 },
+//   { month: "JUL", value: 3348 },
+//   { month: "AUG", value: 2800 },
+//   { month: "SEP", value: 3200 },
+//   { month: "OCT", value: 2900 },
+//   { month: "NOV", value: 3100 },
+//   { month: "DEC", value: 2700 },
+// ];
 
 export function RevenueChart() {
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
-
+  const { data: dashboardApplicationRate } =
+    useDashboardApplicationRateQuery(null);
   const years = ["2021", "2022", "2023", "2024", "2025"];
+  const applicantsData = dashboardApplicationRate?.data;
+
+  const totalApplicants = applicantsData?.reduce(
+    (acc: number, curr: ApplicationRate) => acc + curr.value,
+    0
+  );
+
   return (
     <Card className="bg-white">
       <CardHeader className="flex justify-between items-center">
@@ -70,7 +79,7 @@ export function RevenueChart() {
       <CardContent>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <AreaChart data={applicantsData}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#9CA3AF" stopOpacity={0.8} />
@@ -97,7 +106,7 @@ export function RevenueChart() {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-black text-white px-3 py-2 rounded text-sm">
-                        <p>{`1,348 Application Rate`}</p>
+                        <p>{`${totalApplicants} Application Rate`}</p>
                         {/* <p>{`$${payload[0].value?.toLocaleString()}`}</p> */}
                       </div>
                     );

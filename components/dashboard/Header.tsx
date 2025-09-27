@@ -10,9 +10,10 @@ import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { Bell, Camera, Lock } from "lucide-react";
 import Link from "next/link";
 import { PiPencilFill } from "react-icons/pi";
+import { ClipLoader } from "react-spinners";
 
 export function Header() {
-  const { userProfile, isLoading, error, refetch } = useAuthCheck();
+  const { userProfile, isLoading } = useAuthCheck();
 
   const user = userProfile?.user?.data;
 
@@ -26,14 +27,18 @@ export function Header() {
         </Link>
         <div className="flex items-center space-x-2">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="w-8 h-8 object-cover cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all">
-                <AvatarImage
-                  src={process.env.NEXT_PUBLIC_BASE_URL + user?.image}
-                />
-                <AvatarFallback>{user?.name}</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
+            {isLoading ? (
+              <ClipLoader color="#9CA3AF" size={20} />
+            ) : (
+              <DropdownMenuTrigger asChild>
+                <Avatar className="w-8 h-8 object-cover cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all">
+                  <AvatarImage
+                    src={process.env.NEXT_PUBLIC_BASE_URL + user?.image}
+                  />
+                  <AvatarFallback>{user?.name}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+            )}
             <DropdownMenuContent className="w-56 p-0 rounded" align="end">
               <Link href={"/profile/change-photo"}>
                 <DropdownMenuItem className="flex items-center rounded-none gap-3 border-b px-4 py-3 cursor-pointer hover:bg-neutral-50">

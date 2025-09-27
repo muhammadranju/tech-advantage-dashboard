@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState, useEffect } from "react";
 import { StatsCards } from "@/components/dashboard/StatsCards";
+import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
+import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,15 +13,15 @@ import {
 import { Input } from "@/components/ui/input";
 import FilterUsers from "@/components/users/FilterUsers";
 import { useGetAllUsersQuery } from "@/lib/redux/features/api/users/userApiSlice";
-import { IUsersTableProps } from "@/utils/usersData/usersData";
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PiUsersThreeBold } from "react-icons/pi";
 
 const UserPage = () => {
   const [selectedFilter, setSelectedFilter] = useState("All"); // Active filter
   const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [users, setUsers] = useState<IUsersTableProps[]>([]);
   const [activeTab, setActiveTab] = useState("All");
 
   const { data, isLoading } = useGetAllUsersQuery({
@@ -30,8 +32,7 @@ const UserPage = () => {
   const stats = [
     {
       title: "Total Users",
-      value: users.length,
-
+      value: users?.length,
       icon: PiUsersThreeBold,
     },
   ];
@@ -41,10 +42,6 @@ const UserPage = () => {
       setUsers(data.data.data);
     }
   }, [data]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   const usersPerPage = 8;
 
@@ -97,9 +94,9 @@ const UserPage = () => {
   return (
     <div className="px-10 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards stat={stat} key={stat.title} />
-        ))}
+        {isLoading
+          ? stats.map((stat) => <StatCardSkeleton key={stat.title} />)
+          : stats.map((stat) => <StatsCards stat={stat} key={stat.title} />)}
       </div>
 
       <div className="w-full mx-auto space-y-6 mt-10">
@@ -171,8 +168,11 @@ const UserPage = () => {
             <div>Joining Date</div>
             <div>Action</div>
           </div>
-
-          <FilterUsers users={() => pagedUsers} />
+          {isLoading ? (
+            <UsersTableSkeleton />
+          ) : (
+            <FilterUsers users={() => pagedUsers} />
+          )}
         </div>
 
         {/* Pagination */}

@@ -13,8 +13,11 @@ export interface User {
 export interface AuthState {
   user: User | null;
   token: string | null;
+  authToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  userEmail: string;
+  logout: boolean;
 }
 export interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -27,9 +30,28 @@ export interface LoginRequest {
   password: string;
   rememberPassword?: boolean;
 }
+
+export interface ForgotPasswordRequest {
+  email: string;
+  success?: boolean;
+}
+
+export interface VerifyOTPRequest {
+  otp: number;
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  password: string;
+  confirmPassword: string;
+  authToken?: string | null;
+}
+
 export interface LoginResponse {
   data: string;
   message?: string;
+  success?: boolean;
+  role: string;
 }
 
 export interface UserProfileResponse {

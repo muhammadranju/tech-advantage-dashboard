@@ -1,11 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useGetQuizAnswersQuery } from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
 
 interface SurveyOption {
   id: string;
@@ -61,7 +70,7 @@ const surveyData: SurveyCard[] = [
     options: [
       { id: "5a", text: "Solving problems" },
       { id: "5b", text: "Creating innovative products" },
-      { id: "5c", text: "Leading and inspiring team" },
+      { id: "5c", text: "Leading and inspiring teamsss" },
     ],
   },
 ];
@@ -70,6 +79,12 @@ const SMBViewAnswersPage = () => {
   const [data, setData] = useState(surveyData || []);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("business-overview");
+  const { data: quizAnswers, isLoading } =
+    useGetQuizAnswersQuery(selectedCategory);
+
+  console.log(selectedCategory);
+  console.log(quizAnswers);
 
   const router = useRouter();
 
@@ -112,19 +127,73 @@ const SMBViewAnswersPage = () => {
       });
     }
   };
+
+  const handelChange = (e: any) => {
+    setSelectedCategory(e.target.value);
+    console.log(e.target.value);
+  };
+
+
   return (
     <div className="w-full mx-auto p-8  rounded-xl">
-      <div className="flex gap-8 mb-5">
-        <button
-          onClick={() => router.back()}
-          className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-        >
-          Question & Answer
-        </button>
-        {/* </Link> */}
-        <button className={`pb-2 text-lg font-medium border-b-2 border-black`}>
-          Answer Assessment
-        </button>
+      <div className="flex gap-8 justify-between mb-8">
+        <div className="flex gap-8 ">
+          <button
+            onClick={() => router.back()}
+            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
+          >
+            Question & Answer
+          </button>
+          {/* </Link> */}
+          <button
+            className={`pb-2 text-lg font-medium border-b-2 border-black`}
+          >
+            Answer Assessment
+          </button>
+        </div>
+        <Select>
+          <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent className="py-2 ">
+            <SelectItem
+              onChange={(e) => handelChange(e)}
+              value="business-overview"
+            >
+              Business Overview
+            </SelectItem>
+            <SelectItem
+              onChange={(e) => handelChange(e)}
+              value="aspiring-business"
+            >
+              Business Overview
+            </SelectItem>
+            <SelectItem
+              onChange={(e) => handelChange(e)}
+              value="current-processes"
+            >
+              Current Processes & Pain Points
+            </SelectItem>
+            <SelectItem
+              value="operations-growth"
+              onChange={(e) => handelChange(e)}
+            >
+              Operations & Growth
+            </SelectItem>
+            <SelectItem
+              value="future-goals-integration-needs"
+              onChange={(e) => handelChange(e)}
+            >
+              Future Goals & Integration Needs
+            </SelectItem>
+            <SelectItem
+              value="readiness-budget"
+              onChange={(e) => handelChange(e)}
+            >
+              Readiness Budget
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {data.map((card) => (

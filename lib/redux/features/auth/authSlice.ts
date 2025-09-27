@@ -29,8 +29,11 @@ const loadAuthFromStorage = (): Partial<AuthState> => {
 const initialState: AuthState = {
   user: null,
   token: null,
+  authToken: null,
   isAuthenticated: false,
   isLoading: false,
+  userEmail: "",
+  logout: false,
   ...loadAuthFromStorage(),
 };
 
@@ -69,10 +72,40 @@ const authSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
+
+    setAuthToken: (state, action: PayloadAction<string>) => {
+      state.authToken = action.payload;
+    },
+
+    setUserEmail: (state, action: PayloadAction<string>) => {
+      state.userEmail = action.payload;
+    },
+    setLogout: (state) => {
+      state.isAuthenticated = false;
+      state.userEmail = "";
+      state.authToken = "";
+      Cookies.remove("token");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      state.isLoading = false;
+      state.user = null;
+      state.token = null;
+      state.authToken = null;
+      state.isAuthenticated = false;
+      window.location.href = "/login";
+    },
   },
 });
 
-export const { setCredentials, logout, setLoading } = authSlice.actions;
+// Fixed: Export all actions including setUserEmail and setAuthToken
+export const {
+  setCredentials,
+  logout,
+  setLoading,
+  setAuthToken,
+  setUserEmail,
+  setLogout,
+} = authSlice.actions;
 
 // Selectors
 export const selectCurrentUser = (state: RootState) => state.auth.user;
@@ -80,5 +113,8 @@ export const selectToken = (state: RootState) => state.auth.token;
 export const selectIsAuthenticated = (state: RootState) =>
   state.auth.isAuthenticated;
 export const selectAuthLoading = (state: RootState) => state.auth.isLoading;
+export const selectAuthToken = (state: RootState) => state.auth.authToken;
+export const selectUserEmail = (state: RootState) => state.auth.userEmail;
+export const selectLogout = (state: RootState) => state.auth.logout;
 
 export default authSlice.reducer;

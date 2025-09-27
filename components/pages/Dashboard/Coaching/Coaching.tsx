@@ -4,14 +4,6 @@ import { StatsCards } from "@/components/dashboard/StatsCards";
 import { FileText } from "lucide-react";
 
 import FilterCoaching from "@/components/coaching/FilterCoaching";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,17 +14,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  useCoachingUsersQuery,
+  useUpdateCoachingStatusMutation,
+} from "@/lib/redux/features/api/coaching/coachingApiSlice";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
+import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
+import { toast } from "sonner";
 
-// Type definitions
+// Type definitions based on your API data structure
 interface User {
-  id: number;
+  _id: string;
   name: string;
   email: string;
-  status: "Pending" | "Approved" | "Deny";
-  joiningDate: string;
+  status: "PENDING" | "APPROVED" | "DENY";
+  date: string;
+  time: Array<{
+    range: string;
+    flag: boolean;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 interface Stat {
@@ -42,138 +56,9 @@ interface Stat {
   icon: React.ComponentType<any>;
 }
 
-type StatusFilter = "All" | "Pending" | "Approved" | "Deny";
+type StatusFilter = "All" | "PENDING" | "APPROVED" | "DENY";
 type SortBy = "newest" | "oldest";
 type ActionType = "approve" | "deny";
-
-const users: User[] = [
-  {
-    id: 1,
-    name: "Alice M",
-    email: "alice.m@example.com",
-    status: "Pending",
-    joiningDate: "08/15/25",
-  },
-  {
-    id: 2,
-    name: "Brian K",
-    email: "brian.k@example.com",
-    status: "Approved",
-    joiningDate: "09/01/25",
-  },
-  {
-    id: 3,
-    name: "Sophia L",
-    email: "sophia.l@example.com",
-    status: "Deny",
-    joiningDate: "09/05/25",
-  },
-  {
-    id: 4,
-    name: "David P",
-    email: "david.p@example.com",
-    status: "Pending",
-    joiningDate: "09/10/25",
-  },
-  {
-    id: 5,
-    name: "Emma R",
-    email: "emma.r@example.com",
-    status: "Approved",
-    joiningDate: "09/12/25",
-  },
-  {
-    id: 6,
-    name: "James T",
-    email: "james.t@example.com",
-    status: "Deny",
-    joiningDate: "07/22/25",
-  },
-  {
-    id: 7,
-    name: "Olivia W",
-    email: "olivia.w@example.com",
-    status: "Approved",
-    joiningDate: "08/28/25",
-  },
-  {
-    id: 8,
-    name: "Liam S",
-    email: "liam.s@example.com",
-    status: "Pending",
-    joiningDate: "09/07/25",
-  },
-  {
-    id: 9,
-    name: "Isabella G",
-    email: "isabella.g@example.com",
-    status: "Approved",
-    joiningDate: "09/03/25",
-  },
-  {
-    id: 10,
-    name: "Mason H",
-    email: "mason.h@example.com",
-    status: "Pending",
-    joiningDate: "09/10/25",
-  },
-  {
-    id: 11,
-    name: "Ella J",
-    email: "ella.j@example.com",
-    status: "Deny",
-    joiningDate: "08/30/25",
-  },
-  {
-    id: 12,
-    name: "Aiden B",
-    email: "aiden.b@example.com",
-    status: "Approved",
-    joiningDate: "07/19/25",
-  },
-  {
-    id: 13,
-    name: "Charlotte F",
-    email: "charlotte.f@example.com",
-    status: "Pending",
-    joiningDate: "08/10/25",
-  },
-  {
-    id: 14,
-    name: "Lucas C",
-    email: "lucas.c@example.com",
-    status: "Approved",
-    joiningDate: "08/21/25",
-  },
-  {
-    id: 15,
-    name: "Amelia E",
-    email: "amelia.e@example.com",
-    status: "Deny",
-    joiningDate: "09/13/25",
-  },
-];
-
-const stats: Stat[] = [
-  {
-    title: "Total Application",
-    value: "8,642",
-    changeType: "positive",
-    icon: FileText,
-  },
-  {
-    title: "Total Approve Application",
-    value: "8,642",
-    changeType: "positive",
-    icon: FileText,
-  },
-  {
-    title: "Total Deny Application",
-    value: "15,842",
-    changeType: "positive",
-    icon: FileText,
-  },
-];
 
 const CoachingPage = () => {
   const [activeTab, setActiveTab] = useState<StatusFilter>("All");
@@ -181,42 +66,58 @@ const CoachingPage = () => {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortBy>("newest");
-  const [usersList, setUsersList] = useState<User[]>(users);
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [actionType, setActionType] = useState<ActionType | null>(null);
 
-  const router = useRouter();
+  // Fetch coaching users data
+  const { data, isLoading, error } = useCoachingUsersQuery(null);
+  const coachingUsers: User[] = data?.data || [];
+  const [updateCoachingStatus] = useUpdateCoachingStatusMutation();
 
+  const router = useRouter();
   const usersPerPage = 8;
 
-  // Convert date string to Date object for proper sorting
-  // const parseDate = (dateString: string): Date => {
-  //   const [month, day, year] = dateString.split("/");
-  //   return new Date(`20${year}`, parseInt(month) - 1, parseInt(day));
-  // };
-  const parseDate = (dateString: string): Date => {
-    const [month, day, year] = dateString.split("/");
+  // Calculate statistics dynamically from API data
+  const totalApplications = coachingUsers.length;
+  const totalApproved = coachingUsers.filter(
+    (user) => user.status === "APPROVED"
+  ).length;
+  const totalDenied = coachingUsers.filter(
+    (user) => user.status === "DENY"
+  ).length;
 
-    // Ensure month, day, and year are properly parsed into numbers
-    const monthNumber = parseInt(month, 10);
-    const dayNumber = parseInt(day, 10);
-    const yearNumber = parseInt(`20${year}`, 10);
+  const stats: Stat[] = [
+    {
+      title: "Total Application",
+      value: totalApplications.toString(),
+      changeType: "positive",
+      icon: FileText,
+    },
+    {
+      title: "Total Approve Application",
+      value: totalApproved.toString(),
+      changeType: "positive",
+      icon: FileText,
+    },
+    {
+      title: "Total Deny Application",
+      value: totalDenied.toString(),
+      changeType: "positive",
+      icon: FileText,
+    },
+  ];
 
-    // Validate the parsed numbers
-    if (isNaN(monthNumber) || isNaN(dayNumber) || isNaN(yearNumber)) {
-      throw new Error("Invalid date format");
-    }
-
-    // Return a new Date object with proper numeric values
-    return new Date(yearNumber, monthNumber - 1, dayNumber); // month is 0-indexed in Date
+  // Convert ISO date string to Date object for proper sorting
+  const parseDate = (isoDateString: string): Date => {
+    return new Date(isoDateString);
   };
 
   // Filter, sort and search users
   const getProcessedUsers = (): User[] => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...coachingUsers];
 
     // Apply status filter
     if (statusFilter !== "All") {
@@ -234,10 +135,10 @@ const CoachingPage = () => {
       );
     }
 
-    // Apply sorting by date
+    // Apply sorting by date (using createdAt)
     filteredUsers.sort((a, b) => {
-      const dateA = parseDate(a.joiningDate);
-      const dateB = parseDate(b.joiningDate);
+      const dateA = parseDate(a.createdAt);
+      const dateB = parseDate(b.createdAt);
 
       if (sortBy === "newest") {
         return dateB.getTime() - dateA.getTime(); // Newest first
@@ -286,21 +187,24 @@ const CoachingPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleConfirmAction = (): void => {
+  const handleConfirmAction = async () => {
     if (selectedUser && actionType) {
-      const updatedUsers = usersList.map((user) =>
-        user.id === selectedUser.id
-          ? {
-              ...user,
-              status:
-                actionType === "approve"
-                  ? ("Approved" as const)
-                  : ("Deny" as const),
-            }
-          : user
-      );
-      setUsersList(updatedUsers);
+      console.log(`${actionType} user:`, selectedUser);
+
+      // You can add your API call here to update the user status
+      const result = await updateCoachingStatus({
+        userId: selectedUser._id,
+        time: selectedUser.time[0].range,
+        action: actionType === "approve" ? "APPROVED" : "DENY",
+      }).unwrap();
+
+      if (result.status === 200 && actionType === "approve") {
+        toast.success("User approved successfully!");
+      } else if (result.status === 200 && actionType === "deny") {
+        toast.success("User denied successfully!");
+      }
     }
+
     setIsModalOpen(false);
     setSelectedUser(null);
     setActionType(null);
@@ -312,12 +216,27 @@ const CoachingPage = () => {
     setActionType(null);
   };
 
+  // Error state
+  if (error) {
+    return (
+      <div className="px-10 py-4">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-red-500">
+            Error loading data. Please try again.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="px-10 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards stat={stat as any} key={stat.title} />
-        ))}
+        {isLoading
+          ? stats.map((stat) => <StatCardSkeleton key={stat.title} />)
+          : stats.map((stat) => (
+              <StatsCards stat={stat as any} key={stat.title} />
+            ))}
       </div>
       <div className="w-full mx-auto space-y-6 mt-10">
         {/* Search Bar */}
@@ -337,7 +256,7 @@ const CoachingPage = () => {
             <button
               className={`pb-2 text-sm font-medium transition-colors border-b-2 border-black`}
             >
-              All Applications
+              All Applications ({totalApplications})
             </button>
             <button
               onClick={() => router.push("/dashboard/coaching/coach")}
@@ -370,7 +289,7 @@ const CoachingPage = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 bg-transparent">
-                  {activeTab}
+                  {activeTab === "All" ? "All" : activeTab}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -381,17 +300,17 @@ const CoachingPage = () => {
                   All
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleStatusFilter("Pending", "Pending")}
+                  onClick={() => handleStatusFilter("PENDING", "PENDING")}
                 >
                   Pending
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleStatusFilter("Approved", "Approved")}
+                  onClick={() => handleStatusFilter("APPROVED", "APPROVED")}
                 >
                   Approved
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleStatusFilter("Deny", "Deny")}
+                  onClick={() => handleStatusFilter("DENY", "DENY")}
                 >
                   Denied
                 </DropdownMenuItem>
@@ -407,14 +326,18 @@ const CoachingPage = () => {
             <div>User Name</div>
             <div>Email</div>
             <div>Status</div>
-            <div>Joining Date</div>
+            <div>Application Date</div>
             <div>Action</div>
           </div>
 
-          <FilterCoaching
-            filterCoachingByStatus={getPagedUsers}
-            onActionClick={handleActionClick}
-          />
+          {isLoading ? (
+            <UsersTableSkeleton />
+          ) : (
+            <FilterCoaching
+              filterCoachingByStatus={getPagedUsers}
+              onActionClick={handleActionClick}
+            />
+          )}
         </div>
 
         {/* Pagination */}
@@ -462,12 +385,21 @@ const CoachingPage = () => {
           </div>
         )}
 
+        {/* No data message */}
+        {getProcessedUsers().length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">
+            {searchQuery || statusFilter !== "All"
+              ? "No applications found matching your criteria."
+              : "No coaching applications available."}
+          </div>
+        )}
+
         {/* Confirmation Modal */}
         <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {actionType === "approve" ? "Approve" : "Deny"}
+                {actionType === "approve" ? "Approve" : "Deny"} Application
               </AlertDialogTitle>
               <AlertDialogDescription>
                 Are you sure you want to{" "}

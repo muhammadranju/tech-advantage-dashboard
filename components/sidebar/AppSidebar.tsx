@@ -11,6 +11,8 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logout } from "@/lib/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/lib/redux/hooks";
 import {
   BellRing,
   ChartGantt,
@@ -32,9 +34,6 @@ import {
   PiTentBold,
   PiUsersThreeBold,
 } from "react-icons/pi";
-import Cookies from "js-cookie";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { logout } from "@/lib/redux/features/auth/authSlice";
 
 // This is sample data.
 const data = {
@@ -42,7 +41,7 @@ const data = {
     {
       items: [
         {
-          title: "Dashboard",
+          title: "Overview",
           url: "/dashboard/overview",
           icon: <CircleDollarSign />,
         },
@@ -107,12 +106,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useAppDispatch();
 
   const handelLogout = () => {
-    console.log("logout");
-    Cookies.remove("token");
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
     dispatch(logout());
-    window.location.href = "/login";
   };
 
   return (

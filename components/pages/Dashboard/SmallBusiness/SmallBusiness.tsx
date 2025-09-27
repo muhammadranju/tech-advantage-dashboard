@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
@@ -54,12 +55,6 @@ const SmallBusinessPage = () => {
     setQuestions(updatedQuestions);
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < 4) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
   // Check if all fields for the current question are filled
   const isCurrentQuestionValid = () => {
     const currentQuestion = questions[currentQuestionIndex];
@@ -88,7 +83,7 @@ const SmallBusinessPage = () => {
     <div className="px-10 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
-          <StatsCards stat={stat} key={stat.title} />
+          <StatsCards stat={stat as any} key={stat.title} />
         ))}
       </div>
       <div className="mx-auto bg-white rounded-lg border p-6 mt-16">

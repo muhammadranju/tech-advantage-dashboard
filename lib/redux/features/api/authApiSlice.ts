@@ -1,13 +1,15 @@
 import {
+  ForgotPasswordRequest,
   LoginRequest,
   LoginResponse,
+  ResetPasswordRequest,
   UserProfileResponse,
+  VerifyOTPRequest,
 } from "@/interface/auth.interface";
 
+import toast from "react-hot-toast";
 import { logout, setCredentials, setLoading } from "../auth/authSlice";
 import { apiSlice } from "./apiSlice";
-import { RootState } from "../../store";
-import toast from "react-hot-toast";
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -55,8 +57,6 @@ export const authApiSlice = apiSlice.injectEndpoints({
             })
           );
         } catch (error) {
-          console.error("Login failed:", error);
-          // toast.error("Login failed"+error);
           dispatch(logout()); // Clear any partial state
           throw error; // Re-throw to handle in component
         } finally {
@@ -65,55 +65,6 @@ export const authApiSlice = apiSlice.injectEndpoints({
       },
     }),
 
-    // signup: builder.mutation<LoginResponse, SignupRequest>({
-    //   query: (userData) => ({
-    //     url: "/auth/signup",
-    //     method: "POST",
-    //     body: userData,
-    //   }),
-    //   async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-    //     dispatch(setLoading(true));
-    //     try {
-    //       const { data } = await queryFulfilled;
-
-    //       // Store token temporarily
-    //       const token = data.token;
-
-    //       // Fetch user profile with the token
-    //       const profileResponse = await fetch(
-    //         "http://10.10.7.102:3000/api/v1/user/profile",
-    //         {
-    //           headers: {
-    //             Authorization: `Bearer ${token}`,
-    //             "Content-Type": "application/json",
-    //           },
-    //         }
-    //       );
-
-    //       if (!profileResponse.ok) {
-    //         throw new Error("Failed to fetch user profile");
-    //       }
-
-    //       const profileData = await profileResponse.json();
-
-    //       // Set credentials with both token and user data
-    //       dispatch(
-    //         setCredentials({
-    //           user: profileData.user || profileData,
-    //           token: token,
-    //         })
-    //       );
-    //     } catch (error) {
-    //       console.error("Signup failed:", error);
-    //       dispatch(logout());
-    //       throw error;
-    //     } finally {
-    //       dispatch(setLoading(false));
-    //     }
-    //   },
-    // }),
-
-    // Direct profile fetching endpoint (can be used to refresh user data)
     getUserProfile: builder.query<UserProfileResponse, void>({
       query: () => ({
         url: `${process.env.NEXT_PUBLIC_API_URL}/user/profile`,
@@ -154,28 +105,43 @@ export const authApiSlice = apiSlice.injectEndpoints({
         url: "/auth/refresh",
         method: "POST",
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
-        try {
-          const { data } = await queryFulfilled;
-          const state = getState() as RootState;
-          const currentUser = state.auth.user;
+    }),
 
-          if (currentUser) {
-            dispatch(setCredentials({ user: currentUser, token: data.token }));
-          }
-        } catch (error) {
-          toast.error("Refresh token failed");
-          dispatch(logout());
-        }
-      },
+    forgotPassword: builder.mutation<void, ForgotPasswordRequest>({
+      query: (credentials) => ({
+        url: "/auth/forget-password",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+
+    verifyOTP: builder.mutation<void, VerifyOTPRequest>({
+      query: ({ otp, email }) => ({
+        url: "/auth/verify-email",
+        method: "POST",
+        body: { email, oneTimeCode: otp },
+      }),
+    }),
+
+    resetPassword: builder.mutation<void, ResetPasswordRequest>({
+      query: ({ password, confirmPassword, authToken }) => ({
+        url: "/auth/reset-password",
+        headers: {
+          Authorization: authToken || "",
+        },
+        method: "POST",
+        body: { newPassword: password, confirmPassword },
+      }),
     }),
   }),
 });
 
 export const {
   useLoginMutation,
-  // useSignupMutation,
   useLogoutMutation,
   useGetUserProfileQuery,
   useRefreshTokenMutation,
+  useForgotPasswordMutation,
+  useVerifyOTPMutation,
+  useResetPasswordMutation,
 } = authApiSlice;

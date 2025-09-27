@@ -3,12 +3,11 @@ export interface ApplicationRate {
   value: number;
 }
 
-
 export interface CoachingUser {
   _id: string;
   name: string;
   email: string;
-  status: "PENDING" | "APPROVED" | "DENY";
+  status: "PENDING" | "APPROVED" | "DENIED";
   date: string;
   time: Array<{
     range: string;

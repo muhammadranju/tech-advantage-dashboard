@@ -4,7 +4,6 @@ export interface IUsersTableProps {
   name: string;
   email: string;
   status: string;
-  isActive?: boolean;
   joiningDate: string;
   userStatus: string;
 }

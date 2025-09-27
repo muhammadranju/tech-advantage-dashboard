@@ -17,7 +17,7 @@ import CoachingInformationModel from "./CoachingInformationModel";
 // Interface based on your API data structure
 interface FilterCoachingProps {
   filterCoachingByStatus: () => CoachingUser[];
-  onActionClick: (user: CoachingUser, action: "approve" | "deny") => void;
+  onActionClick: (user: CoachingUser, action: "APPROVED" | "DENIED") => void;
 }
 
 const FilterCoaching = ({
@@ -29,11 +29,11 @@ const FilterCoaching = ({
 
   const handleApproveUser = async (coaching: CoachingUser) => {
     console.log(coaching);
-    onActionClick(coaching, "approve");
+    onActionClick(coaching, "APPROVED");
   };
 
   const handleDenyUser = (coaching: CoachingUser) => {
-    onActionClick(coaching, "deny");
+    onActionClick(coaching, "DENIED");
   };
 
   const handleView = (coaching: CoachingUser) => {
@@ -133,7 +133,7 @@ const FilterCoaching = ({
                   <DropdownMenuContent align="end" className="rounded-none p-0">
                     {/* Show approve/deny options for PENDING and DENY status users */}
                     {(coaching.status === "PENDING" ||
-                      coaching.status === "DENIED" ) && (
+                      coaching.status === "DENIED") && (
                       <>
                         <DropdownMenuItem
                           onClick={() => handleApproveUser(coaching)}

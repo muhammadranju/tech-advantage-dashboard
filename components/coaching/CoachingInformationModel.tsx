@@ -4,6 +4,9 @@ interface CoachingInformationModelProps {
   date: string;
   time: string;
   email: string;
+  name: string;
+  status: string;
+  createdAt: string;
 }
 export default function CoachingInformationModel({
   date,

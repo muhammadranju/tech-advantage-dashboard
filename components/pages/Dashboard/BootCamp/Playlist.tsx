@@ -43,10 +43,10 @@ function UploadPlaylist() {
           onClick={() => router.push("/dashboard/boot-camp")}
           className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
         >
-          Upload Solo Video
+          Back to Bootcamp
         </button>
         <button className={`pb-2 text-lg font-medium  border-b-2 border-black`}>
-          Playlist&apos;s
+          All Playlist&apos;s
         </button>
       </div>
       {/* Create Playlist Form */}

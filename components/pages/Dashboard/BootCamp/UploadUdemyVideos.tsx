@@ -76,19 +76,19 @@ const UdemyVideo = () => {
       <div className="flex justify-between gap-8 ">
         <HeaderTitle />
         <DropdownAndLinks
-          initialOption="Udemy's Video" // The starting selected option in the dropdown
+          initialOption="Udemy’s Video" // The starting selected option in the dropdown
           options={[
-            { label: "Admin’s Video", route: "/dashboard/boot-camp" },
+            // { label: "Admin’s Video", route: "/dashboard/boot-camp" },
             {
               label: "Udemy’s Video",
-              route: "/dashboard/boot-camp/upload-udemy-videos",
+              route: "/dashboard/boot-camp",
             },
             {
               label: "Youtube’s Video",
               route: "/dashboard/boot-camp/upload-youtube-videos",
             },
           ]}
-          staticLabel="Upload Solo Video"
+          staticLabel="Upload Solo Video" // Optional: Customizes the static button/label on the left
           staticLabel2="Upload Playlist Video"
         />
       </div>

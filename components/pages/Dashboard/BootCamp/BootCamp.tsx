@@ -2,7 +2,6 @@
 import HeaderTitle from "@/components/bootcamp/HeaderTitle";
 import DropdownAndLinks from "@/components/discoverStrength/DropdownAndLinks";
 import { ShowVideos } from "@/components/discoverStrength/VideoUpload/ShowVideos";
-import { VideoUploadComponent } from "@/components/discoverStrength/VideoUpload/VideoUploadComponent";
 import { VideoUploads } from "@/components/discoverStrength/VideoUpload/VideoUploads";
 
 const BootCamp = () => {
@@ -12,17 +11,17 @@ const BootCamp = () => {
       videos: 3,
       videosData: [
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "How to Build a Website",
           url: "https://www.youtube.com/watch?v=AMiX4ybJLDM",
         },
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "Introduction to React",
           url: "https://www.youtube.com/watch?v=ZLxOUw2ougo",
         },
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "Mastering JavaScript Basics",
           url: "https://www.youtube.com/watch?v=MG9tI5QCbtM",
         },
@@ -34,17 +33,17 @@ const BootCamp = () => {
 
       videosData: [
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "Mastering JavaScript Basics",
           url: "https://www.youtube.com/watch?v=iWuEpnTTD3k",
         },
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "How to Build a Website",
           url: "https://www.youtube.com/watch?v=AMiX4ybJLDM",
         },
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "Introduction to React",
           url: "https://www.youtube.com/watch?v=fqySz1Me2pI",
         },
@@ -55,17 +54,17 @@ const BootCamp = () => {
       videos: 3,
       videosData: [
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "How to Build a Website",
           url: "https://www.youtube.com/watch?v=WhIN4umuWpg",
         },
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "Mastering JavaScript Basics",
           url: "https://www.youtube.com/watch?v=K2hHOAtkwwk",
         },
         {
-          thumbnail: "https://i.ibb.co.com/HL0CgWVP/admin-video.png",
+          thumbnail: "https://i.ibb.co.com/PGvv15RY/udemy-video.png",
           title: "Introduction to React",
           url: "https://www.youtube.com/watch?v=ZLxOUw2ougo",
         },
@@ -77,24 +76,23 @@ const BootCamp = () => {
       <div className="flex justify-between gap-8 ">
         <HeaderTitle />
         <DropdownAndLinks
-          initialOption="Admin’s Video" // The starting selected option in the dropdown
+          initialOption="Udemy’s Video" // The starting selected option in the dropdown
           options={[
-            { label: "Admin’s Video", route: "/dashboard/boot-camp" },
+            // { label: "Admin’s Video", route: "/dashboard/boot-camp" },
             {
               label: "Udemy’s Video",
-              route: "/dashboard/boot-camp/upload-udemy-videos",
+              route: "/dashboard/boot-camp",
             },
             {
               label: "Youtube’s Video",
               route: "/dashboard/boot-camp/upload-youtube-videos",
             },
           ]}
-          staticLabel="Upload Solo Video" // Optional: Customizes the static button/label on the left
+          staticLabel="Upload Video" // Optional: Customizes the static button/label on the left
           staticLabel2="Upload Playlist Video"
         />
       </div>
-      <ShowVideos title={"Admin"} videoRanges={videoRanges} />
-      <VideoUploadComponent />
+      <ShowVideos title={"Udemy"} videoRanges={videoRanges} />
       <VideoUploads inputTitle="Video Title" />
     </div>
   );

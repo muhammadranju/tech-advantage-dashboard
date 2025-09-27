@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { AssessmentComment } from "@/components/mockInterview/AssessmentComment";
@@ -13,10 +12,21 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+interface Question {
+  question: string;
+  answers: {
+    answer1: string;
+    answer2: string;
+    answer3: string;
+  };
+}
+
+type TabType = "quiz" | "assessment";
+
 const stats = [
   {
     title: "Total Participant",
-    value: "124,563",
+    value: 124563,
     change: "+12.5%",
     changeType: "positive" as const,
     icon: FileText,
@@ -24,9 +34,9 @@ const stats = [
 ];
 
 const MockInterview = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [questions, setQuestions] = useState<any>([
+  const [activeTab, setActiveTab] = useState<TabType>("quiz");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [questions, setQuestions] = useState<Question[]>([
     { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
     { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
     { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
@@ -36,13 +46,16 @@ const MockInterview = () => {
 
   const router = useRouter();
 
-  const handleQuestionChange = (e: any) => {
+  const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedQuestions = [...questions];
     updatedQuestions[currentQuestionIndex].question = e.target.value;
     setQuestions(updatedQuestions);
   };
 
-  const handleAnswerChange = (e: any, answerIndex: any) => {
+  const handleAnswerChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    answerIndex: 1 | 2 | 3
+  ) => {
     const updatedQuestions = [...questions];
     updatedQuestions[currentQuestionIndex].answers[`answer${answerIndex}`] =
       e.target.value;

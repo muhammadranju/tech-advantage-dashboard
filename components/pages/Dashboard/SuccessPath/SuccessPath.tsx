@@ -1,14 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
+interface Question {
+  question: string;
+  answers: {
+    answer1: string;
+    answer2: string;
+    answer3: string;
+  };
+}
+
+type TabType = "quiz" | "upload";
+type Category =
+  | "Aspiring Entrepreneur"
+  | "Small Business"
+  | "Looking to Get Into Tech";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ListCollapse, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import DropdownAndLinks from "./DropdownAndLinks";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import DropdownAndLinks from "@/components/discoverStrength/DropdownAndLinks";
 import { FileText } from "lucide-react";
 import { SiQuizlet } from "react-icons/si";
 import {
@@ -22,25 +35,26 @@ import {
 const stats = [
   {
     title: "Total Participant",
-    value: "8,642",
-
+    value: 8642,
     changeType: "positive" as const,
     icon: FileText,
   },
   {
     title: "Total Quizzes",
-    value: "12",
-
+    value: 12,
     changeType: "positive" as const,
     icon: SiQuizlet,
   },
 ];
 
 const SuccessPathPage = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
+  const [activeTab, setActiveTab] = useState<TabType>("quiz");
+  const [selectedCategory, setSelectedCategory] = useState<
+    Category | undefined
+  >();
 
   // Simplified questions object with one question and answers
-  const [question, setQuestion] = useState({
+  const [question, setQuestion] = useState<Question>({
     question: "",
     answers: {
       answer1: "",
@@ -56,11 +70,14 @@ const SuccessPathPage = () => {
     router.push("/dashboard/success-path/small-business?q=small-business");
   };
 
-  const handleQuestionChange = (e: any) => {
+  const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, question: e.target.value }));
   };
 
-  const handleAnswerChange = (e: any, answerIndex: string) => {
+  const handleAnswerChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    answerIndex: keyof Question["answers"]
+  ) => {
     setQuestion((prev) => ({
       ...prev,
       answers: { ...prev.answers, [answerIndex]: e.target.value },
@@ -83,7 +100,15 @@ const SuccessPathPage = () => {
     <div className="px-10 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
-          <StatsCards stat={stat} key={stat.title} />
+          <StatsCards
+            stat={{
+              title: stat.title,
+              value: stat.value,
+              changeType: stat.changeType,
+              icon: stat.icon,
+            }}
+            key={stat.title}
+          />
         ))}
       </div>
 
@@ -112,15 +137,17 @@ const SuccessPathPage = () => {
               Assessment
             </button>
           </div>
-          <Select>
+          <Select
+            onValueChange={(value) => setSelectedCategory(value as Category)}
+          >
             <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
-            <SelectContent className="py-2 ">
+            <SelectContent className="py-2">
               <SelectItem value="Aspiring Entrepreneur">
                 Aspiring Entrepreneur
               </SelectItem>
-              <SelectItem value="  Small Business">Small Business</SelectItem>
+              <SelectItem value="Small Business">Small Business</SelectItem>
               <SelectItem value="Looking to Get Into Tech">
                 Looking to Get Into Tech
               </SelectItem>

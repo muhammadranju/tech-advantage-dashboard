@@ -38,7 +38,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  status: "PENDING" | "APPROVED" | "DENY";
+  status: "PENDING" | "APPROVED" | "DENIED";
   date: string;
   time: Array<{
     range: string;
@@ -56,9 +56,9 @@ interface Stat {
   icon: React.ComponentType<any>;
 }
 
-type StatusFilter = "All" | "PENDING" | "APPROVED" | "DENY";
+type StatusFilter = "All" | "PENDING" | "APPROVED" | "DENIED";
 type SortBy = "newest" | "oldest";
-type ActionType = "approve" | "deny";
+type ActionType = "APPROVED" | "DENIED";
 
 const CoachingPage = () => {
   const [activeTab, setActiveTab] = useState<StatusFilter>("All");
@@ -86,7 +86,7 @@ const CoachingPage = () => {
     (user) => user.status === "APPROVED"
   ).length;
   const totalDenied = coachingUsers.filter(
-    (user) => user.status === "DENY"
+    (user) => user.status === "DENIED"
   ).length;
 
   const stats: Stat[] = [
@@ -195,12 +195,12 @@ const CoachingPage = () => {
       const result = await updateCoachingStatus({
         userId: selectedUser._id,
         time: selectedUser.time[0].range,
-        action: actionType === "approve" ? "APPROVED" : "DENY",
+        action: actionType,
       }).unwrap();
 
-      if (result.status === 200 && actionType === "approve") {
+      if (result.status === 200 && actionType === "APPROVED") {
         toast.success("User approved successfully!");
-      } else if (result.status === 200 && actionType === "deny") {
+      } else if (result.status === 200 && actionType === "DENIED") {
         toast.success("User denied successfully!");
       }
     }
@@ -310,7 +310,7 @@ const CoachingPage = () => {
                   Approved
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleStatusFilter("DENY", "DENY")}
+                  onClick={() => handleStatusFilter("DENIED", "DENIED")}
                 >
                   Denied
                 </DropdownMenuItem>
@@ -399,11 +399,11 @@ const CoachingPage = () => {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                {actionType === "approve" ? "Approve" : "Deny"} Application
+                {actionType === "APPROVED" ? "Approve" : "Deny"} Application
               </AlertDialogTitle>
               <AlertDialogDescription>
                 Are you sure you want to{" "}
-                {actionType === "approve" ? "approve" : "deny"}{" "}
+                {actionType === "APPROVED" ? "approve" : "deny"}{" "}
                 <strong>{selectedUser?.name}</strong>&apos;s application? This
                 action will change their status.
               </AlertDialogDescription>
@@ -415,12 +415,12 @@ const CoachingPage = () => {
               <AlertDialogAction
                 onClick={handleConfirmAction}
                 className={
-                  actionType === "approve"
+                  actionType === "APPROVED"
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
                 }
               >
-                {actionType === "approve" ? "Approve" : "Deny"}
+                {actionType === "APPROVED" ? "Approve" : "Deny"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

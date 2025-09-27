@@ -15,6 +15,7 @@ import { logout } from "@/lib/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/lib/redux/hooks";
 import {
   BellRing,
+  BookOpen,
   ChartGantt,
   CircleDollarSign,
   Handshake,
@@ -85,6 +86,7 @@ const data = {
           url: "/dashboard/mock-interview",
           icon: <PiStudentBold />,
         },
+
         {
           title: "Notification",
           url: "/dashboard/notification",

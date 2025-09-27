@@ -13,24 +13,33 @@ import { MdOutlineQuiz } from "react-icons/md";
 const stats = [
   {
     title: "Total Quiz Questions",
-    value: "8,642",
+    value: 8642,
     changeType: "positive" as const,
     icon: MdOutlineQuiz,
   },
   {
     title: "Total Long Questions",
-    value: "82",
+    value: 82,
     changeType: "positive" as const,
     icon: MdOutlineQuiz,
   },
 ];
 
+interface Question {
+  question: string;
+  answers: string[];
+  mark: number;
+}
+
+type TabType = "quiz" | "long-question";
+
 const BusinessPlanning = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [questions, setQuestions] = useState([
+  const [activeTab, setActiveTab] = useState<TabType>("quiz");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [questions, setQuestions] = useState<Question[]>([
     { question: "", answers: ["", "", ""], mark: 0 },
   ]);
+  const [longAnswer, setLongAnswer] = useState("");
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedQuestions = [...questions];
@@ -69,7 +78,14 @@ const BusinessPlanning = () => {
   };
 
   const handleSave = () => {
-    console.log(questions);
+    if (activeTab === "quiz") {
+      console.log("Quiz questions:", questions);
+    } else {
+      console.log("Long question:", {
+        question: questions[currentQuestionIndex].question,
+        answer: longAnswer,
+      });
+    }
   };
 
   return (
@@ -206,8 +222,8 @@ const BusinessPlanning = () => {
               <label className="block text-lg font-medium mb-2">Answer</label>
               <Textarea
                 placeholder="Enter question answer"
-                // value={answer}
-                // onChange={(e) => handleAnswerChange(e, index)}
+                value={longAnswer}
+                onChange={(e) => setLongAnswer(e.target.value)}
                 className="py-6 flex-1"
               />
             </div>

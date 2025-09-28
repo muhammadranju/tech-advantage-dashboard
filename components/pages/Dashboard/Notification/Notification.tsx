@@ -61,39 +61,117 @@ const notifications: NotificationItem[] = [
   },
 ];
 
-const getNotificationIcon = (type: string) => {
-  switch (type) {
-    case "success":
-      return <User className="h-5 w-5 text-blue-600" />;
-    case "error":
-      return <X className="h-5 w-5 text-red-500" />;
-    case "suggestion":
-      return <FolderOpen className="h-5 w-5 text-yellow-500" />;
-    case "review":
-      return <Check className="h-5 w-5 text-green-500" />;
-    case "request":
-      return <FolderOpen className="h-5 w-5 text-orange-500" />;
-    default:
-      return <User className="h-5 w-5 text-gray-500" />;
-  }
+// DRY: map type to icon and background
+const typeConfig = {
+  success: {
+    icon: <User className="h-5 w-5 text-blue-600" />,
+    bg: "bg-blue-50",
+  },
+  error: { icon: <X className="h-5 w-5 text-red-500" />, bg: "bg-red-50" },
+  suggestion: {
+    icon: <FolderOpen className="h-5 w-5 text-yellow-500" />,
+    bg: "bg-yellow-50",
+  },
+  review: {
+    icon: <Check className="h-5 w-5 text-green-500" />,
+    bg: "bg-green-50",
+  },
+  request: {
+    icon: <FolderOpen className="h-5 w-5 text-orange-500" />,
+    bg: "bg-orange-50",
+  },
+  default: {
+    icon: <User className="h-5 w-5 text-gray-500" />,
+    bg: "bg-gray-50",
+  },
 };
 
-const getNotificationBg = (type: string) => {
-  switch (type) {
-    case "success":
-      return "bg-blue-50";
-    case "error":
-      return "bg-red-50";
-    case "suggestion":
-      return "bg-yellow-50";
-    case "review":
-      return "bg-green-50";
-    case "request":
-      return "bg-orange-50";
-    default:
-      return "bg-gray-50";
-  }
+const NotificationRow = ({
+  notification,
+}: {
+  notification: NotificationItem;
+}) => {
+  const config = typeConfig[notification.type] || typeConfig.default;
+  return (
+    <div
+      className={`p-6 flex items-start gap-4 border-b hover:bg-gray-50 transition-colors ${config.bg}`}
+    >
+      <div className="flex-shrink-0 mt-1">{config.icon}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm text-gray-900 leading-relaxed">
+          {notification.message}
+        </p>
+        <p className="text-xs text-gray-500 mt-2">{notification.timestamp}</p>
+      </div>
+    </div>
+  );
 };
+
+const NotificationDialog = ({
+  open,
+  setOpen,
+  title,
+  setTitle,
+  body,
+  setBody,
+  handleSubmit,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  title: string;
+  setTitle: (val: string) => void;
+  body: string;
+  setBody: (val: string) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+}) => (
+  <Dialog open={open} onOpenChange={setOpen}>
+    <form onSubmit={handleSubmit}>
+      <DialogTrigger asChild />
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Send Custom Notification</DialogTitle>
+          <DialogDescription>
+            <p className="text-sm text-gray-500">
+              Enter the title and body of your notification.
+            </p>
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <div className="grid gap-3">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              name="title"
+              value={title}
+              placeholder="Enter your notification title"
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="body">Body</Label>
+            <Textarea
+              id="body"
+              name="body"
+              value={body}
+              placeholder="Enter your notification body"
+              onChange={(e) => setBody(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">
+              <X /> Cancel
+            </Button>
+          </DialogClose>
+          <Button variant="default" type="submit">
+            <Send /> Send Notification
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+);
 
 const NotificationsPage = () => {
   const [open, setOpen] = useState(false);
@@ -102,123 +180,55 @@ const NotificationsPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt:", {
-      title: title,
-      body: body,
-    });
-
+    console.log({ title, body });
     setOpen(false);
     toast.success("Notification sent successfully!");
-
     setTitle("");
     setBody("");
   };
+
   return (
-    <div className="px-6 mx-auto ">
+    <div className="px-6 mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between px-6">
         <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-
         <Button
           onClick={() => setOpen(true)}
           variant="default"
-          className=" py-6"
+          className="py-6"
         >
-          <Send /> Send Custom Notification
+          <Send /> Send Notification
         </Button>
       </div>
 
       {/* Search Bar */}
-      <div className="p-6 ">
+      <div className="p-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search here......"
-            className="pl-10 bg-gray-50 py-6  border-gray-200"
+            className="pl-10 bg-gray-50 py-6 border-gray-200"
           />
         </div>
       </div>
 
       {/* Notifications List */}
       <div>
-        {notifications.map((notification) => (
-          <div
-            key={notification.id}
-            // className={`p-6 flex items-start gap-4 border-b hover:bg-gray-50 transition-colors ${getNotificationBg(
-            //   notification.type
-            // )}`}
-            className={`p-6 flex items-start gap-4 border-b hover:bg-gray-50 transition-colors `}
-          >
-            <div className="flex-shrink-0 mt-1">
-              {getNotificationIcon(notification.type)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-900 leading-relaxed">
-                {notification.message}
-              </p>
-              <p className="text-xs text-gray-500 mt-2">
-                {notification.timestamp}
-              </p>
-            </div>
-          </div>
+        {notifications.map((n) => (
+          <NotificationRow key={n.id} notification={n} />
         ))}
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <form>
-          <DialogTrigger asChild>
-            {/* <Button variant="outline">Open Dialog</Button> */}
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Send Custom Notification </DialogTitle>
-              <DialogDescription>
-                <p className="text-sm text-gray-500">
-                  Enter the title and body of your notification.
-                </p>
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={title}
-                  placeholder="Enter your notification title"
-                  onChange={(e) => setTitle(e.target.value)}
-                  
-                />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="body">Body</Label>
-                {/* <Input
-                  
-                /> */}
-                <Textarea
-                  id="body"
-                  name="body"
-                  value={body}
-                  placeholder="Enter your notification body"
-                  onChange={(e) => setBody(e.target.value)}
-                  
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">
-                  <X /> Cancel
-                </Button>
-              </DialogClose>
-              <Button onClick={handleSubmit} variant={"default"} type="submit">
-                <Send /> Send Notification{" "}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </form>
-      </Dialog>
+      {/* Notification Dialog */}
+      <NotificationDialog
+        open={open}
+        setOpen={setOpen}
+        title={title}
+        setTitle={setTitle}
+        body={body}
+        setBody={setBody}
+        handleSubmit={handleSubmit}
+      />
     </div>
   );
 };

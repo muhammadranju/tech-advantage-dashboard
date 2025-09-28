@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { FileText } from "lucide-react";
-
 import FilterCoaching from "@/components/coaching/FilterCoaching";
+import { CoachingUser } from "@/interface/dashboard.interface";
+import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
+import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,40 +18,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { FileText, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import {
+  useCoachingUsersQuery,
+  useUpdateCoachingStatusMutation,
+} from "@/lib/redux/features/api/coaching/coachingApiSlice";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  useCoachingUsersQuery,
-  useUpdateCoachingStatusMutation,
-} from "@/lib/redux/features/api/coaching/coachingApiSlice";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
-import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
-// Type definitions based on your API data structure
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  status: "PENDING" | "APPROVED" | "DENIED";
-  date: string;
-  time: Array<{
-    range: string;
-    flag: boolean;
-  }>;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
+// Types
+type StatusFilter = "All" | "PENDING" | "APPROVED" | "DENIED";
+type SortBy = "newest" | "oldest";
+type ActionType = "APPROVED" | "DENIED";
 
 interface Stat {
   title: string;
@@ -56,218 +44,171 @@ interface Stat {
   icon: React.ComponentType<any>;
 }
 
-type StatusFilter = "All" | "PENDING" | "APPROVED" | "DENIED";
-type SortBy = "newest" | "oldest";
-type ActionType = "APPROVED" | "DENIED";
+// Helper functions
+const sortUsers = (users: CoachingUser[], sortBy: SortBy) =>
+  [...users].sort((a, b) => {
+    const diff =
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    return sortBy === "newest" ? -diff : diff;
+  });
+
+const filterUsers = (
+  users: CoachingUser[],
+  status: StatusFilter,
+  query: string
+) =>
+  users.filter((u) => {
+    const statusMatch = status === "All" || u.status === status;
+    const queryMatch =
+      u.name.toLowerCase().includes(query.toLowerCase()) ||
+      u.email.toLowerCase().includes(query.toLowerCase());
+    return statusMatch && queryMatch;
+  });
 
 const CoachingPage = () => {
   const [activeTab, setActiveTab] = useState<StatusFilter>("All");
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortBy>("newest");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<CoachingUser | null>(null);
   const [actionType, setActionType] = useState<ActionType | null>(null);
 
-  // Fetch coaching users data
   const { data, isLoading, error } = useCoachingUsersQuery(null);
-  const coachingUsers: User[] = data?.data || [];
   const [updateCoachingStatus] = useUpdateCoachingStatusMutation();
-
   const router = useRouter();
   const usersPerPage = 8;
 
-  // Calculate statistics dynamically from API data
-  const totalApplications = coachingUsers.length;
-  const totalApproved = coachingUsers.filter(
-    (user) => user.status === "APPROVED"
-  ).length;
-  const totalDenied = coachingUsers.filter(
-    (user) => user.status === "DENIED"
-  ).length;
+  const coachingUsers = useMemo<CoachingUser[]>(() => data?.data || [], [data]);
 
-  const stats: Stat[] = [
-    {
-      title: "Total Application",
-      value: totalApplications.toString(),
-      changeType: "positive",
-      icon: FileText,
-    },
-    {
-      title: "Total Approve Application",
-      value: totalApproved.toString(),
-      changeType: "positive",
-      icon: FileText,
-    },
-    {
-      title: "Total Deny Application",
-      value: totalDenied.toString(),
-      changeType: "positive",
-      icon: FileText,
-    },
-  ];
+  // Stats
+  const stats: Stat[] = useMemo(
+    () => [
+      {
+        title: "Total Application",
+        value: coachingUsers.length.toString(),
+        changeType: "positive",
+        icon: FileText,
+      },
+      {
+        title: "Total Approve Application",
+        value: coachingUsers
+          .filter((u) => u.status === "APPROVED")
+          .length.toString(),
+        changeType: "positive",
+        icon: FileText,
+      },
+      {
+        title: "Total Deny Application",
+        value: coachingUsers
+          .filter((u) => u.status === "DENIED")
+          .length.toString(),
+        changeType: "positive",
+        icon: FileText,
+      },
+    ],
+    [coachingUsers]
+  );
 
-  // Convert ISO date string to Date object for proper sorting
-  const parseDate = (isoDateString: string): Date => {
-    return new Date(isoDateString);
-  };
+  // Processed users (filter + search + sort)
+  const processedUsers = useMemo(
+    () =>
+      sortUsers(filterUsers(coachingUsers, statusFilter, searchQuery), sortBy),
+    [coachingUsers, statusFilter, searchQuery, sortBy]
+  );
 
-  // Filter, sort and search users
-  const getProcessedUsers = (): User[] => {
-    let filteredUsers = [...coachingUsers];
+  const totalPages = Math.ceil(processedUsers.length / usersPerPage);
+  const pagedUsers = useMemo(
+    () =>
+      processedUsers.slice(
+        (currentPage - 1) * usersPerPage,
+        currentPage * usersPerPage
+      ),
+    [processedUsers, currentPage]
+  );
 
-    // Apply status filter
-    if (statusFilter !== "All") {
-      filteredUsers = filteredUsers.filter(
-        (user) => user.status === statusFilter
-      );
-    }
-
-    // Apply search query filter
-    if (searchQuery) {
-      filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Apply sorting by date (using createdAt)
-    filteredUsers.sort((a, b) => {
-      const dateA = parseDate(a.createdAt);
-      const dateB = parseDate(b.createdAt);
-
-      if (sortBy === "newest") {
-        return dateB.getTime() - dateA.getTime(); // Newest first
-      } else {
-        return dateA.getTime() - dateB.getTime(); // Oldest first
-      }
-    });
-
-    return filteredUsers;
-  };
-
-  // Get paginated users
-  const getPagedUsers = (): User[] => {
-    const processedUsers = getProcessedUsers();
-    const startIndex = (currentPage - 1) * usersPerPage;
-    return processedUsers.slice(startIndex, startIndex + usersPerPage);
-  };
-
-  // Total pages based on processed users
-  const totalPages = Math.ceil(getProcessedUsers().length / usersPerPage);
-
-  // Reset to first page when filters change
-  const handleStatusFilter = (
-    status: StatusFilter,
-    tab: StatusFilter
-  ): void => {
+  // Handlers
+  const handleStatusFilter = (status: StatusFilter) => {
     setStatusFilter(status);
-    setActiveTab(tab);
+    setActiveTab(status);
     setCurrentPage(1);
   };
-
-  const handleSortChange = (newSortBy: SortBy): void => {
-    setSortBy(newSortBy);
+  const handleSortChange = (newSort: SortBy) => {
+    setSortBy(newSort);
     setCurrentPage(1);
   };
-
-  const handleSearchChange = (query: string): void => {
+  const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
-
-  // Handle modal actions
-  const handleActionClick = (user: User, action: ActionType): void => {
+  const handleActionClick = (user: CoachingUser, action: ActionType) => {
     setSelectedUser(user);
     setActionType(action);
     setIsModalOpen(true);
   };
-
   const handleConfirmAction = async () => {
-    if (selectedUser && actionType) {
-      console.log(`${actionType} user:`, selectedUser);
+    if (!selectedUser || !actionType) return;
 
-      // You can add your API call here to update the user status
-      const result = await updateCoachingStatus({
-        userId: selectedUser._id,
-        time: selectedUser.time[0].range,
-        action: actionType,
-      }).unwrap();
+    await updateCoachingStatus({
+      userId: selectedUser._id,
+      time: selectedUser.time[0].range,
+      action: actionType,
+    }).unwrap();
 
-      if (result.status === 200 && actionType === "APPROVED") {
-        toast.success("User approved successfully!");
-      } else if (result.status === 200 && actionType === "DENIED") {
-        toast.success("User denied successfully!");
-      }
-    }
-
-    setIsModalOpen(false);
-    setSelectedUser(null);
-    setActionType(null);
-  };
-
-  const handleCancelAction = (): void => {
-    setIsModalOpen(false);
-    setSelectedUser(null);
-    setActionType(null);
-  };
-
-  // Error state
-  if (error) {
-    return (
-      <div className="px-10 py-4">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-lg text-red-500">
-            Error loading data. Please try again.
-          </div>
-        </div>
-      </div>
+    toast.success(
+      `User ${actionType === "APPROVED" ? "approved" : "denied"} successfully!`
     );
-  }
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    setActionType(null);
+  };
+  const handleCancelAction = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    setActionType(null);
+  };
+
+  if (error) return <div className="text-red-500 p-6">Error loading data.</div>;
 
   return (
     <div className="px-10 py-4">
+      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading
-          ? stats.map((stat) => <StatCardSkeleton key={stat.title} />)
-          : stats.map((stat) => (
-              <StatsCards stat={stat as any} key={stat.title} />
-            ))}
+          ? stats.map((s) => <StatCardSkeleton key={s.title} />)
+          : stats.map((s) => <StatsCards stat={s as any} key={s.title} />)}
       </div>
+
       <div className="w-full mx-auto space-y-6 mt-10">
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
+        {/* Search */}
+        <div className="relative max-w-2xl">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-6 w-6" />
           <Input
             placeholder="Search by name or email..."
-            className="pl-10 border-border max-w-2xl py-6"
+            className="pl-10 py-6"
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
 
-        {/* Tabs and Filter */}
+        {/* Tabs + Sort + Filter */}
         <div className="flex items-center justify-between">
           <div className="flex space-x-8">
-            <button
-              className={`pb-2 text-sm font-medium transition-colors border-b-2 border-black`}
-            >
-              All Applications ({totalApplications})
+            <button className="pb-2 text-sm font-medium border-b-2 border-black">
+              All Applications ({coachingUsers.length})
             </button>
             <button
               onClick={() => router.push("/dashboard/coaching/coach")}
-              className={`pb-2 text-sm font-medium transition-colors cursor-pointer hover:border-b-2 border-black`}
+              className="pb-2 text-sm font-medium cursor-pointer hover:border-b-2 border-black"
             >
               Create Coach
             </button>
           </div>
 
           <div className="flex gap-2">
-            {/* Sort Dropdown */}
+            {/* Sort */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 bg-transparent">
@@ -276,44 +217,33 @@ const CoachingPage = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleSortChange("newest")}>
-                  Newest
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleSortChange("oldest")}>
-                  Oldest
-                </DropdownMenuItem>
+                {(["newest", "oldest"] as SortBy[]).map((s) => (
+                  <DropdownMenuItem key={s} onClick={() => handleSortChange(s)}>
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Filter Dropdown */}
+            {/* Status Filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 bg-transparent">
-                  {activeTab === "All" ? "All" : activeTab}
+                  {activeTab}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => handleStatusFilter("All", "All")}
-                >
-                  All
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleStatusFilter("PENDING", "PENDING")}
-                >
-                  Pending
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleStatusFilter("APPROVED", "APPROVED")}
-                >
-                  Approved
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleStatusFilter("DENIED", "DENIED")}
-                >
-                  Denied
-                </DropdownMenuItem>
+                {(
+                  ["All", "PENDING", "APPROVED", "DENIED"] as StatusFilter[]
+                ).map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    onClick={() => handleStatusFilter(status)}
+                  >
+                    {status}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -321,7 +251,6 @@ const CoachingPage = () => {
 
         {/* Table */}
         <div className="border border-border rounded-lg overflow-hidden bg-card">
-          {/* Table Header */}
           <div className="grid grid-cols-5 gap-4 p-4 bg-muted/50 border-b border-border text-sm font-medium text-muted-foreground">
             <div>User Name</div>
             <div>Email</div>
@@ -334,7 +263,7 @@ const CoachingPage = () => {
             <UsersTableSkeleton />
           ) : (
             <FilterCoaching
-              filterCoachingByStatus={getPagedUsers}
+              filterCoachingByStatus={() => pagedUsers}
               onActionClick={handleActionClick}
             />
           )}
@@ -348,27 +277,21 @@ const CoachingPage = () => {
               size="sm"
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="gap-1"
             >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
+              <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
 
-            <div className="flex space-x-1">
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                )
-              )}
-            </div>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <Button
+                key={p}
+                variant={currentPage === p ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setCurrentPage(p)}
+                className="w-8 h-8 p-0"
+              >
+                {p}
+              </Button>
+            ))}
 
             <Button
               variant="ghost"
@@ -377,16 +300,14 @@ const CoachingPage = () => {
                 setCurrentPage(Math.min(totalPages, currentPage + 1))
               }
               disabled={currentPage === totalPages}
-              className="gap-1"
             >
-              Next
-              <ChevronRight className="h-4 w-4" />
+              Next <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         )}
 
-        {/* No data message */}
-        {getProcessedUsers().length === 0 && (
+        {/* No data */}
+        {processedUsers.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             {searchQuery || statusFilter !== "All"
               ? "No applications found matching your criteria."
@@ -402,8 +323,7 @@ const CoachingPage = () => {
                 {actionType === "APPROVED" ? "Approve" : "Deny"} Application
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to{" "}
-                {actionType === "APPROVED" ? "approve" : "deny"}{" "}
+                Are you sure you want to {actionType?.toLowerCase()}{" "}
                 <strong>{selectedUser?.name}</strong>&apos;s application? This
                 action will change their status.
               </AlertDialogDescription>

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,37 +24,34 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, Play, Plus, Save, Trash, Trash2, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import {
+  ArrowRight,
+  FileText,
+  Play,
+  Plus,
+  Save,
+  Trash,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 
 interface Course {
   id: string;
   title: string;
-  modules: number;
-  slug: string;
+  videos: number;
+  pdfs: number;
 }
 
 const initialCourses: Course[] = [
-  {
-    id: "1",
-    title: "Complete Programming Bootcamp",
-    slug: "complete-programming-bootcamp",
-    modules: 4,
-  },
-  {
-    id: "2",
-    title: "Advanced Java Programming Bootcamp",
-    slug: "advanced-java-programming-bootcamp",
-    modules: 8,
-  },
-  {
-    id: "3",
-    title: "Beginner friendly Python Programming Bootcamp",
-    slug: "beginner-friendly-python-programming-bootcamp",
-    modules: 11,
-  },
+  { id: "1", title: "Complete Programming Bootcamp", videos: 3, pdfs: 2 },
+  { id: "2", title: "Java Programming", videos: 3, pdfs: 2 },
+  { id: "3", title: "Python Programming", videos: 3, pdfs: 2 },
+  { id: "4", title: "C++ Programming", videos: 3, pdfs: 2 },
+  { id: "5", title: "C# Programming", videos: 3, pdfs: 2 },
+  { id: "6", title: "PHP Programming", videos: 3, pdfs: 2 },
 ];
 
 function IconText({
@@ -75,49 +74,51 @@ function CourseCard({
   onDelete,
   onEdit,
   onEnter,
+  modulesParam,
 }: {
   course: Course;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
-  onEnter: (slug: string) => void;
+  onEnter: (path: string) => void;
+  modulesParam: string | undefined;
 }) {
   return (
-    <Card
-      key={course.id}
-      className="bg-white shadow-sm border border-neutral-200 rounded-lg overflow-hidden"
-    >
-      <CardContent>
+    <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+      <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onDelete(course.id)}
-            className="p-2 h-auto hover:text-red-600 rounded-full"
+            className="p-2 h-auto  hover:text-red-600 rounded-full"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
           <Button
             variant="ghost"
             onClick={() => onEdit(course.id)}
-            className="p-2 h-auto hover:text-neutral-600 rounded-full"
+            className="p-2  h-auto  hover:text-gray-600  rounded-full"
           >
             <PiPencilFill className="w-10 h-10" />
           </Button>
         </div>
 
-        <h3 className="text-lg font-medium text-neutral-900 mb-4 leading-tight w-full">
+        <h3 className="text-lg font-medium text-gray-900 mb-4 leading-tight">
           {course.title}
         </h3>
 
-        <div className="flex items-center gap-4 mb-6 text-sm text-neutral-600">
-          <IconText Icon={Play}>{course.modules} Modules</IconText>
+        <div className="flex items-center gap-4 mb-6 text-sm text-gray-600">
+          <IconText Icon={Play}>{course.videos} Videos</IconText>
+          <IconText Icon={FileText}>{course.pdfs} PDFs</IconText>
         </div>
 
         <Button
-          onClick={() => onEnter(course.slug)}
-          className="w-full bg-black hover:bg-neutral-800 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+          onClick={() =>
+            onEnter(`/dashboard/courses/${modulesParam}/${course.id}`)
+          }
+          className="w-full bg-black hover:bg-gray-800 text-white py-2 rounded-lg flex items-center justify-center gap-2"
         >
-          Enter Course
+          Enter Module
           <ArrowRight className="w-4 h-4" />
         </Button>
       </CardContent>
@@ -125,7 +126,7 @@ function CourseCard({
   );
 }
 
-function AddCourseDialog({
+function AddModuleDialog({
   open,
   setOpen,
   onAdd,
@@ -146,16 +147,16 @@ function AddCourseDialog({
       >
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
-            <DialogTitle>Add Course</DialogTitle>
+            <DialogTitle>Add Module</DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="title">Course Title</Label>
+              <Label htmlFor="title">Module Title</Label>
               <Input
                 id="title"
                 name="title"
-                placeholder="Enter your course title"
+                placeholder="Enter your module title"
               />
             </div>
           </div>
@@ -168,7 +169,7 @@ function AddCourseDialog({
               </Button>
             </DialogClose>
             <Button type="submit">
-              <Save /> Add Course
+              <Save /> Add Module
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -192,7 +193,7 @@ function ConfirmDeleteDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Are You Sure You Want to Delete!</AlertDialogTitle>
           <AlertDialogDescription>
-            This course will be deleted permanently and cannot be recovered.
+            This module will be deleted permanently and cannot be recovered.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -200,7 +201,10 @@ function ConfirmDeleteDialog({
             <X /> Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={() => {
+              onConfirm();
+              setOpen(false);
+            }}
             className="bg-red-500 hover:bg-red-600"
           >
             <Trash /> Delete
@@ -211,11 +215,11 @@ function ConfirmDeleteDialog({
   );
 }
 
-export default function CoursePage() {
+export default function ModulesPage() {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
-  // null means no pending delete, otherwise holds id to delete
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const [openAddCourse, setOpenAddCourse] = useState(false);
+  const [openAddModule, setOpenAddModule] = useState(false);
+  const { modules } = useParams();
   const router = useRouter();
 
   const requestDelete = (id: string) => setDeleteTargetId(id);
@@ -226,51 +230,39 @@ export default function CoursePage() {
     cancelDelete();
   };
 
-  const handleAddCourse = (title: string) => {
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
+  const handleAddModule = (title: string) => {
     const newCourse: Course = {
       id: String(Date.now()),
       title,
-      slug,
-      modules: 0,
+      videos: 0,
+      pdfs: 0,
     };
     setCourses((prev) => [newCourse, ...prev]);
   };
 
   const handleEditCourse = (id: string) => console.log("Edit course:", id);
-  const handleEnterCourse = (slug: string) =>
-    router.push(`/dashboard/courses/${slug}`);
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto px-10">
+      <div className=" mx-auto px-10">
         <div className="flex gap-8 mb-5">
           <button
-            onClick={() => router.push("/dashboard/boot-camp")}
+            onClick={() => router.push("/dashboard/courses")}
             className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
           >
-            Bootcamp
-          </button>
-          <button
-            onClick={() => router.push("/dashboard/boot-camp/playlist")}
-            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-          >
-            Playlist
+            Courses
           </button>
           <button
             className={`pb-2 text-lg font-medium  border-b-2 border-black`}
           >
-            Courses
+            Modules
           </button>
         </div>
 
         <div className="flex justify-end mb-8">
           <Button
-            onClick={() => setOpenAddCourse(true)}
-            className="bg-black hover:bg-neutral-800 text-white px-6 py-6 rounded-lg flex items-center gap-2"
+            onClick={() => setOpenAddModule(true)}
+            className="bg-black hover:bg-gray-800 text-white px-6 py-6   rounded-lg flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Course
@@ -284,16 +276,17 @@ export default function CoursePage() {
               course={course}
               onDelete={requestDelete}
               onEdit={handleEditCourse}
-              onEnter={(slug) => handleEnterCourse(slug)}
+              onEnter={(path) => router.push(path)}
+              modulesParam={modules as string}
             />
           ))}
         </div>
       </div>
 
-      <AddCourseDialog
-        open={openAddCourse}
-        setOpen={setOpenAddCourse}
-        onAdd={handleAddCourse}
+      <AddModuleDialog
+        open={openAddModule}
+        setOpen={setOpenAddModule}
+        onAdd={handleAddModule}
       />
 
       <ConfirmDeleteDialog

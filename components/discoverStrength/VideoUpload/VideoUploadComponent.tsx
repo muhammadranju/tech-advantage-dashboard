@@ -25,8 +25,8 @@ export function VideoUploadComponent() {
   };
 
   return (
-    <div className="w-full  mx-auto mt-20">
-      <h2 className="text-lg font-medium  mb-3">Upload Video</h2>
+    <div className="w-full  mx-auto ">
+      {/* <h2 className="text-lg font-medium  mb-3">Upload Video</h2> */}
 
       <div
         className={`relative border-2 border-dashed  rounded-lg p-8 text-center transition-colors ${
@@ -47,7 +47,7 @@ export function VideoUploadComponent() {
             <p className="text-neutral-600 font-bold">
               Drag & drop files here or click to browse
             </p>
-            <p className="text-neutral-600 font-light">MP4, MOV up to 500MB</p>
+            <p className="text-neutral-600 font-light">Up - To 500MB</p>
           </div>
 
           <input

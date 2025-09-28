@@ -63,7 +63,9 @@ function ReplyThread() {
 
         {/* Featured Card */}
         <div className="w-fit p-2 rounded-lg shadow-md">
-          <img
+          <Image
+            width={250}
+            height={250}
             src="https://images.pexels.com/photos/708392/pexels-photo-708392.jpeg?cs=srgb&dl=pexels-helenalopes-708392.jpg&fm=jpg" // Kept the original, as tool didn't yield a usable URL
             alt="Montreal Winter Sports"
             className="w-60 h-60 object-cover rounded-xl"

@@ -21,10 +21,10 @@ const HeaderTitle = () => {
         Playlist
       </button>
       <button
-        onClick={() => router.push("/dashboard/course")}
+        onClick={() => router.push("/dashboard/courses")}
         className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
       >
-        Modules
+        Courses
       </button>
     </div>
   );

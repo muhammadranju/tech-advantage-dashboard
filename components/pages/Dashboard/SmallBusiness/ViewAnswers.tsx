@@ -3,10 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Save, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { PiPencilFill } from "react-icons/pi";
 import {
   Select,
   SelectContent,
@@ -15,6 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGetQuizAnswersQuery } from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
+import { Save, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { PiPencilFill } from "react-icons/pi";
 
 interface SurveyOption {
   id: string;
@@ -132,7 +132,6 @@ const SMBViewAnswersPage = () => {
     setSelectedCategory(e.target.value);
     console.log(e.target.value);
   };
-
 
   return (
     <div className="w-full mx-auto p-8  rounded-xl">

@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import Image from "next/image";
 
 interface VideoRange {
   label: string;
@@ -39,7 +40,9 @@ export const ShowVideos = ({ videoRanges, title }: VideoUploadsProps) => {
                   <div key={videoIndex}>
                     <div className="relative" key={videoIndex}>
                       <div>
-                        <img
+                        <Image
+                          width={640}
+                          height={360}
                           src={range.videosData[videoIndex].thumbnail}
                           alt={range.videosData[videoIndex].title}
                           className="w-full h-64 object-cover rounded-xl"

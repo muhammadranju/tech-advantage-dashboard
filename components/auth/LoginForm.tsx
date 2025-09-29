@@ -4,21 +4,21 @@
 import type React from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/lib/redux/features/api/authApiSlice";
-import Image from "next/image";
+import { logout } from "@/lib/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { logout } from "@/lib/redux/features/auth/authSlice";
-import { Eye, EyeOff } from "lucide-react";
+import LogoComponent from "../logo/Logo";
+import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -60,20 +60,10 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
       <RedirectIfAuthenticated />
-      <CardHeader className="text-center pb-8 pt-8">
-        <div className="flex justify-center">
-          <Image
-            src="/T3-logo.svg"
-            className=" w-52 h-52"
-            alt="logo"
-            width={500}
-            height={600}
-          />
-        </div>
-
-        <h2 className="text-xl font-semibold  mt-8">Welcome back</h2>
-        <p>Tech Advantage Admin Access</p>
-      </CardHeader>
+      <LogoComponent
+        title="Welcome to back"
+        paragraph="Tech Advantage Admin Access"
+      />
 
       <CardContent className="px-8 pb-8">
         <form onSubmit={handleSubmit} className="space-y-6">

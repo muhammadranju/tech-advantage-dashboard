@@ -31,13 +31,13 @@ interface Question {
   answers: { text: string; mark: number }[];
 }
 
-type TabType = "quiz" | "upload";
-type CategoryType =
-  | "Business Overview"
-  | "Current Processes & Pain Points"
-  | "Operations & Growth"
-  | "Future Goals & Integration Needs"
-  | "Readiness & Budget";
+// type TabType = "quiz" | "upload";
+// type CategoryType =
+//   | "Business Overview"
+//   | "Current Processes & Pain Points"
+//   | "Operations & Growth"
+//   | "Future Goals & Integration Needs"
+//   | "Readiness & Budget";
 
 const SmallBusinessPage = () => {
   const [activeTab, setActiveTab] = useState("quiz");

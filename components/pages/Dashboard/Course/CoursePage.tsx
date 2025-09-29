@@ -258,7 +258,7 @@ export default function CoursePage() {
             onClick={() => router.push("/dashboard/boot-camp/playlist")}
             className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
           >
-            Playlist
+            Playlists
           </button>
           <button
             className={`pb-2 text-lg font-medium  border-b-2 border-black`}

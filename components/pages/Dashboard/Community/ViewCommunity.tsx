@@ -1,4 +1,5 @@
 "use client";
+import BackButton from "@/components/logo/BackButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -78,11 +79,11 @@ const FeaturedGroupCard = ({
 }) => (
   <div className="w-fit p-2 rounded-lg shadow-md">
     <Image
-      width={250}
+      width={500}
       height={250}
       src={image}
       alt={name}
-      className="w-60 h-60 object-cover rounded-xl"
+      className="w-full h-60 object-cover rounded-xl"
     />
     <div className="mt-2 flex items-center">
       <span className="text-xl mr-1">
@@ -167,22 +168,25 @@ const PostCard = ({ post }: { post: (typeof posts)[0] }) => (
 
 export default function ViewCommunity() {
   return (
-    <div className="mx-auto p-10">
-      <div className="mb-5">
-        <h1 className="text-3xl font-bold text-neutral-900 mb-4">
-          Aspiring Business Group
-        </h1>
-        <FeaturedGroupCard
-          name="Aspiring Business Solution"
-          image="https://images.pexels.com/photos/708392/pexels-photo-708392.jpeg?cs=srgb&dl=pexels-helenalopes-708392.jpg&fm=jpg"
-        />
-      </div>
+    <>
+      <BackButton backText="Back to Group" />
+      <div className="mx-auto px-10">
+        <div className="mb-5">
+          <h1 className="text-3xl font-bold text-neutral-900 mb-4">
+            Aspiring Business Group
+          </h1>
+          <FeaturedGroupCard
+            name="Aspiring Business Solution"
+            image="https://images.pexels.com/photos/708392/pexels-photo-708392.jpeg?cs=srgb&dl=pexels-helenalopes-708392.jpg&fm=jpg"
+          />
+        </div>
 
-      <div className="space-y-4">
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        <div className="space-y-4">
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

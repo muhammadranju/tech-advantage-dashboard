@@ -18,7 +18,7 @@ const HeaderTitle = () => {
         onClick={() => router.push("/dashboard/boot-camp/playlist")}
         className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
       >
-        Playlist
+        Playlists
       </button>
       <button
         onClick={() => router.push("/dashboard/courses")}

@@ -1,7 +1,8 @@
 "use client";
 import RedirectIfAuthenticated from "@/components/auth/RedirectIfAuthenticated";
+import LogoComponent from "@/components/logo/Logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { useForgotPasswordMutation } from "@/lib/redux/features/api/authApiSlice";
 import { setUserEmail } from "@/lib/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/lib/redux/hooks";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -52,24 +52,13 @@ export default function ForgotPassword() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
         <RedirectIfAuthenticated />
-        <CardHeader className="text-center pb-8 pt-8">
-          <div className="flex justify-center">
-            <Image
-              src="/T3-logo.svg"
-              className=" w-52 h-52"
-              alt="logo"
-              width={500}
-              height={600}
-            />
-          </div>
-
-          <h2 className="text-xl font-semibold  mt-8">
-            Tech Advantage Admin Access
-          </h2>
-        </CardHeader>
+        <LogoComponent
+          title="Forgot Password"
+          paragraph="Tech Advantage Admin Access"
+        />
         <CardContent className="px-8 pb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
@@ -117,6 +106,6 @@ export default function ForgotPassword() {
         </DialogContent>
         {/* </Card> */}
       </Dialog>
-    </>
+    </div>
   );
 }

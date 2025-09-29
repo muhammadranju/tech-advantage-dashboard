@@ -265,7 +265,7 @@ export default function ModulesPage() {
             className="bg-black hover:bg-gray-800 text-white px-6 py-6   rounded-lg flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            Add Course
+            Add Module
           </Button>
         </div>
 

@@ -46,7 +46,7 @@ function UploadPlaylist() {
           Back to Bootcamp
         </button>
         <button className={`pb-2 text-lg font-medium  border-b-2 border-black`}>
-          All Playlist&apos;s
+          All Playlists
         </button>
       </div>
       {/* Create Playlist Form */}

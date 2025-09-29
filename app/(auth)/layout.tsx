@@ -8,7 +8,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen grid place-items-center">
       <div className="w-full  bg-white ">
-        <Toaster position="bottom-right"  />
+        <Toaster position="bottom-right" />
         {children}
       </div>
     </div>

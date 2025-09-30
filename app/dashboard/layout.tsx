@@ -27,23 +27,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased bg-neutral-100">
-        <SidebarProvider className="bg-neutral-100">
-          <AppSidebar />
-          <SidebarInset>
-            <div className="flex-1 flex flex-col overflow-hidden bg-neutral-100">
-              <Header />
-              <main className="flex-1 overflow-y-auto p-6 ">
-                <div className=" mx-auto space-y-6  bg-white p-6 mt-16 rounded-xl shadow-[0_0px_8px_rgba(0,_0,_0,_0.4)]">
-                  <ProtectedRoute>{children}</ProtectedRoute>
-                  <Toaster richColors />
-                </div>
-              </main>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
-      </body>
-    </html>
+    <div className={`${geistSans.variable} ${geistMono.variable}`}>
+      <SidebarProvider className="bg-neutral-100">
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex-1 flex flex-col overflow-hidden bg-neutral-100">
+            <Header />
+            <main className="flex-1 overflow-y-auto p-6 ">
+              <div className=" mx-auto space-y-6  bg-white p-6 mt-16 rounded-xl shadow-[0_0px_8px_rgba(0,_0,_0,_0.4)]">
+                <ProtectedRoute>{children}</ProtectedRoute>
+                <Toaster />
+              </div>
+            </main>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }

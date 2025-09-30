@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,12 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuizSmallBusinessQuestionAnswerMutation } from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
 import { ListCollapse, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { MdOutlineQuiz } from "react-icons/md";
+import { toast } from "sonner";
 
 const stats = [
   {
@@ -27,82 +29,109 @@ const stats = [
 ];
 
 interface Question {
-  question: string;
-  answers: { text: string; mark: number }[];
+  questionText: string;
+  answers: { text: string; score: number }[];
 }
 
-// type TabType = "quiz" | "upload";
-// type CategoryType =
-//   | "Business Overview"
-//   | "Current Processes & Pain Points"
-//   | "Operations & Growth"
-//   | "Future Goals & Integration Needs"
-//   | "Readiness & Budget";
-
 const SmallBusinessPage = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [questions, setQuestions] = useState<Question[]>([
-    { question: "", answers: [{ text: "", mark: 0 }] },
-  ]);
   const router = useRouter();
-
+  const [activeTab, setActiveTab] = useState("quiz");
+  const [question, setQuestion] = useState<Question>({
+    questionText: "",
+    answers: [
+      { text: "", score: 0 },
+      { text: "", score: 0 },
+      { text: "", score: 0 },
+    ],
+  });
+  const [selectCategory, setSelectCategory] = useState("business-overview");
+  const [quizSmallBusinessQuestionAnswer, { isLoading }] =
+    useQuizSmallBusinessQuestionAnswerMutation();
   const handelGoToUpload = () => {
     setActiveTab("upload");
     router.push("/dashboard/small-business/assessment");
   };
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updated = [...questions];
-    updated[currentQuestionIndex].question = e.target.value;
-    setQuestions(updated);
+    setQuestion({
+      ...question,
+      questionText: e.target.value,
+    });
   };
 
   const handleAnswerChange = (
     index: number,
-    field: "text" | "mark",
+    field: "text" | "score",
     value: string
   ) => {
-    const updated = [...questions];
-    if (field === "mark") {
-      updated[currentQuestionIndex].answers[index].mark = parseInt(
-        value || "0"
-      );
+    const updatedAnswers = [...question.answers];
+    if (field === "score") {
+      updatedAnswers[index].score = parseInt(value || "0");
     } else {
-      updated[currentQuestionIndex].answers[index].text = value;
+      updatedAnswers[index].text = value;
     }
-    setQuestions(updated);
+    setQuestion({
+      ...question,
+      answers: updatedAnswers,
+    });
   };
 
   const handleAddAnswer = () => {
-    const updated = [...questions];
-    updated[currentQuestionIndex].answers.push({ text: "", mark: 0 });
-    setQuestions(updated);
+    setQuestion({
+      ...question,
+      answers: [...question.answers, { text: "", score: 0 }],
+    });
   };
 
   const handleRemoveAnswer = (index: number) => {
-    const updated = [...questions];
-    if (updated[currentQuestionIndex].answers.length > 1) {
-      updated[currentQuestionIndex].answers.splice(index, 1);
-      setQuestions(updated);
+    if (question.answers.length > 1) {
+      const updatedAnswers = question.answers.filter((_, i) => i !== index);
+      setQuestion({
+        ...question,
+        answers: updatedAnswers,
+      });
     }
   };
 
-  const isCurrentQuestionValid = () => {
-    const current = questions[currentQuestionIndex];
+  const isQuestionValid = () => {
     return (
-      current.question.trim() !== "" &&
-      current.answers.every((a) => a.text.trim() !== "")
+      question.questionText.trim() !== "" &&
+      question.answers.every((a) => a.text.trim() !== "")
     );
   };
 
-  const handleSave = () => {
-    console.log(questions);
+  const handleSave = async () => {
+    try {
+      const result = await quizSmallBusinessQuestionAnswer({
+        body: question,
+        category: selectCategory,
+      }).unwrap();
+
+      if (result.success) {
+        setQuestion({
+          questionText: "",
+          answers: [
+            { text: "", score: 0 },
+            { text: "", score: 0 },
+            { text: "", score: 0 },
+          ],
+        });
+        toast.success("Question saved successfully");
+      } else {
+      }
+    } catch (error: any) {
+      if (error?.data.message) {
+        toast.error(
+          error?.data.message + "Provide a valid question at least 3 questions"
+        );
+      }
+      // toast.error("Something went wrong");
+    }
   };
 
   return (
-    <div className="px-10 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="px-10  min-h-screen">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <StatsCards
             stat={{
@@ -114,9 +143,9 @@ const SmallBusinessPage = () => {
             key={stat.title}
           />
         ))}
-      </div>
+      </div> */}
 
-      <div className="mx-auto bg-white rounded-lg border p-6 mt-16">
+      <div className="mx-auto bg-white shadow rounded-lg p-6 mt-10 pb-10">
         <div className="flex gap-8 justify-between mb-8">
           <div className="flex gap-8">
             <button
@@ -140,24 +169,27 @@ const SmallBusinessPage = () => {
               Assessment
             </button>
           </div>
-          <Select onValueChange={(value) => console.log(value)}>
+          <Select onValueChange={(value) => setSelectCategory(value)}>
             <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
-              <SelectValue placeholder="Select a category" />
+              <SelectValue placeholder="Business Overview" />
             </SelectTrigger>
             <SelectContent className="py-2">
-              <SelectItem value="Business Overview">
+              <SelectItem value="business-overview">
                 Business Overview
               </SelectItem>
-              <SelectItem value="Current Processes & Pain Points">
+              <SelectItem value="aspiring-business">
+                Aspiring Business
+              </SelectItem>
+              <SelectItem value="current-processes-pain-points">
                 Current Processes & Pain Points
               </SelectItem>
-              <SelectItem value="Operations & Growth">
+              <SelectItem value="operations-growth">
                 Operations & Growth
               </SelectItem>
-              <SelectItem value="Future Goals & Integration Needs">
+              <SelectItem value="future-goals-integration-needs">
                 Future Goals & Integration Needs
               </SelectItem>
-              <SelectItem value="Readiness & Budget">
+              <SelectItem value="readiness-budget">
                 Readiness & Budget
               </SelectItem>
             </SelectContent>
@@ -170,14 +202,14 @@ const SmallBusinessPage = () => {
             <label className="block text-lg font-medium mb-2">Question</label>
             <Input
               placeholder="Enter your question"
-              value={questions[currentQuestionIndex].question}
+              value={question.questionText}
               onChange={handleQuestionChange}
               className="py-6"
             />
           </div>
 
           {/* Answers */}
-          {questions[currentQuestionIndex].answers.map((answer, index) => (
+          {question.answers.map((answer, index) => (
             <div key={index} className="flex items-center space-x-4">
               <div className="w-full flex gap-x-2">
                 <div className="w-full">
@@ -194,19 +226,22 @@ const SmallBusinessPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-lg font-medium mb-2">Mark</label>
+                  <label className="block text-lg font-medium mb-2">
+                    Score
+                  </label>
                   <Input
                     placeholder="0"
                     type="number"
-                    value={answer.mark}
+                    value={answer.score}
+                    required
                     onChange={(e) =>
-                      handleAnswerChange(index, "mark", e.target.value)
+                      handleAnswerChange(index, "score", e.target.value)
                     }
                     className="py-6 w-16"
                   />
                 </div>
               </div>
-              {questions[currentQuestionIndex].answers.length > 1 && (
+              {question.answers.length > 1 && (
                 <Button
                   variant="ghost"
                   onClick={() => handleRemoveAnswer(index)}
@@ -241,7 +276,7 @@ const SmallBusinessPage = () => {
             <Button
               className="flex-1 py-6 hover:bg-neutral-800"
               onClick={handleSave}
-              disabled={!isCurrentQuestionValid()}
+              disabled={!isQuestionValid() || isLoading}
             >
               <Save /> Save
             </Button>

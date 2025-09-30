@@ -1,88 +1,144 @@
 "use client";
+import CardSkeleton from "@/components/skeletons/CardSkeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Save, X } from "lucide-react";
+
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  useDeleteBusinessPlanQuizQuestionAnswerMutation,
+  useGetBusinessPlanQuizQuestionAnswerQuery,
+  useUpdateBusinessPlanQuizQuestionAnswerMutation,
+} from "@/lib/redux/features/api/businessPlanning/businessPlanningApiSlice";
+import { Save, Trash, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
+import { toast } from "sonner";
 
 interface SurveyOption {
-  id: string;
-  text: string;
+  answer: string;
 }
 
 interface SurveyCard {
-  id: string;
-  question: string;
-  options: SurveyOption[];
+  _id: string;
+  questionText: string;
+  answers: SurveyOption[];
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
-const surveyData: SurveyCard[] = Array.from({ length: 5 }, (_, i) => ({
-  id: (i + 1).toString(),
-  question: "What motivates you most in business?",
-  options: [
-    { id: `${i + 1}a`, text: "Solving problems" },
-    { id: `${i + 1}b`, text: "Creating innovative products" },
-    { id: `${i + 1}c`, text: "Leading and inspiring team" },
-  ],
-}));
-
 const ViewAnswersPage = () => {
-  const [data, setData] = useState<SurveyCard[]>(surveyData);
+  const [data, setData] = useState<SurveyCard[]>([]);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+
+  const { data: answers, isLoading } =
+    useGetBusinessPlanQuizQuestionAnswerQuery(null);
+  const [updateBusinessPlanQuizQuestionAnswer] =
+    useUpdateBusinessPlanQuizQuestionAnswerMutation();
+
+  const [deleteBusinessPlanQuizQuestionAnswer] =
+    useDeleteBusinessPlanQuizQuestionAnswerMutation();
 
   const router = useRouter();
 
   const startEdit = (card: SurveyCard) => {
-    setEditingCardId(card.id);
+    setEditingCardId(card._id);
     setEditFormData({ ...card });
   };
 
   const cancelEdit = () => {
     setEditingCardId(null);
     setEditFormData(null);
+    toast.info("Answer editing canceled!");
   };
 
-  const saveEdit = () => {
-    if (editFormData) {
-      setData((prev) =>
-        prev.map((c) => (c.id === editFormData.id ? editFormData : c))
+  const handelDelete = async (id: string) => {
+    setDeleteId(id);
+    setOpenDeleteDialog(true);
+  };
+  const handelDeleteConfirmed = async () => {
+    try {
+      await deleteBusinessPlanQuizQuestionAnswer({
+        id: deleteId,
+      }).unwrap();
+      toast.success("Answer deleted successfully");
+
+      // Filter out the deleted item from current state
+      setData((prevData: SurveyCard[]) =>
+        prevData.filter((card) => card._id !== deleteId)
       );
+      // if (editFormData) {
+      //   setEditingCardId(deleteId);
+      //   setEditFormData(null);
+      // }
+      setOpenDeleteDialog(false);
+    } catch (err) {
+      console.error("Failed to delete:", err);
+      toast.error("Failed to delete answer. Please try again.");
     }
-    cancelEdit();
   };
 
-  const updateQuestion = (value: string) =>
-    editFormData && setEditFormData({ ...editFormData, question: value });
+  const saveEdit = async () => {
+    if (editFormData) {
+      try {
+        const result = await updateBusinessPlanQuizQuestionAnswer({
+          body: editFormData,
+        }).unwrap();
 
-  const updateOption = (optionId: string, value: string) =>
-    editFormData &&
-    setEditFormData({
-      ...editFormData,
-      options: editFormData.options.map((opt) =>
-        opt.id === optionId ? { ...opt, text: value } : opt
-      ),
-    });
+        if (result.success) {
+          setData((prevData: SurveyCard[]) =>
+            prevData.map((card) =>
+              card._id === editFormData._id ? editFormData : card
+            )
+          );
+        }
 
-  const EditForm = ({ card }: { card: SurveyCard }) => (
+        console.log(editFormData);
+        toast.success("Answer updated successfully");
+      } catch (err) {
+        cancelEdit();
+        console.error("Failed to update:", err);
+        // Optionally handle error, e.g., show toast or revert
+        return; // Don't cancel if failed, or handle as needed
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (answers?.data) {
+      setData(answers.data);
+    }
+  }, [answers?.data]);
+
+  const EditForm = () => (
     <>
       <CardHeader>
         <Input
-          value={editFormData?.question || ""}
-          onChange={(e) => updateQuestion(e.target.value)}
+          value={editFormData?.questionText}
           placeholder="Enter question"
           className="text-base py-7 font-medium"
         />
       </CardHeader>
       <CardContent className="pt-0">
         <div className="space-y-3 mb-4">
-          {editFormData?.options.map((opt) => (
+          {editFormData?.answers.map((opt, index) => (
             <Input
-              key={opt.id}
-              value={opt.text}
-              onChange={(e) => updateOption(opt.id, e.target.value)}
+              key={index}
+              value={opt.answer}
               placeholder="Enter option text"
               className="py-7 px-4 bg-gray-50 rounded-2xl border"
             />
@@ -105,24 +161,32 @@ const ViewAnswersPage = () => {
       <CardHeader>
         <div className="flex items-start justify-between">
           <h3 className="text-base font-medium leading-relaxed">
-            {card.question}
+            {card.questionText}
           </h3>
-          <button
-            onClick={() => startEdit(card)}
-            className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
-          >
-            <PiPencilFill className="text-2xl font-bold" />
-          </button>
+          <div>
+            <button
+              onClick={() => startEdit(card)}
+              className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
+            >
+              <PiPencilFill className="text-2xl font-bold" />
+            </button>
+            <button
+              onClick={() => handelDelete(card._id)}
+              className="p-2 cursor-pointer rounded-full hover:bg-red-200"
+            >
+              <Trash className="text-2xl text-red-500 font-bold " />
+            </button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
         <div className="space-y-3">
-          {card.options.map((opt) => (
+          {card.answers.map((opt, index) => (
             <div
-              key={opt.id}
+              key={index}
               className="py-4 px-4 bg-gray-50 rounded-2xl border"
             >
-              {opt.text}
+              {opt.answer}
             </div>
           ))}
         </div>
@@ -145,19 +209,54 @@ const ViewAnswersPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {data.map((card) => (
-          <Card
-            key={card.id}
-            className="border border-gray-200 group hover:shadow-md transition-shadow"
-          >
-            {editingCardId === card.id ? (
-              <EditForm card={card} />
-            ) : (
-              <DisplayCard card={card} />
-            )}
-          </Card>
-        ))}
+        {isLoading ? (
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+        ) : (
+          data.map((card) => (
+            <Card
+              key={card._id}
+              className="border border-gray-200 group hover:shadow-md transition-shadow"
+            >
+              {editingCardId === card._id ? (
+                <EditForm />
+              ) : (
+                <DisplayCard card={card} />
+              )}
+            </Card>
+          ))
+        )}
       </div>
+
+      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpenDeleteDialog(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                onClick={handelDeleteConfirmed}
+                className="bg-red-500 hover:bg-red-600 text-white hover:text-white"
+              >
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

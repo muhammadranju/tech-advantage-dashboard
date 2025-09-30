@@ -1,190 +1,3 @@
-// "use client";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
-// import { Save, X } from "lucide-react";
-// import { useRouter } from "next/navigation";
-// import { useState } from "react";
-// import { PiPencilFill } from "react-icons/pi";
-
-// interface SurveyOption {
-//   id: string;
-//   text: string;
-//   marks: number; // new field for admin-assigned marks
-// }
-
-// interface SurveyCard {
-//   id: string;
-//   question: string;
-//   options: SurveyOption[];
-// }
-
-// const surveyData: SurveyCard[] = Array.from({ length: 5 }, (_, i) => ({
-//   id: (i + 1).toString(),
-//   question: `Sample question ${i + 1}`,
-//   options: [
-//     { id: `${i + 1}a`, text: "Option A", marks: 0 },
-//     { id: `${i + 1}b`, text: "Option B", marks: 0 },
-//     { id: `${i + 1}c`, text: "Option C", marks: 0 },
-//   ],
-// }));
-
-// const MockInterviewViewAnswersPage = () => {
-//   const [data, setData] = useState<SurveyCard[]>(surveyData);
-//   const [editingCardId, setEditingCardId] = useState<string | null>(null);
-//   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
-//   const router = useRouter();
-
-//   const handleEdit = (card: SurveyCard) => {
-//     setEditingCardId(card.id);
-//     setEditFormData({ ...card });
-//   };
-
-//   const handleSave = () => {
-//     if (editFormData) {
-//       setData((prev) =>
-//         prev.map((card) => (card.id === editFormData.id ? editFormData : card))
-//       );
-//     }
-//     setEditingCardId(null);
-//     setEditFormData(null);
-//   };
-
-//   const handleCancel = () => {
-//     setEditingCardId(null);
-//     setEditFormData(null);
-//   };
-
-//   const updateQuestion = (value: string) => {
-//     if (editFormData) setEditFormData({ ...editFormData, question: value });
-//   };
-
-//   const updateOptionText = (optionId: string, value: string) => {
-//     if (editFormData) {
-//       setEditFormData({
-//         ...editFormData,
-//         options: editFormData.options.map((opt) =>
-//           opt.id === optionId ? { ...opt, text: value } : opt
-//         ),
-//       });
-//     }
-//   };
-
-//   const updateOptionMarks = (optionId: string, value: number) => {
-//     if (editFormData) {
-//       setEditFormData({
-//         ...editFormData,
-//         options: editFormData.options.map((opt) =>
-//           opt.id === optionId ? { ...opt, marks: value } : opt
-//         ),
-//       });
-//     }
-//   };
-
-//   return (
-//     <div className="w-full mx-auto p-8 rounded-xl">
-//       <div className="flex gap-8 mb-5">
-//         <button
-//           onClick={() => router.back()}
-//           className="pb-2 text-lg font-medium hover:border-b-2 border-black"
-//         >
-//           Quiz
-//         </button>
-//         <button className="pb-2 text-lg font-medium border-b-2 border-black">
-//           Answers
-//         </button>
-//       </div>
-
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//         {data.map((card) => (
-//           <Card
-//             key={card.id}
-//             className="border border-gray-200 group hover:shadow-md transition-shadow"
-//           >
-//             {editingCardId === card.id && editFormData ? (
-//               <>
-//                 <CardHeader>
-//                   <Input
-//                     value={editFormData.question}
-//                     onChange={(e) => updateQuestion(e.target.value)}
-//                     placeholder="Enter question"
-//                     className="text-base py-7 font-medium"
-//                   />
-//                 </CardHeader>
-//                 <CardContent className="pt-0 space-y-4">
-//                   {editFormData.options.map((option) => (
-//                     <div key={option.id} className="flex gap-3 items-center">
-//                       <Input
-//                         value={option.text}
-//                         onChange={(e) =>
-//                           updateOptionText(option.id, e.target.value)
-//                         }
-//                         placeholder="Option text"
-//                         className="flex-1 py-7 px-4 bg-gray-50 rounded-2xl border"
-//                       />
-//                       <Input
-//                         type="number"
-//                         value={option.marks}
-//                         onChange={(e) =>
-//                           updateOptionMarks(option.id, Number(e.target.value))
-//                         }
-//                         placeholder="Marks"
-//                         className="w-20 py-4 px-4 bg-gray-50 rounded-2xl border text-center"
-//                       />
-//                     </div>
-//                   ))}
-//                   <div className="flex gap-2 justify-end mt-2">
-//                     <Button
-//                       variant="outline"
-//                       onClick={handleCancel}
-//                       className="py-5"
-//                     >
-//                       <X /> Cancel
-//                     </Button>
-//                     <Button onClick={handleSave} className="py-5">
-//                       <Save /> Save
-//                     </Button>
-//                   </div>
-//                 </CardContent>
-//               </>
-//             ) : (
-//               <>
-//                 <CardHeader>
-//                   <div className="flex items-start justify-between">
-//                     <h3 className="text-base font-medium leading-relaxed">
-//                       {card.question}
-//                     </h3>
-//                     <button
-//                       onClick={() => handleEdit(card)}
-//                       className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
-//                     >
-//                       <PiPencilFill className="text-2xl font-bold" />
-//                     </button>
-//                   </div>
-//                 </CardHeader>
-//                 <CardContent className="pt-0 space-y-3">
-//                   {card.options.map((option) => (
-//                     <div
-//                       key={option.id}
-//                       className="flex justify-between py-4 px-4 bg-gray-50 rounded-2xl border"
-//                     >
-//                       <span>{option.text}</span>
-//                       <span className="font-semibold">{option.marks}</span>
-//                     </div>
-//                   ))}
-//                 </CardContent>
-//               </>
-//             )}
-//           </Card>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default MockInterviewViewAnswersPage;
-
-
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -276,7 +89,11 @@ const MockInterviewViewAnswersPage = () => {
     }
   };
 
-  const updateOption = (optionId: string, field: "text" | "marks", value: string | number) => {
+  const updateOption = (
+    optionId: string,
+    field: "text" | "marks",
+    value: string | number
+  ) => {
     if (editFormData) {
       setEditFormData({
         ...editFormData,
@@ -324,21 +141,29 @@ const MockInterviewViewAnswersPage = () => {
                     <div key={option.id} className="flex gap-2">
                       <Input
                         value={option.text}
-                        onChange={(e) => updateOption(option.id, "text", e.target.value)}
+                        onChange={(e) =>
+                          updateOption(option.id, "text", e.target.value)
+                        }
                         placeholder="Enter option text"
                         className="py-7 px-4 bg-gray-50 rounded-2xl border flex-1"
                       />
                       <Input
                         type="number"
                         value={option.marks}
-                        onChange={(e) => updateOption(option.id, "marks", e.target.value)}
+                        onChange={(e) =>
+                          updateOption(option.id, "marks", e.target.value)
+                        }
                         placeholder="Marks"
                         className="py-7 w-24"
                       />
                     </div>
                   ))}
                   <div className="flex gap-2 justify-end">
-                    <Button variant="outline" className="py-5" onClick={handleCancel}>
+                    <Button
+                      variant="outline"
+                      className="py-5"
+                      onClick={handleCancel}
+                    >
                       <X /> Cancel
                     </Button>
                     <Button className="py-5" onClick={handleSave}>
@@ -351,7 +176,9 @@ const MockInterviewViewAnswersPage = () => {
               <>
                 <CardHeader>
                   <div className="flex items-start justify-between w-full">
-                    <h3 className="text-base font-medium leading-relaxed">{card.question}</h3>
+                    <h3 className="text-base font-medium leading-relaxed">
+                      {card.question}
+                    </h3>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(card)}
@@ -370,7 +197,9 @@ const MockInterviewViewAnswersPage = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Question</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete this entire question and all its answers? This action cannot be undone.
+                              Are you sure you want to delete this entire
+                              question and all its answers? This action cannot
+                              be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <div className="flex justify-end gap-2 mt-4">

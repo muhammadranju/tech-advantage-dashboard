@@ -1,16 +1,21 @@
 "use client";
 
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ListCollapse, Save } from "lucide-react";
-import Link from "next/link";
-import React, { useCallback, useMemo, useState } from "react";
-import { IoMdAdd, IoMdRemove } from "react-icons/io";
+import React, { useState, useCallback } from "react";
 import { MdOutlineQuiz } from "react-icons/md";
+import { TabToggle } from "./components/TabToggle";
+import { QuizForm } from "./components/QuizForm";
+// import { LongQuestionForm } from "./components/LongQuestionForm";
+import { Stat, TabType } from "./components/types";
+import { useQuestions } from "./components/useQuestions";
+import {
+  useCreateBusinessPlanLongQuestionAnswerMutation,
+  useCreateBusinessPlanQuizQuestionAnswerMutation,
+} from "@/lib/redux/features/api/businessPlanning/businessPlanningApiSlice";
+import { toast } from "sonner";
+import { LongQuestionForm } from "./components/LongQuestionForm";
 
-const stats = [
+const stats: Stat[] = [
   {
     title: "Total Quiz Questions",
     value: 8642,
@@ -25,222 +30,76 @@ const stats = [
   },
 ];
 
-interface Question {
-  question: string;
-  answers: string[];
-  mark: number;
-}
-
-type TabType = "quiz" | "long-question";
-
-function TabToggle({
-  active,
-  setActive,
-}: {
-  active: TabType;
-  setActive: (t: TabType) => void;
-}) {
-  return (
-    <div className="flex gap-8">
-      <button
-        onClick={() => setActive("quiz")}
-        className={`pb-2 text-lg font-medium ${
-          active === "quiz"
-            ? "text-black border-b-2 border-black"
-            : "text-neutral-500"
-        }`}
-      >
-        Quiz
-      </button>
-      <button
-        onClick={() => setActive("long-question")}
-        className={`pb-2 text-lg font-medium ${
-          active === "long-question"
-            ? "text-black border-b-2 border-black"
-            : "text-neutral-500"
-        }`}
-      >
-        Long Question
-      </button>
-    </div>
-  );
-}
-
-function QuestionField({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div>
-      <label className="block text-lg font-medium mb-2">Questions</label>
-      <Input
-        placeholder="Enter your question"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="py-6"
-      />
-    </div>
-  );
-}
-
-function AnswersList({
-  answers,
-  onChange,
-  onAdd,
-  onRemove,
-}: {
-  answers: string[];
-  onChange: (index: number, value: string) => void;
-  onAdd: () => void;
-  onRemove: (index: number) => void;
-}) {
-  return (
-    <>
-      {answers.map((answer, index) => (
-        <div key={index} className="flex items-center space-x-4">
-          <div className="w-full flex gap-x-2">
-            <div className="w-full">
-              <label className="block text-lg font-medium mb-2">
-                {index + 1}. Answer (User will get mark)
-              </label>
-              <Input
-                placeholder="Enter question answer"
-                value={answer}
-                onChange={(e) => onChange(index, e.target.value)}
-                className="py-6 flex-1"
-              />
-            </div>
-          </div>
-          {answers.length > 1 && (
-            <Button
-              variant="ghost"
-              onClick={() => onRemove(index)}
-              className="text-neutral-900 mt-9 hover:text-red-700"
-            >
-              <IoMdRemove className="text-xl" />
-            </Button>
-          )}
-        </div>
-      ))}
-
-      <div className="flex justify-end items-center gap-8">
-        <Button
-          variant="default"
-          className="flex items-center gap-2 py-5"
-          onClick={onAdd}
-        >
-          Add More
-          <IoMdAdd className="text-2xl" />
-        </Button>
-      </div>
-    </>
-  );
-}
-
-function ActionRow({
-  viewHref,
-  onSave,
-  disabled,
-}: {
-  viewHref: string;
-  onSave: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <div className="flex gap-4">
-      <Link className="flex-1" href={viewHref}>
-        <Button variant="outline" className="py-6 bg-transparent w-full">
-          <ListCollapse /> View Details
-        </Button>
-      </Link>
-      <Button
-        className="flex-1 py-6 hover:bg-neutral-800"
-        onClick={onSave}
-        disabled={disabled}
-      >
-        <Save /> Save
-      </Button>
-    </div>
-  );
-}
-
 const BusinessPlanning: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [questions, setQuestions] = useState<Question[]>([
-    { question: "", answers: ["", "", ""], mark: 0 },
-  ]);
   const [longAnswer, setLongAnswer] = useState("");
 
-  const handleQuestionChange = useCallback(
-    (value: string) => {
-      setQuestions((prev) => {
-        const copy = [...prev];
-        copy[currentQuestionIndex] = {
-          ...copy[currentQuestionIndex],
-          question: value,
-        };
-        return copy;
-      });
-    },
-    [currentQuestionIndex]
-  );
+  // create quiz question answer
+  const [createBusinessPlanQuizQuestionAnswer] =
+    useCreateBusinessPlanQuizQuestionAnswerMutation();
+  // create long question answer
+  const [createBusinessPlanLongQuestionAnswer] =
+    useCreateBusinessPlanLongQuestionAnswerMutation();
 
-  const handleAnswerChange = useCallback(
-    (index: number, value: string) => {
-      setQuestions((prev) => {
-        const copy = [...prev];
-        const q = { ...copy[currentQuestionIndex] };
-        q.answers = [...q.answers];
-        q.answers[index] = value;
-        copy[currentQuestionIndex] = q;
-        return copy;
-      });
-    },
-    [currentQuestionIndex]
-  );
+  const {
+    currentQuestion,
+    handleQuestionChange,
+    handleAnswerChange,
+    handleAddAnswer,
+    handleRemoveAnswer,
+    resetQuestions,
+    isCurrentQuestionValid,
+  } = useQuestions();
 
-  const isCurrentQuestionValid = useMemo(() => {
-    const q = questions[currentQuestionIndex];
-    return Boolean(q && q.question.trim());
-  }, [questions, currentQuestionIndex]);
-
-  const handleAddMoreAnswers = useCallback(() => {
-    setQuestions((prev) => {
-      const copy = [...prev];
-      const q = { ...copy[currentQuestionIndex] };
-      q.answers = [...q.answers, ""];
-      copy[currentQuestionIndex] = q;
-      return copy;
-    });
-  }, [currentQuestionIndex]);
-
-  const handleRemoveAnswer = useCallback(
-    (answerIndex: number) => {
-      setQuestions((prev) => {
-        const copy = [...prev];
-        const q = { ...copy[currentQuestionIndex] };
-        q.answers = q.answers.filter((_, i) => i !== answerIndex);
-        copy[currentQuestionIndex] = q;
-        return copy;
-      });
-    },
-    [currentQuestionIndex]
-  );
-
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (activeTab === "quiz") {
-      console.log("Quiz questions:", questions);
+      try {
+        const result = await createBusinessPlanQuizQuestionAnswer({
+          body: {
+            questionText: currentQuestion.questionText,
+            answers: currentQuestion.answers,
+          },
+        }).unwrap();
+
+        if (result.success) {
+          resetQuestions(3);
+          toast.success("Quiz question saved successfully");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to save quiz question. Please try again.");
+      }
     } else {
-      console.log("Long question:", {
-        question: questions[currentQuestionIndex]?.question,
-        answer: longAnswer,
-      });
+      try {
+        console.log({
+          questionText: currentQuestion.questionText,
+          answer: longAnswer,
+        });
+        const result = await createBusinessPlanLongQuestionAnswer({
+          body: {
+            questionText: currentQuestion.questionText,
+            answer: longAnswer,
+          },
+        }).unwrap();
+
+        if (result.success) {
+          resetQuestions(1);
+          setLongAnswer("");
+          toast.success("Long question saved successfully");
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to save long question. Please try again.");
+      }
     }
-  }, [activeTab, questions, currentQuestionIndex, longAnswer]);
+  }, [
+    activeTab,
+    currentQuestion,
+    longAnswer,
+    resetQuestions,
+    createBusinessPlanQuizQuestionAnswer,
+    createBusinessPlanLongQuestionAnswer,
+  ]);
 
   return (
     <div className="px-10 py-4">
@@ -256,44 +115,24 @@ const BusinessPlanning: React.FC = () => {
         </div>
 
         {activeTab === "quiz" ? (
-          <div className="space-y-6">
-            <QuestionField
-              value={questions[currentQuestionIndex].question}
-              onChange={handleQuestionChange}
-            />
-            <AnswersList
-              answers={questions[currentQuestionIndex].answers}
-              onChange={handleAnswerChange}
-              onAdd={handleAddMoreAnswers}
-              onRemove={handleRemoveAnswer}
-            />
-            <ActionRow
-              viewHref="/dashboard/business-planning/view-answers"
-              onSave={handleSave}
-              disabled={!isCurrentQuestionValid}
-            />
-          </div>
+          <QuizForm
+            question={currentQuestion}
+            onQuestionChange={handleQuestionChange}
+            onAnswerChange={handleAnswerChange}
+            onAddAnswer={handleAddAnswer}
+            onRemoveAnswer={handleRemoveAnswer}
+            onSave={handleSave}
+            isValid={isCurrentQuestionValid}
+          />
         ) : (
-          <div className="space-y-6">
-            <div className="space-y-6">
-              <QuestionField
-                value={questions[currentQuestionIndex].question}
-                onChange={handleQuestionChange}
-              />
-              <label className="block text-lg font-medium mb-2">Answer</label>
-              <Textarea
-                placeholder="Enter question answer"
-                value={longAnswer}
-                onChange={(e) => setLongAnswer(e.target.value)}
-                className="py-6 flex-1"
-              />
-            </div>
-            <ActionRow
-              viewHref="/dashboard/business-planning/view-long-answers"
-              onSave={handleSave}
-              disabled={!isCurrentQuestionValid}
-            />
-          </div>
+          <LongQuestionForm
+            questionText={currentQuestion.questionText}
+            answerText={longAnswer}
+            onQuestionChange={handleQuestionChange}
+            onAnswerChange={setLongAnswer}
+            onSave={handleSave}
+            isValid={isCurrentQuestionValid}
+          />
         )}
       </div>
     </div>

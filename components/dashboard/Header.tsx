@@ -50,10 +50,12 @@ export function Header() {
 
         <div className="flex items-center space-x-2">
           <DropdownMenu>
-            {isLoading ? (
-              <ClipLoader color="#9CA3AF" size={20} />
-            ) : (
-              <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild>
+              {isLoading ? (
+                <div className="w-8 h-8 flex items-center justify-center">
+                  <ClipLoader color="#9CA3AF" size={20} cssOverride={{ display: 'inline-block' }} />
+                </div>
+              ) : (
                 <Avatar className="w-8 h-8 object-cover cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all">
                   <AvatarImage
                     src={
@@ -64,8 +66,8 @@ export function Header() {
                   />
                   <AvatarFallback>{user?.name}</AvatarFallback>
                 </Avatar>
-              </DropdownMenuTrigger>
-            )}
+              )}
+            </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-56 p-0 rounded" align="end">
               <UserMenuItem

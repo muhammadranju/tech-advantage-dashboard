@@ -16,3 +16,4 @@ export interface Stat {
   changeType: "positive" | "negative";
   icon: any;
 }
+

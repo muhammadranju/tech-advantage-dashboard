@@ -103,6 +103,8 @@ const BusinessAssessmentContent = () => {
       setEditingIndex(null);
       setEditFormData(null);
     }
+
+    console.log(assessmentData);
   };
 
   const handleDeleteConfirmed = () => {
@@ -164,17 +166,13 @@ const BusinessAssessmentContent = () => {
               {/* Edit Mode */}
               <CardHeader className="flex justify-between items-start">
                 <div className="flex-1 space-y-3">
-                  <Badge
-                    variant="secondary"
-                    className="bg-white shadow rounded-md border text-sm text-foreground hover:bg-muted"
-                  >
-                    Range - {assessment.range}
-                  </Badge>
+                  <label htmlFor="range">Range</label>
                   <Input
-                    value={editFormData?.title || ""}
+                    value={editFormData?.range || ""}
                     onChange={(e) => updateField("title", e.target.value)}
-                    className="text-xl font-bold"
+                    className="text-sm font-bold"
                   />
+                  <h3 className="text-xl font-bold">{assessment.title}</h3>
                   <Input
                     value={editFormData?.description || ""}
                     onChange={(e) => updateField("description", e.target.value)}

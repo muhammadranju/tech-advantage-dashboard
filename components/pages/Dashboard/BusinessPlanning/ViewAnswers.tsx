@@ -1,19 +1,18 @@
 "use client";
 import CardSkeleton from "@/components/skeletons/CardSkeleton";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   useDeleteBusinessPlanQuizQuestionAnswerMutation,
   useGetBusinessPlanQuizQuestionAnswerQuery,
@@ -63,29 +62,27 @@ const ViewAnswersPage = () => {
   const cancelEdit = () => {
     setEditingCardId(null);
     setEditFormData(null);
-    toast.info("Answer editing canceled!");
   };
 
-  const handelDelete = async (id: string) => {
+  const handleDelete = async (id: string) => {
     setDeleteId(id);
     setOpenDeleteDialog(true);
   };
-  const handelDeleteConfirmed = async () => {
+
+  const handleDeleteConfirmed = async () => {
     try {
       await deleteBusinessPlanQuizQuestionAnswer({
-        id: deleteId,
+        id: deleteId!,
       }).unwrap();
       toast.success("Answer deleted successfully");
 
-      // Filter out the deleted item from current state
       setData((prevData: SurveyCard[]) =>
         prevData.filter((card) => card._id !== deleteId)
       );
-      // if (editFormData) {
-      //   setEditingCardId(deleteId);
-      //   setEditFormData(null);
-      // }
+
       setOpenDeleteDialog(false);
+      setEditingCardId(null);
+      setEditFormData(null);
     } catch (err) {
       console.error("Failed to delete:", err);
       toast.error("Failed to delete answer. Please try again.");
@@ -93,27 +90,51 @@ const ViewAnswersPage = () => {
   };
 
   const saveEdit = async () => {
+    // if (editFormData) {
+    //   try {
+    //     const result = await updateBusinessPlanQuizQuestionAnswer({
+    //       body: editFormData,
+    //       id: editFormData._id,
+    //     }).unwrap();
+
+    //     if (result.success) {
+    //       setData((prevData: SurveyCard[]) =>
+    //         prevData.map((card) =>
+    //           card._id === editFormData._id ? editFormData : card
+    //         )
+    //       );
+    //       toast.success("Answer updated successfully");
+    //       setEditingCardId(null);
+    //       setEditFormData(null);
+    //     }
+    //   } catch (err) {
+    //     console.error("Failed to update:", err);
+    //     toast.error("Failed to update answer. Please try again.");
+    //     cancelEdit();
+    //   }
+    // }
     if (editFormData) {
       try {
         const result = await updateBusinessPlanQuizQuestionAnswer({
           body: editFormData,
+          id: editFormData._id,
         }).unwrap();
 
         if (result.success) {
-          setData((prevData: SurveyCard[]) =>
-            prevData.map((card) =>
+          setData((prev) =>
+            prev.map((card) =>
               card._id === editFormData._id ? editFormData : card
             )
           );
+          toast.success("Answer updated successfully");
+          setEditingCardId(null);
+          setEditFormData(null);
+          cancelEdit();
         }
-
-        console.log(editFormData);
-        toast.success("Answer updated successfully");
-      } catch (err) {
-        cancelEdit();
-        console.error("Failed to update:", err);
-        // Optionally handle error, e.g., show toast or revert
-        return; // Don't cancel if failed, or handle as needed
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to update answer. Please try again.");
+        // Optionally, revert the local state if the update failed
       }
     }
   };
@@ -124,82 +145,36 @@ const ViewAnswersPage = () => {
     }
   }, [answers?.data]);
 
-  const EditForm = () => (
-    <>
-      <CardHeader>
-        <Input
-          value={editFormData?.questionText}
-          placeholder="Enter question"
-          className="text-base py-7 font-medium"
-        />
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3 mb-4">
-          {editFormData?.answers.map((opt, index) => (
-            <Input
-              key={index}
-              value={opt.answer}
-              placeholder="Enter option text"
-              className="py-7 px-4 bg-gray-50 rounded-2xl border"
-            />
-          ))}
+  if (isLoading) {
+    return (
+      <div className="w-full mx-auto p-8 rounded-xl">
+        <div className="flex gap-8 mb-5">
+          <button
+            onClick={() => router.back()}
+            className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
+          >
+            Question
+          </button>
+          <button className="pb-2 text-lg font-medium border-b-2 border-black">
+            Answer
+          </button>
         </div>
-        <div className="flex gap-2 justify-end">
-          <Button variant="outline" className="py-5" onClick={cancelEdit}>
-            <X /> Cancel
-          </Button>
-          <Button className="py-5" onClick={saveEdit}>
-            <Save /> Save
-          </Button>
-        </div>
-      </CardContent>
-    </>
-  );
 
-  const DisplayCard = ({ card }: { card: SurveyCard }) => (
-    <>
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <h3 className="text-base font-medium leading-relaxed">
-            {card.questionText}
-          </h3>
-          <div>
-            <button
-              onClick={() => startEdit(card)}
-              className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
-            >
-              <PiPencilFill className="text-2xl font-bold" />
-            </button>
-            <button
-              onClick={() => handelDelete(card._id)}
-              className="p-2 cursor-pointer rounded-full hover:bg-red-200"
-            >
-              <Trash className="text-2xl text-red-500 font-bold " />
-            </button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
-          {card.answers.map((opt, index) => (
-            <div
-              key={index}
-              className="py-4 px-4 bg-gray-50 rounded-2xl border"
-            >
-              {opt.answer}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <CardSkeleton key={i} />
           ))}
         </div>
-      </CardContent>
-    </>
-  );
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mx-auto p-8 rounded-xl">
       <div className="flex gap-8 mb-5">
         <button
           onClick={() => router.back()}
-          className="pb-2 text-lg font-medium hover:border-b-2 border-black"
+          className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
         >
           Question
         </button>
@@ -209,27 +184,107 @@ const ViewAnswersPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {isLoading ? (
-          <>
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-          </>
-        ) : (
-          data.map((card) => (
-            <Card
-              key={card._id}
-              className="border border-gray-200 group hover:shadow-md transition-shadow"
-            >
-              {editingCardId === card._id ? (
-                <EditForm />
-              ) : (
-                <DisplayCard card={card} />
-              )}
-            </Card>
-          ))
-        )}
+        {data.map((card) => (
+          <Card
+            key={card._id}
+            className="group hover:shadow-md transition-shadow"
+          >
+            {editingCardId === card._id ? (
+              <>
+                <CardHeader>
+                  <Input
+                    type="text"
+                    value={editFormData?.questionText || ""}
+                    onChange={(e) =>
+                      setEditFormData((prev) =>
+                        prev ? { ...prev, questionText: e.target.value } : null
+                      )
+                    }
+                    placeholder="Enter question"
+                    className="text-base py-7 font-medium"
+                  />
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="space-y-3 mb-4">
+                    {editFormData?.answers.map((opt, index) => (
+                      <Input
+                        key={index}
+                        type="text"
+                        value={opt.answer}
+                        onChange={(e) => {
+                          setEditFormData((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  answers: prev.answers.map((a, i) =>
+                                    i === index
+                                      ? { ...a, answer: e.target.value }
+                                      : a
+                                  ),
+                                }
+                              : null
+                          );
+                        }}
+                        placeholder="Enter option text "
+                        className="py-7 px-4 bg-gray-50 rounded-2xl border min-h-[120px]"
+                      />
+                    ))}
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      className="py-5"
+                      onClick={cancelEdit}
+                      variant="outline"
+                    >
+                      <X className="w-4 h-4 mr-2" /> Cancel
+                    </Button>
+                    <Button className="py-5" onClick={saveEdit}>
+                      <Save className="w-4 h-4 mr-2 " /> Save
+                    </Button>
+                  </div>
+                </CardContent>
+              </>
+            ) : (
+              <>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-base font-medium leading-relaxed">
+                      {card.questionText}
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startEdit(card)}
+                        // size="icon"
+                        className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
+                      >
+                        <PiPencilFill className="text-2xl font-bold" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(card._id)}
+                        // size="icon"
+                        className="p-2 cursor-pointer rounded-full hover:bg-red-200"
+                      >
+                        <Trash className="text-2xl text-red-500 font-bold " />
+                      </button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="space-y-3">
+                    {card.answers.map((opt, index) => (
+                      <div
+                        key={index}
+                        className="py-4 px-4 bg-gray-50 rounded-2xl border border-gray-200"
+                      >
+                        {opt.answer}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </>
+            )}
+          </Card>
+        ))}
       </div>
 
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
@@ -237,23 +292,18 @@ const ViewAnswersPage = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              This action cannot be undone. This will permanently delete this
+              answer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setOpenDeleteDialog(false)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                onClick={handelDeleteConfirmed}
-                className="bg-red-500 hover:bg-red-600 text-white hover:text-white"
-              >
-                Delete
-              </Button>
-            </AlertDialogTrigger>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirmed}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

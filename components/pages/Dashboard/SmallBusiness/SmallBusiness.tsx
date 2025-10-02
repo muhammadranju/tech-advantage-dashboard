@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -169,9 +168,12 @@ const SmallBusinessPage = () => {
               Assessment
             </button>
           </div>
-          <Select onValueChange={(value) => setSelectCategory(value)}>
+          <Select
+            value={selectCategory}
+            onValueChange={(value) => setSelectCategory(value)}
+          >
             <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
-              <SelectValue placeholder="Business Overview" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="py-2">
               <SelectItem value="business-overview">

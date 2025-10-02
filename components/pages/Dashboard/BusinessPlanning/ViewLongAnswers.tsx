@@ -1,4 +1,5 @@
 "use client";
+import CardSkeleton from "@/components/skeletons/CardSkeleton";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -7,7 +8,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useDeleteBusinessPlanLongQuestionAnswerMutation,
   useGetBusinessPlanLongQuestionAnswerQuery,
+  useUpdateBusinessPlanLongQuestionAnswerMutation,
 } from "@/lib/redux/features/api/businessPlanning/businessPlanningApiSlice";
 import { Save, Trash, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -38,9 +39,12 @@ const ViewLongAnswersPage = () => {
 
   const [deleteBusinessPlanLongQuestionAnswer] =
     useDeleteBusinessPlanLongQuestionAnswerMutation();
-  const { data: longQuestionAnswerData } =
+  const { data: longQuestionAnswerData, isLoading } =
     useGetBusinessPlanLongQuestionAnswerQuery(null);
   const router = useRouter();
+
+  const [updateBusinessPlanLongQuestionAnswer] =
+    useUpdateBusinessPlanLongQuestionAnswerMutation();
 
   const startEdit = (card: SurveyCard) => {
     setEditingCardId(card._id);
@@ -52,16 +56,7 @@ const ViewLongAnswersPage = () => {
     setEditFormData(null);
   };
 
-  const saveEdit = () => {
-    if (editFormData) {
-      setData((prev) =>
-        prev.map((card) =>
-          card._id === editFormData._id ? editFormData : card
-        )
-      );
-      cancelEdit();
-    }
-  };
+  console.log(editFormData);
 
   const updateQuestion = (value: string) =>
     editFormData && setEditFormData({ ...editFormData, questionText: value });
@@ -69,40 +64,11 @@ const ViewLongAnswersPage = () => {
   const updateAnswer = (value: string) =>
     editFormData && setEditFormData({ ...editFormData, answer: value });
 
-  const EditForm = () => (
-    <>
-      <CardHeader>
-        <Input
-          value={editFormData?.questionText || ""}
-          onChange={(e) => updateQuestion(e.target.value)}
-          placeholder="Enter question"
-          className="text-base py-7 font-medium"
-        />
-      </CardHeader>
-      <CardContent className="pt-0">
-        <Textarea
-          value={editFormData?.answer || ""}
-          onChange={(e) => updateAnswer(e.target.value)}
-          placeholder="Enter answer"
-          className="py-7 px-4 bg-gray-50 rounded-2xl border min-h-[120px]"
-        />
-        <div className="flex gap-2 justify-end mt-4">
-          <Button variant="outline" className="py-5" onClick={cancelEdit}>
-            <X className="mr-2 h-4 w-4" /> Cancel
-          </Button>
-          <Button className="py-5" onClick={saveEdit}>
-            <Save className="mr-2 h-4 w-4" /> Save
-          </Button>
-        </div>
-      </CardContent>
-    </>
-  );
-
   const handelDelete = async (id: string) => {
     setDeleteId(id);
-
     setOpenDeleteDialog(true);
   };
+
   const handelDeleteConfirmed = async () => {
     try {
       await deleteBusinessPlanLongQuestionAnswer({
@@ -113,11 +79,36 @@ const ViewLongAnswersPage = () => {
       setData((prevData: SurveyCard[]) =>
         prevData.filter((card) => card._id !== deleteId)
       );
-
       setOpenDeleteDialog(false);
     } catch (err) {
       console.error("Failed to delete:", err);
       toast.error("Failed to delete answer. Please try again.");
+    }
+  };
+  const saveEdit = async () => {
+    if (editFormData) {
+      try {
+        const result = await updateBusinessPlanLongQuestionAnswer({
+          body: editFormData,
+          id: editFormData._id,
+        }).unwrap();
+
+        if (result.success) {
+          setData((prev) =>
+            prev.map((card) =>
+              card._id === editFormData._id ? editFormData : card
+            )
+          );
+          toast.success("Answer updated successfully");
+          setEditingCardId(null);
+          setEditFormData(null);
+          cancelEdit();
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Failed to update answer. Please try again.");
+        // Optionally, revert the local state if the update failed
+      }
     }
   };
 
@@ -127,36 +118,29 @@ const ViewLongAnswersPage = () => {
     }
   }, [longQuestionAnswerData?.data]);
 
-  const DisplayCard = ({ card }: { card: SurveyCard }) => (
-    <>
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <h3 className="text-base font-medium leading-relaxed">
-            {card.questionText}
-          </h3>
-          <div>
-            <button
-              onClick={() => startEdit(card)}
-              className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
-            >
-              <PiPencilFill className="text-2xl font-bold" />
-            </button>
-            <button
-              onClick={() => handelDelete(card._id)}
-              className="p-2 cursor-pointer rounded-full hover:bg-red-200"
-            >
-              <Trash className="text-2xl text-red-500 font-bold " />
-            </button>
-          </div>
+  if (isLoading) {
+    return (
+      <div className="w-full mx-auto p-8 rounded-xl">
+        <div className="flex gap-8 mb-5">
+          <button
+            onClick={() => router.back()}
+            className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
+          >
+            Question
+          </button>
+          <button className="pb-2 text-lg font-medium border-b-2 border-black">
+            Answer
+          </button>
         </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="py-4 px-4 bg-gray-50 rounded-2xl border">
-          {card.answer}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
-      </CardContent>
-    </>
-  );
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mx-auto p-8 rounded-xl">
@@ -179,9 +163,65 @@ const ViewLongAnswersPage = () => {
             className="border border-gray-200 group hover:shadow-md transition-shadow"
           >
             {editingCardId === card._id ? (
-              <EditForm />
+              <>
+                <CardHeader>
+                  <Input
+                    value={editFormData?.questionText || ""}
+                    onChange={(e) => updateQuestion(e.target.value)}
+                    placeholder="Enter question"
+                    className="text-base py-7 font-medium"
+                  />
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <Textarea
+                    value={editFormData?.answer || ""}
+                    onChange={(e) => updateAnswer(e.target.value)}
+                    placeholder="Enter answer"
+                    className="py-7 px-4 bg-gray-50 rounded-2xl border min-h-[120px]"
+                  />
+                  <div className="flex gap-2 justify-end mt-4">
+                    <Button
+                      variant="outline"
+                      className="py-5"
+                      onClick={cancelEdit}
+                    >
+                      <X className="mr-2 h-4 w-4" /> Cancel
+                    </Button>
+                    <Button className="py-5" onClick={saveEdit}>
+                      <Save className="mr-2 h-4 w-4" /> Save
+                    </Button>
+                  </div>
+                </CardContent>
+              </>
             ) : (
-              <DisplayCard card={card} />
+              <>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-base font-medium leading-relaxed">
+                      {card.questionText}
+                    </h3>
+                    <div>
+                      <button
+                        onClick={() => startEdit(card)}
+                        className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
+                      >
+                        <PiPencilFill className="text-2xl font-bold" />
+                      </button>
+                      <button
+                        onClick={() => handelDelete(card._id)}
+                        className="p-2 cursor-pointer rounded-full hover:bg-red-200"
+                      >
+                        <Trash className="text-2xl text-red-500 font-bold " />
+                      </button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="py-4 px-4 bg-gray-50 rounded-2xl border">
+                    {card.answer}
+                  </div>
+                </CardContent>
+              </>
             )}
           </Card>
         ))}
@@ -192,23 +232,21 @@ const ViewLongAnswersPage = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              This action cannot be undone. This will permanently delete the
+              answer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpenDeleteDialog(false)}>
               Cancel
             </AlertDialogCancel>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                onClick={handelDeleteConfirmed}
-                className="bg-red-500 hover:bg-red-600 text-white hover:text-white"
-              >
-                Delete
-              </Button>
-            </AlertDialogTrigger>
+            <Button
+              variant="destructive"
+              onClick={handelDeleteConfirmed}
+              className="bg-red-500 hover:bg-red-600 text-white hover:text-white"
+            >
+              Delete
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

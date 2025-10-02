@@ -1,12 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 interface Question {
   question: string;
-  answers: {
-    answer1: string;
-    answer2: string;
-    answer3: string;
-  };
 }
 
 type TabType = "quiz" | "upload";
@@ -15,15 +11,9 @@ type Category =
   | "Small Business"
   | "Looking to Get Into Tech";
 
+import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ListCollapse, Save } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { StatsCards } from "@/components/dashboard/StatsCards";
-import { FileText } from "lucide-react";
-import { SiQuizlet } from "react-icons/si";
 import {
   Select,
   SelectContent,
@@ -31,6 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCreateSuccessPathQuizQuestionAnswerMutation } from "@/lib/redux/features/api/successPath/successPathSliceApi";
+import { FileText, ListCollapse, Save } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SiQuizlet } from "react-icons/si";
+import { toast } from "sonner";
 
 const stats = [
   {
@@ -48,22 +45,16 @@ const stats = [
 ];
 
 const SuccessPathPage = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("quiz");
-  const [selectedCategory, setSelectedCategory] = useState<
-    Category | undefined
-  >();
-
-  // Simplified questions object with one question and answers
+  const [selectedCategory, setSelectedCategory] = useState(
+    "aspiring-entrepreneur"
+  ); // Simplified questions object with one question and answers
   const [question, setQuestion] = useState<Question>({
     question: "",
-    answers: {
-      answer1: "",
-      answer2: "",
-      answer3: "",
-    },
   });
-
-  const router = useRouter();
+  const [createSuccessPathQuizQuestionAnswer] =
+    useCreateSuccessPathQuizQuestionAnswerMutation();
 
   const handelGoToUpload = () => {
     setActiveTab("upload");
@@ -74,27 +65,48 @@ const SuccessPathPage = () => {
     setQuestion((prev) => ({ ...prev, question: e.target.value }));
   };
 
-  const handleAnswerChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    answerIndex: keyof Question["answers"]
-  ) => {
-    setQuestion((prev) => ({
-      ...prev,
-      answers: { ...prev.answers, [answerIndex]: e.target.value },
-    }));
-  };
+  // const handleAnswerChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  //   // answerIndex: keyof Question["answers"]
+  // ) => {
+  //   // setQuestion((prev) => ({
+  //   //   ...prev,
+  //   //   answers: { ...prev.answers, [answerIndex]: e.target.value },
+  //   // }));
+  // };
 
   // Check if all fields for the current question are filled
   const isQuestionValid = () => {
-    return (
-      question.question !== "" &&
-      question.answers.answer1 !== "" &&
-      question.answers.answer2 !== ""
-    );
+    return question.question !== "";
   };
 
-  const handleSave = () => {
-    console.log(question);
+  const handleSave = async () => {
+    // console.log(question.question);
+    // console.log(selectedCategory);
+
+    try {
+      const result = await createSuccessPathQuizQuestionAnswer({
+        body: {
+          questionText: question.question,
+        },
+        category: selectedCategory,
+      }).unwrap();
+
+      if (result.success) {
+        setQuestion({
+          question: "",
+        });
+        toast.success("Question saved successfully");
+      } else {
+      }
+    } catch (error: any) {
+      if (error?.data.message) {
+        toast.error(
+          error?.data.message + "Provide a valid question at least 3 questions"
+        );
+      }
+      // toast.error("Something went wrong");
+    }
   };
   return (
     <div className="px-10 py-4">
@@ -127,7 +139,7 @@ const SuccessPathPage = () => {
               Quiz
             </button>
             <button
-              onClick={handelGoToUpload}
+              onClick={() => router.push("/dashboard/success-path/assessment")}
               className={`pb-2 text-lg font-medium ${
                 activeTab === "upload"
                   ? "text-black border-b-2 border-black"
@@ -138,17 +150,18 @@ const SuccessPathPage = () => {
             </button>
           </div>
           <Select
+            value={selectedCategory}
             onValueChange={(value) => setSelectedCategory(value as Category)}
           >
             <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
-              <SelectValue placeholder="Select a category" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="py-2">
-              <SelectItem value="Aspiring Entrepreneur">
+              <SelectItem value="aspiring-entrepreneur">
                 Aspiring Entrepreneur
               </SelectItem>
-              <SelectItem value="Small Business">Small Business</SelectItem>
-              <SelectItem value="Looking to Get Into Tech">
+              <SelectItem value="small-business">Small Business</SelectItem>
+              <SelectItem value="looking-to-get-into-tech">
                 Looking to Get Into Tech
               </SelectItem>
             </SelectContent>
@@ -168,14 +181,14 @@ const SuccessPathPage = () => {
           </div>
 
           {/* Answer Sections */}
-          <div>
+          {/* <div>
             <label className="block text-lg font-medium mb-3">
               1.Yes (User will get 1 mark)
             </label>
             <Input
               placeholder="Enter Answer"
-              value={question.answers.answer1}
-              onChange={(e) => handleAnswerChange(e, "answer1")}
+              // value={question.answers.answer1}
+              // onChange={(e) => handleAnswerChange(e, "answer1")}
               className="py-6"
             />
           </div>
@@ -186,11 +199,11 @@ const SuccessPathPage = () => {
             </label>
             <Input
               placeholder="Enter Answer"
-              value={question.answers.answer2}
-              onChange={(e) => handleAnswerChange(e, "answer2")}
+              // value={question.answers.answer2}
+              // onChange={(e) => handleAnswerChange(e, "answer2")}
               className="py-6"
             />
-          </div>
+          </div> */}
 
           {/* Action Buttons */}
           <div className="flex gap-4">

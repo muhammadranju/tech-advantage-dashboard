@@ -30,8 +30,8 @@ export const authApiSlice = apiSlice.injectEndpoints({
         return response;
       },
     }),
+
     //  Business Planning - Update Quiz Question Answer !TODO
-    // !TODO
     updateBusinessPlanQuizQuestionAnswer: builder.mutation({
       query: ({ body, id }) => ({
         url: `business/plan/quiz/${id}`,
@@ -47,6 +47,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
         return response;
       },
     }),
+
     //  Business Planning - Delete Quiz Question Answer
     deleteBusinessPlanQuizQuestionAnswer: builder.mutation({
       query: ({ id }) => ({
@@ -93,7 +94,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: {
           questionText: body.questionText,
-          answers: body.answers,
+          answer: body.answer,
         },
       }),
       invalidatesTags: ["QuestionAnswer"],

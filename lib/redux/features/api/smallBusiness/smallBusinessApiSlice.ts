@@ -1,6 +1,6 @@
 import { apiSlice } from "../apiSlice";
 
-export const authApiSlice = apiSlice.injectEndpoints({
+export const smallBusinessApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get all users
     addQuestionAnswer: builder.mutation({
@@ -21,4 +21,4 @@ export const authApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useAddQuestionAnswerMutation } = authApiSlice;
+export const { useAddQuestionAnswerMutation } = smallBusinessApiSlice;

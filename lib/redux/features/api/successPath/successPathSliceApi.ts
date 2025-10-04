@@ -1,6 +1,6 @@
 import { apiSlice } from "../apiSlice";
 
-export const authApiSlice = apiSlice.injectEndpoints({
+export const successPathApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     //  Success Path - Get Quiz Question Answer
     getSuccessPathQuizQuestionAnswer: builder.query({
@@ -135,4 +135,4 @@ export const {
   useCreateSuccessPathAssessmentQuestionAnswerMutation,
   useUpdateSuccessPathAssessmentQuestionAnswerMutation,
   useDeleteSuccessPathAssessmentQuestionAnswerMutation,
-} = authApiSlice;
+} = successPathApiSlice;

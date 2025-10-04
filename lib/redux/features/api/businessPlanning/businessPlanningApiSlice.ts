@@ -1,6 +1,6 @@
 import { apiSlice } from "../apiSlice";
 
-export const authApiSlice = apiSlice.injectEndpoints({
+export const businessPlanningApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     //  Business Planning - Get Quiz Question Answer
     getBusinessPlanQuizQuestionAnswer: builder.query({
@@ -130,4 +130,4 @@ export const {
   useGetBusinessPlanLongQuestionAnswerQuery,
   useUpdateBusinessPlanLongQuestionAnswerMutation,
   useDeleteBusinessPlanLongQuestionAnswerMutation,
-} = authApiSlice;
+} = businessPlanningApiSlice;

@@ -2,7 +2,7 @@
 
 import { apiSlice } from "../apiSlice";
 
-export const authApiSlice = apiSlice.injectEndpoints({
+export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get all users
     getAllUsers: builder.query({
@@ -30,7 +30,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         // Optimistically update the cache
         const patchResult = dispatch(
-          authApiSlice.util.updateQueryData(
+          userApiSlice.util.updateQueryData(
             "getAllUsers",
             undefined,
             (draft: any) => {
@@ -72,7 +72,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         // Optimistically update the cache
         const patchResult = dispatch(
-          authApiSlice.util.updateQueryData(
+          userApiSlice.util.updateQueryData(
             "getAllUsers",
             undefined,
             (draft: any) => {
@@ -106,4 +106,4 @@ export const {
   useGetAllUsersQuery,
   useBlockedUserMutation,
   useUnblockUserMutation,
-} = authApiSlice;
+} = userApiSlice;

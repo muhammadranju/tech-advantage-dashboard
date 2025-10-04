@@ -1,6 +1,6 @@
 import { apiSlice } from "../apiSlice";
 
-export const authApiSlice = apiSlice.injectEndpoints({
+export const coachingApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get all users
     totalCochairingUsers: builder.query({
@@ -54,4 +54,4 @@ export const {
   useDashboardApplicationRateQuery,
   useCoachingUsersQuery,
   useUpdateCoachingStatusMutation,
-} = authApiSlice;
+} = coachingApiSlice;

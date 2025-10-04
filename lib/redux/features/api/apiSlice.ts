@@ -16,7 +16,16 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Coaching", "Dashboard", "Assessments", "QuestionAnswer","SuccessPath"],
+  tagTypes: [
+    "User",
+    "Coaching",
+    "Dashboard",
+    "Assessments",
+    "QuestionAnswer",
+    "SuccessPath",
+    "BootCamp",
+    "Playlists",
+  ],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   endpoints: (builder) => ({}),
 });

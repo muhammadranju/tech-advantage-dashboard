@@ -27,15 +27,11 @@ import {
   useUpdateSuccessPathQuizQuestionAnswerMutation,
 } from "@/lib/redux/features/api/successPath/successPathSliceApi";
 import { Save, Trash, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
-
-// interface SurveyOption {
-//   _id: string;
-//   text: string;
-// }
+import BackButtons from "../BootCamp/BackButtons";
+import { ClipLoader } from "react-spinners";
 
 interface SurveyCard {
   _id: string;
@@ -51,7 +47,6 @@ const QuizzesPage = () => {
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
-  const router = useRouter();
 
   const { data: quizData, isLoading } =
     useGetSuccessPathQuizQuestionAnswerQuery({
@@ -62,7 +57,7 @@ const QuizzesPage = () => {
   const [deleteSuccessPathQuizQuestionAnswer] =
     useDeleteSuccessPathQuizQuestionAnswerMutation();
 
-  const [updateSuccessPathQuizQuestionAnswer] =
+  const [updateSuccessPathQuizQuestionAnswer, { isLoading: isUpdating }] =
     useUpdateSuccessPathQuizQuestionAnswerMutation();
 
   const handleEdit = (card: SurveyCard) => {
@@ -77,7 +72,7 @@ const QuizzesPage = () => {
         category: selectedCategory,
         id: editFormData?._id,
       }).unwrap();
-      console.log(result)
+      console.log(result);
 
       // if (result.success) {
       //   setData((prevData) =>
@@ -114,13 +109,13 @@ const QuizzesPage = () => {
     }
   };
 
-  const updateOption = (optionId: string, value: string) => {
-    if (editFormData) {
-      setEditFormData({
-        ...editFormData,
-      });
-    }
-  };
+  // const updateOption = (optionId: string, value: string) => {
+  //   if (editFormData) {
+  //     setEditFormData({
+  //       ...editFormData,
+  //     });
+  //   }
+  // };
 
   const handleDelete = async () => {
     try {
@@ -158,17 +153,7 @@ const QuizzesPage = () => {
   if (isLoading) {
     return (
       <div className="w-full mx-auto p-8 rounded-xl">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
-          >
-            Question
-          </button>
-          <button className="pb-2 text-lg font-medium border-b-2 border-black">
-            Answer
-          </button>
-        </div>
+        <BackButtons backTitle="Question" title={"Answer"} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
@@ -182,20 +167,7 @@ const QuizzesPage = () => {
   return (
     <div className="w-full mx-auto p-8 ">
       <div className="flex justify-between gap-8 mb-5">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-          >
-            Quiz
-          </button>
-          {/* </Link> */}
-          <button
-            className={`pb-2 text-lg font-medium border-b-2 border-black`}
-          >
-            Answer
-          </button>
-        </div>
+        <BackButtons backTitle="Quiz" title={"Answer"} />
         <Select
           value={selectedCategory}
           onValueChange={(value) => setSelectedCategory(value)}
@@ -275,8 +247,21 @@ const QuizzesPage = () => {
                     >
                       <X /> Cancel
                     </Button>
-                    <Button className="py-5" onClick={handleSave}>
-                      <Save /> Save
+                    <Button
+                      className="py-5"
+                      onClick={handleSave}
+                      disabled={isUpdating}
+                    >
+                      {isUpdating ? (
+                        <>
+                          <ClipLoader color="#ffffff" size={16} />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save /> Save
+                        </>
+                      )}
                     </Button>
                   </div>
                 </CardContent>

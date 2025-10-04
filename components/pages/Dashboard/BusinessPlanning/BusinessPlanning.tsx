@@ -35,10 +35,10 @@ const BusinessPlanning: React.FC = () => {
   const [longAnswer, setLongAnswer] = useState("");
 
   // create quiz question answer
-  const [createBusinessPlanQuizQuestionAnswer] =
+  const [createBusinessPlanQuizQuestionAnswer, { isLoading: isCreating }] =
     useCreateBusinessPlanQuizQuestionAnswerMutation();
   // create long question answer
-  const [createBusinessPlanLongQuestionAnswer] =
+  const [createBusinessPlanLongQuestionAnswer, { isLoading: isCreatingLong }] =
     useCreateBusinessPlanLongQuestionAnswerMutation();
 
   const {
@@ -122,6 +122,7 @@ const BusinessPlanning: React.FC = () => {
             onAddAnswer={handleAddAnswer}
             onRemoveAnswer={handleRemoveAnswer}
             onSave={handleSave}
+            isUpdating={isCreating}
             isValid={isCurrentQuestionValid}
           />
         ) : (
@@ -131,6 +132,7 @@ const BusinessPlanning: React.FC = () => {
             onQuestionChange={handleQuestionChange}
             onAnswerChange={setLongAnswer}
             onSave={handleSave}
+            isUpdating={isCreatingLong}
             isValid={isCurrentQuestionValid}
           />
         )}

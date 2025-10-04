@@ -27,6 +27,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SiQuizlet } from "react-icons/si";
+import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 
 const stats = [
@@ -53,8 +54,9 @@ const SuccessPathPage = () => {
   const [question, setQuestion] = useState<Question>({
     question: "",
   });
-  const [createSuccessPathQuizQuestionAnswer] =
+  const [createSuccessPathQuizQuestionAnswer, { isLoading: isCreating }] =
     useCreateSuccessPathQuizQuestionAnswerMutation();
+  useCreateSuccessPathQuizQuestionAnswerMutation();
 
   const handelGoToUpload = () => {
     setActiveTab("upload");
@@ -218,9 +220,18 @@ const SuccessPathPage = () => {
             <Button
               className="flex-1 py-6 hover:bg-neutral-800"
               onClick={handleSave}
-              disabled={!isQuestionValid()}
+              disabled={!isQuestionValid() || isCreating}
             >
-              <Save /> Save
+              {isCreating ? (
+                <>
+                  <ClipLoader color="#ffffff" size={16} />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save /> Save
+                </>
+              )}
             </Button>
           </div>
         </div>

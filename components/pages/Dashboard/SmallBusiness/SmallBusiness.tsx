@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { MdOutlineQuiz } from "react-icons/md";
+import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 
 const stats = [
@@ -280,7 +281,16 @@ const SmallBusinessPage = () => {
               onClick={handleSave}
               disabled={!isQuestionValid() || isLoading}
             >
-              <Save /> Save
+              {isLoading ? (
+                <>
+                  <ClipLoader color="#ffffff" size={16} />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save /> Save
+                </>
+              )}
             </Button>
           </div>
         </div>

@@ -28,27 +28,64 @@ interface ForgotPasswordResponse {
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const validateForm = () => {
+    let isValid = true;
+
+    // Reset error
+    setEmailError("");
+
+    // Validate email
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Please enter a valid email address");
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = (await forgotPassword({
-      email,
-    }).unwrap()) as unknown as ForgotPasswordResponse;
-    if (result?.success) {
-      dispatch(setUserEmail(email));
-      setOpenDialog(true);
-      toast.success("Password reset link sent successfully");
-
-      setTimeout(() => {
-        router.push("/verify-otp");
-        setOpenDialog(false);
-      }, 2000);
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
     }
+
+    try {
+      const result = (await forgotPassword({
+        email,
+      }).unwrap()) as unknown as ForgotPasswordResponse;
+
+      if (result?.success) {
+        dispatch(setUserEmail(email));
+        setOpenDialog(true);
+        toast.success("Password reset link sent successfully");
+
+        setTimeout(() => {
+          router.push("/verify-otp");
+          setOpenDialog(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+      // Handle error if needed
+      toast.error("Failed to send password reset link");
+    }
+  };
+
+  // Clear error when user starts typing
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (emailError) setEmailError("");
   };
 
   return (
@@ -70,10 +107,14 @@ export default function ForgotPassword() {
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl"
-                required
+                onChange={handleEmailChange}
+                className={`h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl ${
+                  emailError ? "border-red-500 focus:border-red-500" : ""
+                }`}
               />
+              {emailError && (
+                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-end">
@@ -89,22 +130,28 @@ export default function ForgotPassword() {
             <Button
               type="submit"
               className="w-full h-12 bg-black hover:bg-neutral-800 text-white font-medium"
+              disabled={isLoading || email.length === 0}
             >
-              Continue {isLoading && <ClipLoader color="#ffffff" />}
+              {isLoading ? (
+                <>
+                  Continue{" "}
+                  <ClipLoader color="#ffffff" size={16} className="ml-2" />
+                </>
+              ) : (
+                "Continue"
+              )}
             </Button>
           </form>
         </CardContent>
       </Card>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        {/* <Card> */}
         <DialogContent className="w-full max-w-lg mx-auto p-10">
           <DialogDescription className="text-center text-black text-lg">
-            We’ve sent you an email with instructions to reset your password.
-            Check your inbox and follow the steps there.
+            We&apos;ve sent you an email with instructions to reset your
+            password. Check your inbox and follow the steps there.
           </DialogDescription>
         </DialogContent>
-        {/* </Card> */}
       </Dialog>
     </div>
   );

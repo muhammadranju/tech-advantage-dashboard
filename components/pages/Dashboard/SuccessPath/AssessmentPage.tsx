@@ -25,10 +25,10 @@ import {
   useUpdateSuccessPathAssessmentQuestionAnswerMutation,
 } from "@/lib/redux/features/api/successPath/successPathSliceApi";
 import { Save, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface Assessment {
   _id: string;
@@ -67,7 +67,6 @@ const successPathTitles: SuccessPathTitles = {
 };
 
 export default function AssessmentPage() {
-  const router = useRouter();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Assessment | null>(null);
   const [deleteDialogId, setDeleteDialogId] = useState<string | null>(null);
@@ -83,7 +82,7 @@ export default function AssessmentPage() {
     assessmentData?.data?.assessment || []
   );
 
-  const [updateSuccessPathAssessmentQuestionAnswer] =
+  const [updateSuccessPathAssessmentQuestionAnswer, { isLoading: isUpdating }] =
     useUpdateSuccessPathAssessmentQuestionAnswerMutation();
 
   // Function to split paragraph by fullstop and return array
@@ -183,17 +182,7 @@ export default function AssessmentPage() {
   if (isLoading) {
     return (
       <div className="w-full mx-auto rounded-xl">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
-          >
-            Quiz
-          </button>
-          <button className="pb-2 text-lg font-medium border-b-2 border-black">
-            Assessment
-          </button>
-        </div>
+        <BackButtons backTitle="Question" title={"Answer"} />
 
         {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}
         {[1, 2, 3, 4].map((i) => (
@@ -207,7 +196,7 @@ export default function AssessmentPage() {
   return (
     <section className="space-y-3 p-10">
       <div className="flex justify-between gap-8 mb-5">
-        <div className="flex gap-8 mb-5">
+        {/* <div className="flex gap-8 mb-5">
           <button
             onClick={() => router.back()}
             className="pb-2 text-lg font-medium hover:border-b-2 border-black"
@@ -217,7 +206,8 @@ export default function AssessmentPage() {
           <button className="pb-2 text-lg font-medium border-b-2 border-black">
             Assessment
           </button>
-        </div>
+        </div> */}
+        <BackButtons backTitle="Quiz" title={"Assessment"} />
         <Select
           value={selectedCategory}
           onValueChange={(value) => setSelectedCategory(value as CategoryType)}
@@ -327,8 +317,13 @@ export default function AssessmentPage() {
                   >
                     <X className="h-4 w-4" /> Cancel
                   </Button>
-                  <Button onClick={handleSave} className="py-5">
-                    <Save className="h-4 w-4" /> Save
+                  <Button
+                    onClick={handleSave}
+                    className="py-5"
+                    disabled={isUpdating}
+                  >
+                    <Save className="h-4 w-4" />{" "}
+                    {isUpdating ? "Saving..." : "Save"}
                   </Button>
                 </div>
               </CardContent>

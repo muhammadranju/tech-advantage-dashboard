@@ -2,14 +2,21 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ListCollapse, Save } from "lucide-react";
 import Link from "next/link";
+import { ClipLoader } from "react-spinners";
 
 interface ActionRowProps {
   viewHref: string;
   onSave: () => void;
+  isUpdating?: boolean;
   disabled?: boolean;
 }
 
-export function ActionRow({ viewHref, onSave, disabled }: ActionRowProps) {
+export function ActionRow({
+  viewHref,
+  onSave,
+  isUpdating,
+  disabled,
+}: ActionRowProps) {
   return (
     <div className="flex gap-4">
       <Link className="flex-1" href={viewHref}>
@@ -20,9 +27,18 @@ export function ActionRow({ viewHref, onSave, disabled }: ActionRowProps) {
       <Button
         className="flex-1 py-6 hover:bg-neutral-800"
         onClick={onSave}
-        disabled={disabled}
+        disabled={disabled || isUpdating}
       >
-        <Save /> Save
+        {isUpdating ? (
+          <>
+            <ClipLoader color="#ffffff" size={16} />
+            Saving...
+          </>
+        ) : (
+          <>
+            <Save /> {isUpdating ? "Updating" : "Save"}
+          </>
+        )}
       </Button>
     </div>
   );

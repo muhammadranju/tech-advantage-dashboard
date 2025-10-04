@@ -10,6 +10,7 @@ interface LongQuestionFormProps {
   onAnswerChange: (value: string) => void;
   onSave: () => void;
   isValid: boolean;
+  isUpdating?: boolean;
 }
 
 export function LongQuestionForm({
@@ -19,6 +20,7 @@ export function LongQuestionForm({
   onAnswerChange,
   onSave,
   isValid,
+  isUpdating,
 }: LongQuestionFormProps) {
   return (
     <div className="space-y-6">
@@ -27,6 +29,7 @@ export function LongQuestionForm({
       <ActionRow
         viewHref="/dashboard/business-planning/view-long-answers"
         onSave={onSave}
+        isUpdating={isUpdating}
         disabled={!isValid}
       />
     </div>

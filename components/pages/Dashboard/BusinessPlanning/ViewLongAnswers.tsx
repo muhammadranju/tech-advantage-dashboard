@@ -19,10 +19,10 @@ import {
   useUpdateBusinessPlanLongQuestionAnswerMutation,
 } from "@/lib/redux/features/api/businessPlanning/businessPlanningApiSlice";
 import { Save, Trash, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface SurveyCard {
   _id: string;
@@ -41,7 +41,6 @@ const ViewLongAnswersPage = () => {
     useDeleteBusinessPlanLongQuestionAnswerMutation();
   const { data: longQuestionAnswerData, isLoading } =
     useGetBusinessPlanLongQuestionAnswerQuery(null);
-  const router = useRouter();
 
   const [updateBusinessPlanLongQuestionAnswer] =
     useUpdateBusinessPlanLongQuestionAnswerMutation();
@@ -121,18 +120,7 @@ const ViewLongAnswersPage = () => {
   if (isLoading) {
     return (
       <div className="w-full mx-auto p-8 rounded-xl">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
-          >
-            Question
-          </button>
-          <button className="pb-2 text-lg font-medium border-b-2 border-black">
-            Answer
-          </button>
-        </div>
-
+        <BackButtons backTitle="Question" title={"Answer"} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <CardSkeleton key={i} />
@@ -144,17 +132,7 @@ const ViewLongAnswersPage = () => {
 
   return (
     <div className="w-full mx-auto p-8 rounded-xl">
-      <div className="flex gap-8 mb-5">
-        <button
-          onClick={() => router.back()}
-          className="pb-2 text-lg font-medium hover:border-b-2 border-black transition-all duration-200"
-        >
-          Question
-        </button>
-        <button className="pb-2 text-lg font-medium border-b-2 border-black">
-          Answer
-        </button>
-      </div>
+      <BackButtons backTitle="Question" title={"Answer"} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {data.map((card) => (

@@ -1,13 +1,8 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const HeaderTitle = () => {
   const router = useRouter();
-  const pathname = usePathname();
-  const path = pathname.split("/")[2];
-
-  console.log(path);
-
   return (
     <div className="flex gap-8 mb-5">
       {/* </Link> */}

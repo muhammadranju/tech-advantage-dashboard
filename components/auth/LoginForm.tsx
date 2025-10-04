@@ -25,13 +25,46 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [rememberPassword, setRememberPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
   const [login, { isLoading }] = useLoginMutation();
 
   const dispatch = useAppDispatch();
 
+  const validateForm = () => {
+    let isValid = true;
+
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+
+    // Validate email
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Please enter a valid email address");
+      isValid = false;
+    }
+
+    // Validate password
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
     // Handle login logic here
     try {
       const result = await login({
@@ -57,6 +90,17 @@ export function LoginForm() {
     setShowPassword(!showPassword);
   };
 
+  // Clear error when user starts typing
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (emailError) setEmailError("");
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (passwordError) setPasswordError("");
+  };
+
   return (
     <Card className="w-full max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
       <RedirectIfAuthenticated />
@@ -76,10 +120,14 @@ export function LoginForm() {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl"
-              required
+              onChange={handleEmailChange}
+              className={`h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl ${
+                emailError ? "border-red-500 focus:border-red-500" : ""
+              }`}
             />
+            {emailError && (
+              <p className="text-red-500 text-xs mt-1">{emailError}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -95,9 +143,10 @@ export function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl pr-12"
-                required
+                onChange={handlePasswordChange}
+                className={`h-12 bg-neutral-50 border-neutral-200 focus:bg-white rounded-xl pr-12 ${
+                  passwordError ? "border-red-500 focus:border-red-500" : ""
+                }`}
               />
               <button
                 type="button"
@@ -111,6 +160,9 @@ export function LoginForm() {
                 )}
               </button>
             </div>
+            {passwordError && (
+              <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+            )}
           </div>
 
           <div className="flex items-center justify-between">
@@ -144,7 +196,6 @@ export function LoginForm() {
             className={`w-full h-12 bg-black hover:bg-neutral-800 text-white font-medium`}
             disabled={isLoading}
           >
-            {/* {isLoading && <ClipLoader className="ml-2" />} */}
             {isLoading ? <ClipLoader color="#ffffff" /> : "Login"}
           </Button>
         </form>

@@ -13,6 +13,8 @@ interface QuizFormProps {
   onRemoveAnswer: (index: number) => void;
   onSave: () => void;
   isValid: boolean;
+  isUpdating?: boolean;
+  disabled?: boolean;
 }
 
 export function QuizForm({
@@ -23,6 +25,7 @@ export function QuizForm({
   onRemoveAnswer,
   onSave,
   isValid,
+  isUpdating,
 }: QuizFormProps) {
   return (
     <div className="space-y-6">
@@ -36,6 +39,7 @@ export function QuizForm({
       <ActionRow
         viewHref="/dashboard/business-planning/view-answers"
         onSave={onSave}
+        isUpdating={isUpdating}
         disabled={!isValid}
       />
     </div>

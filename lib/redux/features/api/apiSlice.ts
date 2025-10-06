@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         headers.set("authorization", `Bearer ${token}`);
       }
 
-      headers.set("content-type", "application/json");
+      // headers.set("content-type", "application/json");
       return headers;
     },
   }),
@@ -25,6 +25,15 @@ export const apiSlice = createApi({
     "SuccessPath",
     "BootCamp",
     "Playlists",
+    "Profile",
+    "Coaching",
+    "Courses",
+    "Modules",
+    "Contents",
+    "MockInterview",
+    "Notifications",
+    "Community",
+    "Terms",
   ],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   endpoints: (builder) => ({}),

@@ -194,19 +194,8 @@ export default function AssessmentPage() {
   }
 
   return (
-    <section className="space-y-3 p-10">
+    <section className="px-10 mt-5 min-h-screen">
       <div className="flex justify-between gap-8 mb-5">
-        {/* <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className="pb-2 text-lg font-medium hover:border-b-2 border-black"
-          >
-            Quiz
-          </button>
-          <button className="pb-2 text-lg font-medium border-b-2 border-black">
-            Assessment
-          </button>
-        </div> */}
         <BackButtons backTitle="Quiz" title={"Assessment"} />
         <Select
           value={selectedCategory}

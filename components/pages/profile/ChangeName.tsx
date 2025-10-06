@@ -6,8 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuthCheck } from "@/hooks/useAuthCheck";
+import { useUpdateUserNameProfileMutation } from "@/lib/redux/features/api/profile/profileSliceApi";
+import { Save, X } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { ClipLoader } from "react-spinners";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+import { DialogTriggerComponent } from "./DialogTriggerComponent";
 
 interface FormFieldProps {
   id: string;
@@ -42,12 +57,76 @@ const FormField: React.FC<FormFieldProps> = ({
   </div>
 );
 
+// const DialogTriggerComponent = ({
+//   isOpen,
+//   setIsOpen,
+// }: {
+//   isOpen: boolean;
+//   setIsOpen: (isOpen: boolean) => void;
+// }) => {
+//   return (
+//     <Dialog open={isOpen} onOpenChange={setIsOpen}>
+//       <DialogContent className="sm:max-w-[380px] flex flex-col items-center justify-center shadow-lg rounded-xl">
+//         <DialogHeader className="flex flex-col items-center justify-center">
+//           <Image
+//             src="/success.gif"
+//             alt="Success"
+//             width={200}
+//             height={100}
+//             className="-mb-14 -mt-10"
+//           />
+
+//           <DialogTitle className="text-2xl text-center">
+//             Password Changed🎉
+//           </DialogTitle>
+//           <DialogDescription className="text-center text-base">
+//             Your password has been changed successfully.
+//           </DialogDescription>
+//           <DialogClose asChild>
+//             <Button className="px-6 mt-4">
+//               <X /> Close
+//             </Button>
+//           </DialogClose>
+//         </DialogHeader>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// };
+
 export default function ChangeName() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { userProfile, refetch } = useAuthCheck();
+  const userId = userProfile?.user?.data._id;
+
+  const [updateUserNameProfile, { isLoading }] =
+    useUpdateUserNameProfileMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const result = await updateUserNameProfile({
+        userId: userId,
+        body: {
+          name: `${firstName} ${lastName}`,
+          userId: userId,
+        },
+      }).unwrap();
+
+      if (result?.success) {
+        setIsOpen(true);
+        refetch();
+        setFirstName("");
+        setLastName("");
+        toast.success("Name updated successfully");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error updating name");
+    }
+
     console.log("Name update attempt:", { firstName, lastName });
   };
 
@@ -80,12 +159,28 @@ export default function ChangeName() {
             <Button
               type="submit"
               className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
+              disabled={isLoading}
             >
-              Save & Continue
+              {isLoading ? (
+                <>
+                  <ClipLoader color="#ffffff" size={16} />
+                </>
+              ) : (
+                <>
+                  <Save />
+                  Save & Continue
+                </>
+              )}
             </Button>
           </form>
         </CardContent>
       </Card>
+      <DialogTriggerComponent
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Name Updated🎉"
+        description="Your name has been updated successfully."
+      />
     </>
   );
 }

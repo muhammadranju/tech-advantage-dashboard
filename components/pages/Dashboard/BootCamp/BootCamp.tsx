@@ -14,9 +14,9 @@ import { useState } from "react";
 const BootCamp = () => {
   const [category, setCategory] = useState("udemy");
   return (
-    <div className="px-10">
+    <div className="px-10 mt-5">
       <div className="flex justify-between gap-8 ">
-        <HeaderTitle />
+        <HeaderTitle isActive="bootcamp" />
 
         <Select value={category} onValueChange={setCategory}>
           <SelectTrigger className="bg-transparent p-5">

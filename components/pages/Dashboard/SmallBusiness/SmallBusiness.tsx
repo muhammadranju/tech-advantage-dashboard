@@ -15,18 +15,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
-import { MdOutlineQuiz } from "react-icons/md";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
-
-const stats = [
-  {
-    title: "Total Questions",
-    value: 8642,
-    changeType: "positive" as const,
-    icon: MdOutlineQuiz,
-  },
-];
 
 interface Question {
   questionText: string;
@@ -130,22 +120,9 @@ const SmallBusinessPage = () => {
   };
 
   return (
-    <div className="px-10  min-h-screen">
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards
-            stat={{
-              title: stat.title,
-              value: stat.value,
-              changeType: stat.changeType,
-              icon: stat.icon,
-            }}
-            key={stat.title}
-          />
-        ))}
-      </div> */}
-
-      <div className="mx-auto bg-white shadow rounded-lg p-6 mt-10 pb-10">
+    <div className="px-10 mt-5 min-h-screen">
+      <h1 className="text-3xl font-bold  text-black">Small Business</h1>
+      <div className="mx-auto bg-white border rounded-lg p-10 mt-5">
         <div className="flex gap-8 justify-between mb-8">
           <div className="flex gap-8">
             <button

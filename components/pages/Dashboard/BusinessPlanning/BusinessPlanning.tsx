@@ -102,7 +102,7 @@ const BusinessPlanning: React.FC = () => {
   ]);
 
   return (
-    <div className="px-10 py-4">
+     <div className="px-10 mt-5 min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <StatsCards stat={stat} key={stat.title} />

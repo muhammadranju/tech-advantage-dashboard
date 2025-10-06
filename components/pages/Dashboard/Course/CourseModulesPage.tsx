@@ -17,6 +17,7 @@ import { FileText, Play, Plus, Save, Trash2, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface Video {
   id: string;
@@ -212,7 +213,6 @@ function AddDialog({
 export default function CourseContentPage() {
   const { moduleID } = useParams();
   const params = moduleID as string;
-  const router = useRouter();
 
   const [openDialog, setOpenDialog] = useState<MediaType | null>(null);
 
@@ -293,21 +293,10 @@ export default function CourseContentPage() {
   return (
     <div className="min-h-screen px-10">
       <div className="mx-auto">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-          >
-            Back to Modules
-          </button>
-          <button
-            className={`pb-2 text-lg font-medium  border-b-2 border-black`}
-          >
-            {courseContent.title}
-          </button>
-        </div>
-
+        {/* Navigation Tabs */}
         {/* Header */}
+        <BackButtons backTitle="Modules" title={"Contents"} />
+
         <div className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold text-neutral-900">

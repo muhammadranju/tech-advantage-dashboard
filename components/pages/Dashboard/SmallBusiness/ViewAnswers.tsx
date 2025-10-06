@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import { ClipLoader } from "react-spinners";
+import BackButtons from "../BootCamp/BackButtons";
 
 const SMBViewAnswersPage = () => {
   const router = useRouter();
@@ -147,22 +148,9 @@ const SMBViewAnswersPage = () => {
   };
 
   return (
-    <div className="w-full mx-auto p-8  rounded-xl">
+    <div className="w-full mx-auto p-8  rounded-xl ">
       <div className="flex gap-8 justify-between mb-8">
-        <div className="flex gap-8 ">
-          <button
-            onClick={() => router.back()}
-            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-          >
-            Question & Answer
-          </button>
-          {/* </Link> */}
-          <button
-            className={`pb-2 text-lg font-medium border-b-2 border-black`}
-          >
-            Answer Assessment
-          </button>
-        </div>
+        <BackButtons backTitle="Question" title={"Answer"} />
         <Select onValueChange={(value) => setSelectedCategory(value)}>
           <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
             <SelectValue placeholder="Business Overview" />

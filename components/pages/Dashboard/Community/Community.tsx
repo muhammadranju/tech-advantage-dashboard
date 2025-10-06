@@ -70,8 +70,9 @@ const GroupCard = ({ group }: { group: (typeof groups)[0] }) => (
 
 const CommunityPage = () => {
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto p-6">
+    <div className="px-10 mt-5 min-h-screen">
+      <h1 className="text-3xl font-bold  text-black">Community Groups</h1>
+      <div className="mx-auto my-4">
         {/* Create Group Form */}
         <div className="space-y-4">
           <div>

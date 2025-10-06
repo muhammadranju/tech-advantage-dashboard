@@ -188,10 +188,10 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="px-6 mx-auto">
+    <div className="px-10 mt-5 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between px-6">
-        <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+      <div className="flex items-center justify-between ">
+        <h1 className="text-3xl font-bold ">Notifications</h1>
         <Button
           onClick={() => setOpen(true)}
           variant="default"
@@ -202,7 +202,7 @@ const NotificationsPage = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="p-6">
+      <div className=" my-5">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input

@@ -82,7 +82,7 @@ export const ShowVideos = ({ title }: VideoUploadsProps) => {
   );
 
   return (
-    <div className="mx-auto mt-10 space-y-8 bg-white p-6">
+    <div className="mx-auto  space-y-8 bg-white p-6">
       {/* Header */}
       <h1 className="text-3xl font-bold text-gray-900 capitalize">
         {title} Videos

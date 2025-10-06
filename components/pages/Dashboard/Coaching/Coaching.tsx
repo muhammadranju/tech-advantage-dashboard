@@ -173,7 +173,7 @@ const CoachingPage = () => {
   if (error) return <div className="text-red-500 p-6">Error loading data.</div>;
 
   return (
-    <div className="px-10 py-4">
+    <div className="px-10 mt-5 min-h-screen">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading

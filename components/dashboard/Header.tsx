@@ -40,7 +40,7 @@ export function Header() {
   const user = userProfile?.user?.data;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-10 px-10 py-4 bg-neutral/80 backdrop-blur-md border-b border-neutral-200/20 w-full">
+    <header className="fixed top-0 left-0 right-0 z-10 px-10 py-4 bg-neutral/80 backdrop-blur-md border-neutral-200/20 w-full">
       <div className="flex items-center justify-end space-x-4">
         <Link href="/dashboard/notification">
           <button className="bg-transparent hover:bg-neutral-200/80 rounded-full p-2 cursor-pointer transition-colors">
@@ -53,10 +53,14 @@ export function Header() {
             <DropdownMenuTrigger asChild>
               {isLoading ? (
                 <div className="w-8 h-8 flex items-center justify-center">
-                  <ClipLoader color="#9CA3AF" size={20} cssOverride={{ display: 'inline-block' }} />
+                  <ClipLoader
+                    color="#9CA3AF"
+                    size={20}
+                    cssOverride={{ display: "inline-block" }}
+                  />
                 </div>
               ) : (
-                <Avatar className="w-8 h-8 object-cover cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all">
+                <Avatar className="w-10 h-10 object-cover cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all border-2 shadow-lg">
                   <AvatarImage
                     src={
                       user?.image

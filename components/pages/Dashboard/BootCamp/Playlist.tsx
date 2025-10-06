@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 import BackButtons from "./BackButtons";
+import HeaderTitle from "@/components/bootcamp/HeaderTitle";
 
 interface Playlist {
   _id: any;
@@ -61,8 +62,8 @@ function UploadPlaylist() {
   }, [playlistsData]);
 
   return (
-    <div className="mx-auto px-10">
-      <BackButtons backTitle="Bootcamp" title={"Playlists"} />
+    <div className="px-10 mt-5">
+      <HeaderTitle isActive="playlist" />
       {/* Create Playlist Form */}
       <div className="flex justify-between gap-x-10 items-center mb-5">
         <h1 className="text-3xl font-bold text-neutral-900">All Playlists</h1>
@@ -77,7 +78,7 @@ function UploadPlaylist() {
       {/* Video Grid */}
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <VideoCardSkeleton range={8} />
+          <VideoCardSkeleton range={12} />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">

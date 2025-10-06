@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { PiCheckBold, PiPencilFill, PiXBold } from "react-icons/pi";
 import { toast } from "sonner";
+import BackButtons from "../BootCamp/BackButtons";
 
 // Type interfaces based on API data structure
 interface Assessment {
@@ -38,7 +39,7 @@ const AssessmentPage: React.FC = () => {
   const [editData, setEditData] = useState<EditData>({} as EditData);
 
   // Fetch assessments data from API
-  const { data, isLoading, error, refetch } = useGetAssessmentsQuery(null);
+  const { data, error, refetch } = useGetAssessmentsQuery(null);
   const [updateAssessments, { isLoading: isUpdating }] =
     useUpdateAssessmentsMutation();
 
@@ -181,20 +182,11 @@ const AssessmentPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="px-10 mt-5">
       <div className="mx-auto bg-white">
         {/* Navigation Tabs */}
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className="pb-2 text-lg font-medium hover:border-b-2 border-black"
-          >
-            Question & Answer
-          </button>
-          <button className="pb-2 text-lg font-medium border-b-2 border-black">
-            Assessment
-          </button>
-        </div>
+
+        <BackButtons backTitle="Question" title={"Answer"} />
 
         {/* Assessment Cards */}
         <div className="space-y-6">

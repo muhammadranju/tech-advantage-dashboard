@@ -36,7 +36,7 @@ export default function OverviewPage() {
     refetch();
   }, [data?.data?.data.length, cochairingUsersData?.data, refetch]);
   return (
-    <div className="lg:px-10 py-4 space-y-10">
+    <div className="lg:px-10 mt-5 space-y-10">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading

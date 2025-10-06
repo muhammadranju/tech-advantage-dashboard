@@ -33,10 +33,12 @@ import {
   Trash,
   Trash2,
   X,
+  Check,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface Course {
   id: string;
@@ -75,13 +77,33 @@ function CourseCard({
   onEdit,
   onEnter,
   modulesParam,
+  isEditing,
+  onStartEdit,
+  onCancelEdit,
 }: {
   course: Course;
   onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
+  onEdit: (id: string, newTitle: string) => void;
   onEnter: (path: string) => void;
   modulesParam: string | undefined;
+  isEditing: boolean;
+  onStartEdit: (id: string) => void;
+  onCancelEdit: () => void;
 }) {
+  const [editValue, setEditValue] = useState(course.title);
+
+  const handleSave = () => {
+    if (editValue.trim()) {
+      onEdit(course.id, editValue.trim());
+    }
+    onCancelEdit();
+  };
+
+  const handleCancel = () => {
+    setEditValue(course.title);
+    onCancelEdit();
+  };
+
   return (
     <Card className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
       <CardContent className="p-6">
@@ -91,21 +113,56 @@ function CourseCard({
             size="sm"
             onClick={() => onDelete(course.id)}
             className="p-2 h-auto  hover:text-red-600 rounded-full"
+            disabled={isEditing}
           >
             <Trash2 className="w-4 h-4" />
           </Button>
-          <Button
-            variant="ghost"
-            onClick={() => onEdit(course.id)}
-            className="p-2  h-auto  hover:text-gray-600  rounded-full"
-          >
-            <PiPencilFill className="w-10 h-10" />
-          </Button>
+          {!isEditing ? (
+            <Button
+              variant="ghost"
+              onClick={() => onStartEdit(course.id)}
+              className="p-2  h-auto  hover:text-gray-600  rounded-full"
+            >
+              <PiPencilFill className="w-10 h-10" />
+            </Button>
+          ) : (
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                onClick={handleCancel}
+                className="p-2 h-auto hover:text-red-600 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleSave}
+                className="p-2 h-auto hover:text-green-600 rounded-full"
+              >
+                <Check className="w-5 h-5" />
+              </Button>
+            </div>
+          )}
         </div>
 
-        <h3 className="text-lg font-medium text-gray-900 mb-4 leading-tight">
-          {course.title}
-        </h3>
+        {isEditing ? (
+          <div className="mb-4">
+            <Input
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              className="text-lg font-medium"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSave();
+                if (e.key === "Escape") handleCancel();
+              }}
+            />
+          </div>
+        ) : (
+          <h3 className="text-lg font-medium text-gray-900 mb-4 leading-tight">
+            {course.title}
+          </h3>
+        )}
 
         <div className="flex items-center gap-4 mb-6 text-sm text-gray-600">
           <IconText Icon={Play}>{course.videos} Videos</IconText>
@@ -117,6 +174,7 @@ function CourseCard({
             onEnter(`/dashboard/courses/${modulesParam}/${course.id}`)
           }
           className="w-full bg-black hover:bg-gray-800 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+          disabled={isEditing}
         >
           Enter Module
           <ArrowRight className="w-4 h-4" />
@@ -135,45 +193,49 @@ function AddModuleDialog({
   setOpen: (v: boolean) => void;
   onAdd: (title: string) => void;
 }) {
+  const [title, setTitle] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (title.trim()) {
+      onAdd(title.trim());
+      setTitle("");
+      setOpen(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const title = (e.target as any).title?.value?.trim();
-          if (title) onAdd(title);
-          setOpen(false);
-        }}
-      >
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle>Add Module</DialogTitle>
-          </DialogHeader>
+      <DialogContent className="sm:max-w-[525px]">
+        <DialogHeader>
+          <DialogTitle>Add Module</DialogTitle>
+        </DialogHeader>
 
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="title">Module Title</Label>
-              <Input
-                id="title"
-                name="title"
-                placeholder="Enter your module title"
-              />
-            </div>
+        <div className="grid gap-4">
+          <div className="grid gap-3">
+            <Label htmlFor="title">Module Title</Label>
+            <Input
+              id="title"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter your module title"
+            />
           </div>
+        </div>
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">
-                <X />
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit">
-              <Save /> Add Module
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline" onClick={() => setTitle("")}>
+              <X />
+              Cancel
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+          </DialogClose>
+          <Button onClick={handleSubmit}>
+            <Save /> Add Module
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }
@@ -218,6 +280,7 @@ function ConfirmDeleteDialog({
 export default function ModulesPage() {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [openAddModule, setOpenAddModule] = useState(false);
   const { modules } = useParams();
   const router = useRouter();
@@ -240,24 +303,23 @@ export default function ModulesPage() {
     setCourses((prev) => [newCourse, ...prev]);
   };
 
-  const handleEditCourse = (id: string) => console.log("Edit course:", id);
+  const handleEditCourse = (id: string, newTitle: string) => {
+    setCourses((prev) =>
+      prev.map((course) =>
+        course.id === id ? { ...course, title: newTitle } : course
+      )
+    );
+  };
+
+  const handleStartEdit = (id: string) => setEditingId(id);
+  const handleCancelEdit = () => setEditingId(null);
 
   return (
     <div className="min-h-screen">
       <div className=" mx-auto px-10">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.push("/dashboard/courses")}
-            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-          >
-            Courses
-          </button>
-          <button
-            className={`pb-2 text-lg font-medium  border-b-2 border-black`}
-          >
-            Modules
-          </button>
-        </div>
+        {/* Navigation Tabs */}
+        {/* Header */}
+        <BackButtons backTitle="Courses" title={"Modules"} />
 
         <div className="flex justify-end mb-8">
           <Button
@@ -278,6 +340,9 @@ export default function ModulesPage() {
               onEdit={handleEditCourse}
               onEnter={(path) => router.push(path)}
               modulesParam={modules as string}
+              isEditing={editingId === course.id}
+              onStartEdit={handleStartEdit}
+              onCancelEdit={handleCancelEdit}
             />
           ))}
         </div>

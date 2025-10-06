@@ -31,7 +31,6 @@ export function LoginForm() {
   const [login, { isLoading }] = useLoginMutation();
 
   const dispatch = useAppDispatch();
-
   const validateForm = () => {
     let isValid = true;
 

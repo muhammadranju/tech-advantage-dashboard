@@ -58,10 +58,10 @@ const SuccessPathPage = () => {
     useCreateSuccessPathQuizQuestionAnswerMutation();
   useCreateSuccessPathQuizQuestionAnswerMutation();
 
-  const handelGoToUpload = () => {
-    setActiveTab("upload");
-    router.push("/dashboard/success-path/small-business?q=small-business");
-  };
+  // const handelGoToUpload = () => {
+  //   setActiveTab("upload");
+  //   router.push("/dashboard/success-path/small-business?q=small-business");
+  // };
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, question: e.target.value }));
@@ -111,7 +111,7 @@ const SuccessPathPage = () => {
     }
   };
   return (
-    <div className="px-10 py-4">
+    <div className="px-10 mt-5 min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <StatsCards

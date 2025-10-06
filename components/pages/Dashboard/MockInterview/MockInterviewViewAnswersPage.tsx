@@ -1,21 +1,21 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Save, X, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { PiPencilFill } from "react-icons/pi";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogDescription,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Save, Trash, X } from "lucide-react";
+import { useState } from "react";
+import { PiPencilFill } from "react-icons/pi";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface SurveyOption {
   id: string;
@@ -54,8 +54,6 @@ const MockInterviewViewAnswersPage = () => {
   const [data, setData] = useState<SurveyCard[]>(surveyData || []);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
-
-  const router = useRouter();
 
   const handleEdit = (card: SurveyCard) => {
     setEditingCardId(card.id);
@@ -108,17 +106,7 @@ const MockInterviewViewAnswersPage = () => {
 
   return (
     <div className="w-full mx-auto p-8 rounded-xl">
-      <div className="flex gap-8 mb-5">
-        <button
-          onClick={() => router.back()}
-          className="pb-2 text-lg font-medium hover:border-b-2 border-black"
-        >
-          Quiz
-        </button>
-        <button className="pb-2 text-lg font-medium border-b-2 border-black">
-          Answers
-        </button>
-      </div>
+      <BackButtons backTitle="Quiz" title={"Answers"} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {data.map((card) => (

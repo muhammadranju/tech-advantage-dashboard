@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TechAdvantage - Dashboard Overview",
+  title: "Dashboard Overview - TechAdvantage",
   description: "Dashboard Overview",
 };
 

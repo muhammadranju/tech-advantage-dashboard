@@ -2,7 +2,7 @@ import BootCamp from "@/components/pages/Dashboard/BootCamp/BootCamp";
 const page = () => {
   return (
     <>
-      <title>TechAdvantage - Boot Camp Upload Videos</title>
+      <title>Boot Camp Upload Videos - TechAdvantage</title>
       <BootCamp />
     </>
   );

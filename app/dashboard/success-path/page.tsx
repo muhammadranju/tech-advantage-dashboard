@@ -4,7 +4,7 @@ import SuccessPathPage from "@/components/pages/Dashboard/SuccessPath/SuccessPat
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Success Path</title>
+      <title>Success Path - TechAdvantage</title>
       <SuccessPathPage />
     </div>
   );

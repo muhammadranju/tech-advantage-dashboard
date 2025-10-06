@@ -3,7 +3,7 @@ import ViewCommunity from "@/components/pages/Dashboard/Community/ViewCommunity"
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Community View Community</title>
+      <title>View Community - TechAdvantage</title>
       <ViewCommunity />
     </div>
   );

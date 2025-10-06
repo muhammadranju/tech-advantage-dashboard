@@ -10,7 +10,7 @@ const CommentUpdatePage = () => {
   };
   return (
     <div className="space-y-2">
-      <title>TechAdvantage - Mock Interview View Answers</title>
+      <title>Mock Interview View Answers - TechAdvantage</title>
       <h1 className="text-xl font-semibold">Assessment Comment Box</h1>
 
       {/* Textarea with Tailwind width classes */}

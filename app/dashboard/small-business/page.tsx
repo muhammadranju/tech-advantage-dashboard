@@ -3,7 +3,7 @@ import SmallBusinessPage from "@/components/pages/Dashboard/SmallBusiness/SmallB
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Small Business</title>
+      <title>Small Business - TechAdvantage</title>
       <SmallBusinessPage />
     </div>
   );

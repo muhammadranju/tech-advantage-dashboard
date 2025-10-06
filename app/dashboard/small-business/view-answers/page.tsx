@@ -3,7 +3,7 @@ import SMBViewAnswersPage from "@/components/pages/Dashboard/SmallBusiness/ViewA
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Small Business View Answers</title>
+      <title>Small Business View Answers - TechAdvantage</title>
       <SMBViewAnswersPage />
     </div>
   );

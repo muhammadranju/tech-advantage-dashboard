@@ -3,7 +3,7 @@ import ModulesPage from "@/components/pages/Dashboard/Course/ModulesPage";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Course</title>
+      <title>Modules - TechAdvantage</title>
       <ModulesPage />
     </div>
   );

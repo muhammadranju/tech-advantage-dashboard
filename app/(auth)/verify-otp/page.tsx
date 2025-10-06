@@ -5,7 +5,7 @@ import VerifyOTP from "@/components/pages/auth/VerifyOTP";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Verify OTP</title>
+      <title>Verify OTP - TechAdvantage</title>
       <VerifyOTP />
     </div>
   );

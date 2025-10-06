@@ -3,7 +3,7 @@ import ForgotPassword from "@/components/pages/auth/ForgotPasswordPage";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Forgot Password</title>
+      <title>Forgot Password - TechAdvantage</title>
       <ForgotPassword />
     </div>
   );

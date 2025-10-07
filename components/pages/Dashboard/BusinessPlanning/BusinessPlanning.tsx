@@ -11,29 +11,20 @@ import { useQuestions } from "./components/useQuestions";
 import {
   useCreateBusinessPlanLongQuestionAnswerMutation,
   useCreateBusinessPlanQuizQuestionAnswerMutation,
+  useGetBusinessPlanLongQuestionAnswerQuery,
+  useGetBusinessPlanQuizQuestionAnswerQuery,
 } from "@/lib/redux/features/api/businessPlanning/businessPlanningApiSlice";
 import { toast } from "sonner";
 import { LongQuestionForm } from "./components/LongQuestionForm";
 
-const stats: Stat[] = [
-  {
-    title: "Total Quiz Questions",
-    value: 8642,
-    changeType: "positive" as const,
-    icon: MdOutlineQuiz,
-  },
-  {
-    title: "Total Long Questions",
-    value: 82,
-    changeType: "positive" as const,
-    icon: MdOutlineQuiz,
-  },
-];
-
 const BusinessPlanning: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("quiz");
   const [longAnswer, setLongAnswer] = useState("");
-
+  const { data: answers, refetch: refetchQuiz } =
+    useGetBusinessPlanQuizQuestionAnswerQuery(null);
+  const { data: longQuestionAnswerData, refetch: refetchLong } =
+    useGetBusinessPlanLongQuestionAnswerQuery(null);
+  console.log(answers);
   // create quiz question answer
   const [createBusinessPlanQuizQuestionAnswer, { isLoading: isCreating }] =
     useCreateBusinessPlanQuizQuestionAnswerMutation();
@@ -50,6 +41,20 @@ const BusinessPlanning: React.FC = () => {
     resetQuestions,
     isCurrentQuestionValid,
   } = useQuestions();
+  const stats: Stat[] = [
+    {
+      title: "Total Quiz Questions",
+      value: answers?.data?.length || 0,
+      changeType: "positive" as const,
+      icon: MdOutlineQuiz,
+    },
+    {
+      title: "Total Long Questions",
+      value: longQuestionAnswerData?.data?.length || 0,
+      changeType: "positive" as const,
+      icon: MdOutlineQuiz,
+    },
+  ];
 
   const handleSave = useCallback(async () => {
     if (activeTab === "quiz") {
@@ -102,7 +107,7 @@ const BusinessPlanning: React.FC = () => {
   ]);
 
   return (
-     <div className="px-10 mt-5 min-h-screen">
+    <div className="px-10 mt-5 min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
           <StatsCards stat={stat} key={stat.title} />

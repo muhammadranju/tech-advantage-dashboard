@@ -4,7 +4,8 @@ import BackButton from "@/components/logo/BackButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { MessageCircle, MoreHorizontal } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MessageCircle, MoreHorizontal, Send } from "lucide-react";
 import Image from "next/image";
 import { GrGroup } from "react-icons/gr";
 
@@ -59,8 +60,6 @@ function ReplyThread() {
       <BackButton backText="Back to community" />
       <div className="mx-auto px-10">
         {/* Header */}
-     
-
         {/* Main Post */}
         <Card className="w-full shadow-none border-none">
           <CardHeader>
@@ -129,7 +128,6 @@ function ReplyThread() {
             </div>
           </CardContent>
         </Card>
-
         {/* Replies */}
         <div className="space-y-4 mt-4 ml-10">
           {replies.map((reply) => (
@@ -189,6 +187,15 @@ function ReplyThread() {
               </CardContent>
             </Card>
           ))}
+          <div className="flex items-center justify-end mt-4 space-x-2">
+            <Input placeholder="Reply here..." />
+            <Button
+              variant="default"
+              className="h-8 px-6 py-6 text-white hover:bg-neutral-800"
+            >
+              <Send /> Reply
+            </Button>
+          </div>
         </div>
       </div>
     </>

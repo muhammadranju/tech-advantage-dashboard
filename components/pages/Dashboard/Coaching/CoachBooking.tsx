@@ -19,6 +19,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useState } from "react";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface TimeSlot {
   id: string;
@@ -454,17 +455,7 @@ const CoachBooking = () => {
   return (
     <div className="px-10 mt-5 min-h-screen">
       <div className="">
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => window.history.back()}
-            className="pb-2 cursor-pointer text-lg font-medium hover:border-b-2 border-black"
-          >
-            All Applications
-          </button>
-          <button className="pb-2 cursor-pointer text-lg font-medium border-b-2 border-black">
-            Coach Management
-          </button>
-        </div>
+        <BackButtons backTitle="Applications" title={"Coach Booking"} />
 
         {/* Add New Coach */}
         <Card className="mb-6">

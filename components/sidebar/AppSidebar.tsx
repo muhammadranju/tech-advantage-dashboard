@@ -26,6 +26,7 @@ import {
   ChartGantt,
   CircleDollarSign,
   Handshake,
+  MessagesSquare,
 } from "lucide-react";
 
 import { CgLogOut } from "react-icons/cg";
@@ -79,6 +80,11 @@ const NAV_MAIN: NavItem[] = [
     title: "Mock Interview",
     url: "/dashboard/mock-interview",
     icon: <PiStudentBold />,
+  },
+  {
+    title: "Feedback",
+    url: "/dashboard/feedback",
+    icon: <MessagesSquare />,
   },
   { title: "Notification", url: "/dashboard/notification", icon: <BellRing /> },
   {

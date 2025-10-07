@@ -39,7 +39,7 @@ const AssessmentPage: React.FC = () => {
   const [editData, setEditData] = useState<EditData>({} as EditData);
 
   // Fetch assessments data from API
-  const { data, error, refetch } = useGetAssessmentsQuery(null);
+  const { data, error, refetch, isLoading } = useGetAssessmentsQuery(null);
   const [updateAssessments, { isLoading: isUpdating }] =
     useUpdateAssessmentsMutation();
 
@@ -190,7 +190,7 @@ const AssessmentPage: React.FC = () => {
 
         {/* Assessment Cards */}
         <div className="space-y-6">
-          {assessments.length === 0 ? (
+          {isLoading ? (
             <>
               <AssessmentCardSkeleton />
               <AssessmentCardSkeleton />

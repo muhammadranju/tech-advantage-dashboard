@@ -1,36 +1,37 @@
 "use client";
-import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FileText, ListCollapseIcon, Plus, Save } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import { useCreateMockInterviewMutation } from "@/lib/redux/features/api/mockInterview/mockInterviewSliceApi";
+import { ListCollapseIcon, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { AssessmentComment } from "./AssessmentComment";
 
 interface Answer {
   text: string;
-  score: number | "";
+  score: number | string;
 }
 
-interface Question {
-  question: string;
-  answers: Answer[];
-}
+// interface Question {
+//   question: string;
+//   answers: Answer[];
+// }
 
 type TabType = "quiz" | "assessment";
 
 const MockInterview = () => {
   const [activeTab, setActiveTab] = useState<TabType>("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
 
   // Single question with multiple answers
   const [question, setQuestion] = useState<string>("");
   const [answers, setAnswers] = useState<Answer[]>([
-    { text: "", score: "" },
-    { text: "", score: "" },
-    { text: "", score: "" },
+    { text: "", score: "3" },
+    { text: "", score: "2" },
+    { text: "", score: "1" },
   ]);
-
+  const [createMockInterview, { isLoading }] = useCreateMockInterviewMutation();
   const router = useRouter();
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,14 +57,6 @@ const MockInterview = () => {
     setAnswers(updatedAnswers);
   };
 
-  const handleNextQuestion = () => {
-    // Not needed for single question
-  };
-
-  const handlePreviousQuestion = () => {
-    // Not needed for single question
-  };
-
   const isQuestionValid = () => {
     return (
       question.trim() !== "" &&
@@ -71,29 +64,38 @@ const MockInterview = () => {
     );
   };
 
-  const handleAddAnswer = () => {
-    setAnswers([...answers, { text: "", score: "" }]);
-  };
-
-  const handleRemoveAnswer = (index: number) => {
-    if (answers.length > 1) {
-      const updatedAnswers = answers.filter((_, i) => i !== index);
-      setAnswers(updatedAnswers);
-    }
-  };
-
-  const handleSave = () => {
+  const handleSave = async () => {
     // Format as a single object with question and answers array
-    const formattedQuestion = {
-      question: question,
-      answers: answers
-        .filter((a) => a.text.trim() !== "")
-        .map((a) => ({
-          text: a.text,
-          score: a.score === "" ? 0 : a.score,
-        })),
-    };
-    console.log(formattedQuestion);
+
+    try {
+      const formattedQuestion = {
+        question: question,
+        answers: answers
+          .filter((a) => a.text.trim() !== "")
+          .map((a) => ({
+            text: a.text,
+            score: a.score === "" ? 0 : a.score,
+          })),
+      };
+      console.log(formattedQuestion);
+
+      const result = await createMockInterview({
+        body: formattedQuestion,
+      }).unwrap();
+
+      if (result.success) {
+        toast.success("Question saved successfully");
+        setQuestion("");
+        setAnswers([
+          { text: "", score: "3" },
+          { text: "", score: "2" },
+          { text: "", score: "1" },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to save question. Please try again.");
+    }
     // Here you would send formattedQuestion to your API
   };
 
@@ -153,40 +155,19 @@ const MockInterview = () => {
                     className="py-6"
                   />
                 </div>
-                <div className="w-24">
+                <div className="w-16">
                   <label className="block text-lg font-medium mb-2">
                     Score
                   </label>
                   <Input
                     type="number"
-                    placeholder="Score"
                     value={answer.score}
                     onChange={(e) => handleAnswerScoreChange(e, index)}
                     className="py-6"
                   />
                 </div>
-                {answers.length > 1 && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemoveAnswer(index)}
-                    className="mt-8"
-                  >
-                    ✕
-                  </Button>
-                )}
               </div>
             ))}
-
-            {/* Add Answer Button */}
-            <Button
-              variant="outline"
-              onClick={handleAddAnswer}
-              className="w-full"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Answer
-            </Button>
 
             {/* Action Buttons */}
             <div className="flex gap-4 pt-4">
@@ -203,9 +184,17 @@ const MockInterview = () => {
               <Button
                 className="flex-1 py-6 hover:bg-neutral-800"
                 onClick={handleSave}
-                disabled={!isQuestionValid()}
+                disabled={!isQuestionValid() || isLoading}
               >
-                <Save /> Save
+                {isLoading ? (
+                  <>
+                    <Spinner className="size-6" /> Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save /> Save
+                  </>
+                )}
               </Button>
             </div>
           </div>

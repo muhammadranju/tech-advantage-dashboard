@@ -5,14 +5,14 @@ import { selectIsAuthenticated } from "@/lib/redux/features/auth/authSlice";
 
 const RedirectIfAuthenticated: React.FC = () => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const queryParams = new URLSearchParams(window.location.search);
+  const queryParams = new URLSearchParams(window?.location.search);
   const redirect = queryParams.get("redirect");
 
   const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(`/${redirect?.slice(1) as string}`);
+      router.push(`/${(redirect?.slice(1) as string) || "dashboard/overview"}`);
     }
   }, [isAuthenticated, router, redirect]);
 

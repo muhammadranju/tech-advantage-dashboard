@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-
+import { NumberTicker } from "@/components/ui/number-ticker";
 interface StatsCardsProps {
   stat: {
     title: string;
@@ -28,7 +28,7 @@ export function StatsCards({ stat }: StatsCardsProps) {
         </div>
         <div>
           <p className="text-lg font-bold ">{stat.title}</p>
-          <p className="text-2xl font-bold">{stat.value}</p>
+          <NumberTicker value={stat.value} className="text-2xl font-bold" />
         </div>
       </CardContent>
     </Card>

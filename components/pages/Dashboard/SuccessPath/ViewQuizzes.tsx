@@ -156,9 +156,7 @@ const QuizzesPage = () => {
         <BackButtons backTitle="Question" title={"Answer"} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <CardSkeleton key={i} />
-          ))}
+          <CardSkeleton />
         </div>
       </div>
     );

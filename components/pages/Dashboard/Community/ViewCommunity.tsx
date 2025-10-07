@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { MessageCircle, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { GrGroup } from "react-icons/gr";
 
 const posts = [
@@ -94,7 +95,13 @@ const FeaturedGroupCard = ({
   </div>
 );
 
-const PostCard = ({ post }: { post: (typeof posts)[0] }) => (
+const PostCard = ({
+  post,
+  communityID,
+}: {
+  post: (typeof posts)[0];
+  communityID: string;
+}) => (
   <>
     <Card className="w-full shadow-none border-none">
       <CardHeader>
@@ -150,7 +157,7 @@ const PostCard = ({ post }: { post: (typeof posts)[0] }) => (
         )}
 
         <div className="flex items-center space-x-2 text-neutral-500">
-          <Link href={`/dashboard/community/view-community/${post.id}`}>
+          <Link href={`/dashboard/community/${communityID}/${post.id}`}>
             <Button
               variant="ghost"
               size="sm"
@@ -167,6 +174,8 @@ const PostCard = ({ post }: { post: (typeof posts)[0] }) => (
 );
 
 export default function ViewCommunity() {
+  const { community } = useParams();
+
   return (
     <>
       <BackButton backText="Back to Group" />
@@ -183,7 +192,11 @@ export default function ViewCommunity() {
 
         <div className="space-y-4">
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard
+              key={post.id}
+              post={post}
+              communityID={community as string}
+            />
           ))}
         </div>
       </div>

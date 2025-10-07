@@ -203,7 +203,7 @@ const CoachingPage = () => {
               onClick={() => router.push("/dashboard/coaching/coach")}
               className="pb-2 text-sm font-medium cursor-pointer hover:border-b-2 border-black"
             >
-              Create Coach
+              Coach Booking
             </button>
           </div>
 

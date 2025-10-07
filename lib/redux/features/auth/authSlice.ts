@@ -61,6 +61,17 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      state.isAuthenticated = false;
+      state.isLoading = false;
+      state.userEmail = "";
+      state.authToken = "";
+      Cookies.remove("token");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      window.location.href = `/login?redirect= ${window.location.pathname.slice(
+        1
+      )}`;
 
       // Clear localStorage
       if (typeof window !== "undefined") {
@@ -87,12 +98,17 @@ const authSlice = createSlice({
       Cookies.remove("token");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+
       state.isLoading = false;
       state.user = null;
       state.token = null;
       state.authToken = null;
       state.isAuthenticated = false;
-      window.location.href = "/login";
+
+      // window.location.href = "/login?logout=true";
+      window.location.href = `/login?redirect=${window.location.pathname.slice(
+        1
+      )}`;
     },
   },
 });

@@ -32,8 +32,9 @@ export const apiSlice = createApi({
     "Contents",
     "MockInterview",
     "Notifications",
+
     "Community",
-    "Terms",
+    "Terms-conditions",
   ],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   endpoints: (builder) => ({}),

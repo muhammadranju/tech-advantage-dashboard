@@ -1,17 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-interface Question {
-  question: string;
-}
-
-type TabType = "quiz" | "upload";
-type Category =
-  | "Aspiring Entrepreneur"
-  | "Small Business"
-  | "Looking to Get Into Tech";
-
-import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,29 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Category, Question, TabType } from "@/interface/successPath.interface";
 import { useCreateSuccessPathQuizQuestionAnswerMutation } from "@/lib/redux/features/api/successPath/successPathSliceApi";
-import { FileText, ListCollapse, Save } from "lucide-react";
+import { ListCollapse, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { SiQuizlet } from "react-icons/si";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
-
-const stats = [
-  {
-    title: "Total Participant",
-    value: 8642,
-    changeType: "positive" as const,
-    icon: FileText,
-  },
-  {
-    title: "Total Quizzes",
-    value: 12,
-    changeType: "positive" as const,
-    icon: SiQuizlet,
-  },
-];
 
 const SuccessPathPage = () => {
   const router = useRouter();
@@ -56,26 +30,10 @@ const SuccessPathPage = () => {
   });
   const [createSuccessPathQuizQuestionAnswer, { isLoading: isCreating }] =
     useCreateSuccessPathQuizQuestionAnswerMutation();
-  useCreateSuccessPathQuizQuestionAnswerMutation();
-
-  // const handelGoToUpload = () => {
-  //   setActiveTab("upload");
-  //   router.push("/dashboard/success-path/small-business?q=small-business");
-  // };
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, question: e.target.value }));
   };
-
-  // const handleAnswerChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>
-  //   // answerIndex: keyof Question["answers"]
-  // ) => {
-  //   // setQuestion((prev) => ({
-  //   //   ...prev,
-  //   //   answers: { ...prev.answers, [answerIndex]: e.target.value },
-  //   // }));
-  // };
 
   // Check if all fields for the current question are filled
   const isQuestionValid = () => {
@@ -83,9 +41,6 @@ const SuccessPathPage = () => {
   };
 
   const handleSave = async () => {
-    // console.log(question.question);
-    // console.log(selectedCategory);
-
     try {
       const result = await createSuccessPathQuizQuestionAnswer({
         body: {
@@ -107,28 +62,14 @@ const SuccessPathPage = () => {
           error?.data.message + "Provide a valid question at least 3 questions"
         );
       }
-      // toast.error("Something went wrong");
     }
   };
   return (
     <div className="px-10 mt-5 min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards
-            stat={{
-              title: stat.title,
-              value: stat.value,
-              changeType: stat.changeType,
-              icon: stat.icon,
-            }}
-            key={stat.title}
-          />
-        ))}
-      </div>
-
-      <div className="mx-auto bg-white rounded-lg border p-6 mt-16">
+      <h1 className="text-3xl font-bold text-black">Success Path</h1>
+      <div className="mx-auto bg-white rounded-lg border p-6 my-5 pb-16">
         {/* Tab Navigation */}
-        <div className="flex justify-between">
+        <div className="flex justify-between ">
           <div className="flex gap-8 mb-8">
             <button
               onClick={() => setActiveTab("quiz")}
@@ -183,29 +124,31 @@ const SuccessPathPage = () => {
           </div>
 
           {/* Answer Sections */}
-          {/* <div>
-            <label className="block text-lg font-medium mb-3">
-              1.Yes (User will get 1 mark)
-            </label>
-            <Input
-              placeholder="Enter Answer"
-              // value={question.answers.answer1}
-              // onChange={(e) => handleAnswerChange(e, "answer1")}
-              className="py-6"
-            />
-          </div>
+          <div className="flex gap-4 flex-row">
+            <div className="flex-1">
+              <label className="block text-lg font-medium mb-3">
+                1.Yes (User will get 1 mark)
+              </label>
+              <Input
+                placeholder="Enter Answer"
+                className="py-6"
+                disabled
+                defaultValue={"Yes"}
+              />
+            </div>
 
-          <div>
-            <label className="block text-lg font-medium mb-3">
-              1.Yes (User will get 0 mark)
-            </label>
-            <Input
-              placeholder="Enter Answer"
-              // value={question.answers.answer2}
-              // onChange={(e) => handleAnswerChange(e, "answer2")}
-              className="py-6"
-            />
-          </div> */}
+            <div className="flex-1">
+              <label className="block text-lg font-medium mb-3">
+                2. No (User will get 0 mark)
+              </label>
+              <Input
+                placeholder="Enter Answer"
+                className="py-6"
+                disabled
+                defaultValue={"No"}
+              />
+            </div>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex gap-4">

@@ -21,7 +21,7 @@ const TermsConditions = () => {
   const [showEditor, setShowEditor] = useState(true);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
 
-  const { data: termsData, isLoading } = useGetTermsQuery(null);
+  const { data: termsData } = useGetTermsQuery(null);
 
   useEffect(() => {
     if (termsData?.data?.length > 0) {

@@ -1,4 +1,5 @@
 "use client";
+import Pagination from "@/components/pagination/Pagination";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,6 +56,18 @@ const notifications: NotificationItem[] = [
   },
   {
     id: "5",
+    type: "request",
+    message: 'User "robin_dev23" has submitted a request to review the app.',
+    timestamp: "Yesterday",
+  },
+  {
+    id: "6",
+    type: "request",
+    message: 'User "robin_dev23" has submitted a request to review the app.',
+    timestamp: "Yesterday",
+  },
+  {
+    id: "7",
     type: "request",
     message: 'User "robin_dev23" has submitted a request to review the app.',
     timestamp: "Yesterday",
@@ -177,15 +190,28 @@ const NotificationsPage = () => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log({ title, body });
-    setOpen(false);
     toast.success("Notification sent successfully!");
     setTitle("");
     setBody("");
+    setOpen(false);
   };
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
+  const paginatedNotifications = notifications.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
 
   return (
     <div className="px-10 mt-5 min-h-screen">
@@ -214,10 +240,18 @@ const NotificationsPage = () => {
 
       {/* Notifications List */}
       <div>
-        {notifications.map((n) => (
+        {paginatedNotifications.map((n) => (
           <NotificationRow key={n.id} notification={n} />
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       {/* Notification Dialog */}
       <NotificationDialog

@@ -1,16 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import CardSkeleton from "@/components/skeletons/CardSkeleton";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +11,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SurveyCard } from "@/interface/assessments.interface";
 import {
   useGetQuizAnswersQuery,
@@ -28,33 +28,44 @@ import {
   useQuizUpdateSmallBusinessQuestionAnswerMutation,
 } from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
 import { Save, Trash, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
-import { toast } from "sonner";
 import { ClipLoader } from "react-spinners";
+import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
 
 const SMBViewAnswersPage = () => {
-  const router = useRouter();
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("business-overview");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [quizUpdateSmallBusinessQuestionAnswer, { isLoading: isUpdating }] =
     useQuizUpdateSmallBusinessQuestionAnswerMutation();
   const [quizDeleteSmallBusinessQuestionAnswer] =
     useQuizDeleteSmallBusinessQuestionAnswerMutation();
 
-  const { data: quizAnswers, isLoading } = useGetQuizAnswersQuery({
+  const {
+    data: quizAnswers,
+    isLoading,
+    refetch,
+  } = useGetQuizAnswersQuery({
     category: selectedCategory,
   });
   const [data, setData] = useState(quizAnswers?.data || []);
 
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  const paginatedData =
+    data?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) ||
+    [];
+
   useEffect(() => {
     setData(quizAnswers?.data || []);
-  }, [quizAnswers?.data]);
+    setCurrentPage(1);
+    refetch();
+  }, [quizAnswers?.data, refetch]);
 
   const handleEdit = (card: SurveyCard) => {
     setEditingCardId(card._id);
@@ -147,6 +158,22 @@ const SMBViewAnswersPage = () => {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   return (
     <div className="w-full mx-auto p-8  rounded-xl ">
       <div className="flex gap-8 justify-between mb-8">
@@ -185,7 +212,7 @@ const SMBViewAnswersPage = () => {
             <CardSkeleton />
           </>
         ) : (
-          data?.map((card: SurveyCard) => (
+          paginatedData.map((card: SurveyCard) => (
             <Card
               key={card._id}
               className="border border-gray-200 group hover:shadow-md transition-shadow"
@@ -306,6 +333,34 @@ const SMBViewAnswersPage = () => {
           ))
         )}
       </div>
+
+      {!isLoading && totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <Button
+            variant="outline"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

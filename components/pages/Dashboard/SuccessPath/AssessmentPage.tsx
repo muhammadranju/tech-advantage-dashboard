@@ -125,45 +125,7 @@ export default function AssessmentPage() {
       console.log(error);
       toast.error("Failed to update assessment. Please try again.");
     }
-
-    // if (editForm && editingId) {
-    //   setAssessments(
-    //     assessments.map((a) => (a._id === editingId ? editForm : a))
-    //   );
-    //   console.log("Saved data:", editForm); // Only logs the edited item
-    //   setEditingId(null);
-    //   setEditForm(null);
-    // }
   };
-
-  // const handleDelete = async (): Promise<void> => {
-  //   try {
-  //     const result = await deleteSuccessPathAssessmentQuestionAnswer({
-  //       id: deleteDialogId,
-  //       category: selectedCategory,
-  //     }).unwrap();
-
-  //     if (result.success) {
-  //       setAssessments(assessments.filter((a) => a._id !== deleteDialogId));
-  //       if (editingId === deleteDialogId) {
-  //         setEditingId(null);
-  //         setEditForm(null);
-  //       }
-  //       setDeleteDialogId(null);
-  //       toast.success("Assessment deleted successfully");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Failed to delete assessment. Please try again.");
-  //   }
-
-  //   // setAssessments(assessments.filter((a) => a._id !== deleteDialogId));
-  //   // if (editingId === deleteDialogId) {
-  //   //   setEditingId(null);
-  //   //   setEditForm(null);
-  //   // }
-  //   // setDeleteDialogId(null);
-  // };
 
   const updateField = (field: keyof Assessment, value: string): void => {
     if (editForm) {
@@ -217,11 +179,11 @@ export default function AssessmentPage() {
       </div>
 
       {assessments.map((assessment, index) => (
-        <Card key={assessment._id} className="w-full">
+        <Card key={assessment._id} className="w-full mb-5">
           {editingId === assessment._id ? (
             <>
               {/* Edit Mode */}
-              <CardHeader className="flex justify-between items-start">
+              <CardHeader className="flex justify-between items-start ">
                 <div className="flex-1 space-y-3 w-full">
                   <div>
                     <label htmlFor="range" className="text-sm font-medium">

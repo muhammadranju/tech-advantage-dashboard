@@ -7,7 +7,6 @@ import {
   useGetAssessmentsQuery,
   useUpdateAssessmentsMutation,
 } from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
-import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { PiCheckBold, PiPencilFill, PiXBold } from "react-icons/pi";
 import { toast } from "sonner";
@@ -33,7 +32,6 @@ interface EditData {
 }
 
 const AssessmentPage: React.FC = () => {
-  const router = useRouter();
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<EditData>({} as EditData);

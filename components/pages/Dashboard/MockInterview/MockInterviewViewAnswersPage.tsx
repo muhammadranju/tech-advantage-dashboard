@@ -1,4 +1,6 @@
 "use client";
+import Pagination from "@/components/pagination/Pagination";
+import CardSkeleton from "@/components/skeletons/CardSkeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,17 +14,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Save, Trash, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { PiPencilFill } from "react-icons/pi";
-import BackButtons from "../BootCamp/BackButtons";
 import {
   useDeleteMockInterviewMutation,
   useGetMockInterviewQuery,
   useUpdateMockInterviewMutation,
 } from "@/lib/redux/features/api/mockInterview/mockInterviewSliceApi";
-import CardSkeleton from "@/components/skeletons/CardSkeleton";
+import { Save, Trash, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
+import BackButtons from "../BootCamp/BackButtons";
 
 interface SurveyOption {
   _id: string;
@@ -39,12 +40,19 @@ interface SurveyCard {
 const MockInterviewViewAnswersPage = () => {
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: quizAnswers, isLoading } = useGetMockInterviewQuery(null);
   const [data, setData] = useState<SurveyCard[]>(quizAnswers?.data || []);
 
   const [updateMockInterview] = useUpdateMockInterviewMutation();
   const [deleteMockInterview] = useDeleteMockInterviewMutation();
+
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  const paginatedData =
+    data?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) ||
+    [];
 
   const handleEdit = (card: SurveyCard) => {
     setEditingCardId(card._id);
@@ -117,17 +125,27 @@ const MockInterviewViewAnswersPage = () => {
 
   useEffect(() => {
     setData(quizAnswers?.data || []);
+    setCurrentPage(1);
   }, [quizAnswers]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="w-full mx-auto p-8 rounded-xl">
       <BackButtons backTitle="Quiz" title={"Answers"} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {isLoading && <CardSkeleton />}
-
-        {!isLoading &&
-          data?.map((card: SurveyCard) => (
+        {isLoading ? (
+          <>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </>
+        ) : (
+          paginatedData.map((card: SurveyCard) => (
             <Card
               key={card._id}
               className="border border-gray-200 group hover:shadow-md transition-shadow"
@@ -238,8 +256,17 @@ const MockInterviewViewAnswersPage = () => {
                 </>
               )}
             </Card>
-          ))}
+          ))
+        )}
       </div>
+
+      {!isLoading && totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

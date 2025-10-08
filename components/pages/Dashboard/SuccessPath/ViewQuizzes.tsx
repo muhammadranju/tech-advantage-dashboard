@@ -47,6 +47,7 @@ const QuizzesPage = () => {
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: quizData, isLoading } =
     useGetSuccessPathQuizQuestionAnswerQuery({
@@ -60,6 +61,12 @@ const QuizzesPage = () => {
   const [updateSuccessPathQuizQuestionAnswer, { isLoading: isUpdating }] =
     useUpdateSuccessPathQuizQuestionAnswerMutation();
 
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  const paginatedData =
+    data?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) ||
+    [];
+
   const handleEdit = (card: SurveyCard) => {
     setEditingCardId(card._id);
     setEditFormData({ ...card });
@@ -67,21 +74,14 @@ const QuizzesPage = () => {
 
   const handleSave = async () => {
     try {
-      const result = await updateSuccessPathQuizQuestionAnswer({
+      await updateSuccessPathQuizQuestionAnswer({
         body: editFormData,
         category: selectedCategory,
         id: editFormData?._id,
       }).unwrap();
-      console.log(result);
 
-      // if (result.success) {
-      //   setData((prevData) =>
-      //     prevData.map((card) =>
-      //       card._id === editFormData._id ? editFormData : card
-      //     )
-      //   );
       toast.success("Question updated successfully");
-      // }
+
       if (editFormData) {
         setData((prevData) =>
           prevData.map((card) =>
@@ -108,14 +108,6 @@ const QuizzesPage = () => {
       setEditFormData({ ...editFormData, questionText: value });
     }
   };
-
-  // const updateOption = (optionId: string, value: string) => {
-  //   if (editFormData) {
-  //     setEditFormData({
-  //       ...editFormData,
-  //     });
-  //   }
-  // };
 
   const handleDelete = async () => {
     try {
@@ -147,8 +139,25 @@ const QuizzesPage = () => {
   useEffect(() => {
     if (quizData?.data?.questions) {
       setData(quizData.data.questions);
+      setCurrentPage(1);
     }
   }, [quizData?.data?.questions]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -156,6 +165,9 @@ const QuizzesPage = () => {
         <BackButtons backTitle="Question" title={"Answer"} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
           <CardSkeleton />
         </div>
       </div>
@@ -186,7 +198,7 @@ const QuizzesPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {data?.map((card: any) => (
+        {paginatedData?.map((card: any) => (
           <Card
             key={card._id}
             className="border border-gray-200 group hover:shadow-md transition-shadow"
@@ -205,37 +217,15 @@ const QuizzesPage = () => {
                 </CardHeader>
                 <CardContent className="pt-0">
                   <div className="space-y-3 mb-4">
-                    {/* {editFormData?.answers.map((answer, i) => (
+                    {card.answers?.map((answer: any) => (
                       <Input
-                        key={i}
+                        key={answer}
                         value={answer}
-                        onChange={(e) =>
-                          updateOption(answer, e.target.value)
-                        }
-                        placeholder="Enter option text"
-                        className="py-7 px-4 bg-gray-50 rounded-2xl border"
+                        placeholder="Enter question"
+                        className="text-base py-7 font-medium"
+                        disabled
                       />
-                    ))} */}
-                    <CardContent className="pt-0">
-                      <div className="space-y-3">
-                        <div
-                          key={card.answers?.[0]}
-                          className="py-4 px-4 bg-gray-50 rounded-2xl border"
-                        >
-                          {card.answers?.[0]}
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardContent className="pt-0">
-                      <div className="space-y-3">
-                        <div
-                          key={card.answers?.[1]}
-                          className="py-4 px-4 bg-gray-50 rounded-2xl border"
-                        >
-                          {card.answers?.[1]}
-                        </div>
-                      </div>
-                    </CardContent>
+                    ))}
                   </div>
                   <div className="flex gap-2 justify-end">
                     <Button
@@ -290,12 +280,13 @@ const QuizzesPage = () => {
                 <CardContent className="pt-0">
                   <div className="space-y-3">
                     {card.answers?.map((answer: any) => (
-                      <div
+                      <Input
                         key={answer}
-                        className="py-4 px-4 bg-gray-50 rounded-2xl border"
-                      >
-                        {answer}
-                      </div>
+                        value={answer}
+                        placeholder="Enter question"
+                        className="text-base py-7 font-medium"
+                        disabled
+                      />
                     ))}
                   </div>
                 </CardContent>
@@ -304,6 +295,35 @@ const QuizzesPage = () => {
           </Card>
         ))}
       </div>
+
+      {!isLoading && totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <Button
+            variant="outline"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </Button>
+          ))}
+          <Button
+            variant="outline"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
         <AlertDialogContent>

@@ -1,25 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import type React from "react";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/lib/redux/features/api/authApiSlice";
-import { logout } from "@/lib/redux/features/auth/authSlice";
-import { useAppDispatch } from "@/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import LogoComponent from "../logo/Logo";
 import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
-
+import { logout } from "@/lib/redux/features/auth/authSlice";
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,8 +26,15 @@ export function LoginForm() {
   const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
   const [login, { isLoading }] = useLoginMutation();
-
   const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard/overview");
+    }
+  }, [isAuthenticated, router]);
+
   const validateForm = () => {
     let isValid = true;
 

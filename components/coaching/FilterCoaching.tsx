@@ -46,6 +46,7 @@ const FilterCoaching = ({
       const date = parseISO(isoDate);
       return format(date, "MM/dd/yyyy");
     } catch (error) {
+      console.log(error);
       return "Invalid Date";
     }
   };
@@ -61,6 +62,7 @@ const FilterCoaching = ({
         return format(date, "MM/dd/yyyy");
       }
     } catch (error) {
+      console.log(error);
       return "Invalid Date";
     }
   };

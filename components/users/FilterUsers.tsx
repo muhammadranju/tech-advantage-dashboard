@@ -97,6 +97,7 @@ const FilterUsers = ({ users }: any) => {
       const date = parseISO(isoDate);
       return format(date, "MM/dd/yyyy");
     } catch (error) {
+      console.log(error)
       return "Invalid Date";
     }
   };

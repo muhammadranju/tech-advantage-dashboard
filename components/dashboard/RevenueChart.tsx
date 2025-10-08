@@ -29,7 +29,7 @@ export function RevenueChart() {
   const applicantsData = [
     { month: "January", value: 3 },
     { month: "February", value: 2 },
-    { month: "March", value: 4},
+    { month: "March", value: 4 },
     { month: "April", value: 2 },
     ...(dashboardApplicationRate?.data || []),
   ];
@@ -71,8 +71,8 @@ export function RevenueChart() {
             <AreaChart data={applicantsData}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#101828 " stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#6a7282  " stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#262626 " stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#a3a3a3  " stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -80,14 +80,14 @@ export function RevenueChart() {
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                className="text-xs text-gray-500 px-10 mt-10"
+                className="text-xs"
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                className="text-xs  text-gray-500 mr-10"
+                className="text-xs"
                 tickFormatter={(value) => `${value}%`}
-                orientation="right"
+                // orientation="right"
               />
 
               <Tooltip
@@ -95,8 +95,8 @@ export function RevenueChart() {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-black text-white px-3 py-2 rounded text-sm">
-                        {/* <p>{`${totalApplicants} Application Rate`}</p> */}
                         <p>{`${payload[0]?.value?.toLocaleString()} Application Rate`}</p>
+                        <p>{`${payload[0].payload.month}`}</p>
                       </div>
                     );
                   }
@@ -106,8 +106,8 @@ export function RevenueChart() {
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#9CA3AF"
-                strokeWidth={2}
+                stroke="#171717"
+                strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorUsers)"
               />

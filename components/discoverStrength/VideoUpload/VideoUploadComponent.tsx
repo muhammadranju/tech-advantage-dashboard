@@ -55,9 +55,9 @@ export function VideoUploadComponent() {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(e) => {
-              // Handle file selection logic here
-            }}
+            // onChange={(e) => {
+            //   // Handle file selection logic here
+            // }}
           />
         </div>
       </div>

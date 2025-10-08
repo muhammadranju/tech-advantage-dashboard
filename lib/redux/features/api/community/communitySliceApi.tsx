@@ -17,7 +17,7 @@ export const communitySliceApi = apiSlice.injectEndpoints({
 
     getSingleCommunityGroup: builder.query({
       query: ({ groupId }) => ({
-        url: `groups}`,
+        url: `groups/${groupId}`,
         method: "GET",
       }),
       providesTags: ["Community"],

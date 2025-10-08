@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../store";
-import Cookies from "js-cookie";
 import { AuthState, User } from "@/interface/auth.interface";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
+import type { RootState } from "../../store";
 
 // Load initial state from localStorage (if available)
 const loadAuthFromStorage = (): Partial<AuthState> => {
@@ -69,10 +69,7 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("user");
 
-      window.location.href = `/login?redirect= ${window.location.pathname.slice(
-        1
-      )}`;
-
+     
       // Clear localStorage
       if (typeof window !== "undefined") {
         Cookies.remove("token");
@@ -105,10 +102,13 @@ const authSlice = createSlice({
       state.authToken = null;
       state.isAuthenticated = false;
 
-      // window.location.href = "/login?logout=true";
-      window.location.href = `/login?redirect=${window.location.pathname.slice(
-        1
-      )}`;
+      // Only redirect in browser environment
+      if (typeof window !== "undefined") {
+        // window.location.href = "/login?logout=true";
+        window.location.href = `/login?redirect=${window.location.pathname.slice(
+          1
+        )}`;
+      }
     },
   },
 });

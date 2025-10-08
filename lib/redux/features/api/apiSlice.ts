@@ -32,7 +32,6 @@ export const apiSlice = createApi({
     "Contents",
     "MockInterview",
     "Notifications",
-
     "Community",
     "Terms-conditions",
   ],

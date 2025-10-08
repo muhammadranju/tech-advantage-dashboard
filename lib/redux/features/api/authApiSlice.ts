@@ -92,6 +92,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
           dispatch(logout());
           dispatch(apiSlice.util.resetApiState()); // Clear all cached data
         } catch (error) {
+          console.log(error);
           // toast.error("Logout failed");
           // Even if the API call fails, logout locally
           dispatch(logout());

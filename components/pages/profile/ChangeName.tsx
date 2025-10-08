@@ -8,20 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { useUpdateUserNameProfileMutation } from "@/lib/redux/features/api/profile/profileSliceApi";
-import { Save, X } from "lucide-react";
+import { Save } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import Image from "next/image";
 import { DialogTriggerComponent } from "./DialogTriggerComponent";
 
 interface FormFieldProps {

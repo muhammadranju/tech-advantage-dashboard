@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import HeaderTitle from "@/components/bootcamp/HeaderTitle";
 import VideoCardSkeleton from "@/components/skeletons/VideoCardSkeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +21,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
-import BackButtons from "./BackButtons";
-import HeaderTitle from "@/components/bootcamp/HeaderTitle";
 
 interface Playlist {
   _id: any;

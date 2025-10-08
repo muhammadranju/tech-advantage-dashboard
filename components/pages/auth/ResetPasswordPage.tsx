@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ResetPasswordResponse } from "@/interface/auth.interface";
 import { useResetPasswordMutation } from "@/lib/redux/features/api/authApiSlice";
 import { selectAuthToken } from "@/lib/redux/features/auth/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
@@ -16,12 +17,6 @@ import type React from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
-
-interface ResetPasswordResponse {
-  success: boolean;
-  data?: string;
-  message?: string;
-}
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -38,12 +33,16 @@ export default function ResetPassword() {
 
     // Basic password validation
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      if (typeof window !== "undefined") {
+        toast.error("Passwords do not match");
+      }
       return;
     }
 
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+      if (typeof window !== "undefined") {
+        toast.error("Password must be at least 6 characters long");
+      }
       return;
     }
 
@@ -55,41 +54,52 @@ export default function ResetPassword() {
       }).unwrap()) as unknown as ResetPasswordResponse;
 
       if (result.success) {
-        toast.success("Password reset successfully");
-        router.push("/login");
+        if (typeof window !== "undefined") {
+          toast.success("Password reset successfully");
+          router.push("/login");
+        }
       }
 
       console.log("Reset password attempt:", result);
     } catch (error) {
       console.log("Error:", error);
 
-      // Type guard for FetchBaseQueryError
-      if (error && typeof error === "object" && "status" in error) {
-        const apiError = error as FetchBaseQueryError;
+      // Only show toast notifications in browser environment
+      if (typeof window !== "undefined") {
+        // Type guard for FetchBaseQueryError
+        if (error && typeof error === "object" && "status" in error) {
+          const apiError = error as FetchBaseQueryError;
 
-        if (
-          apiError.status === 400 &&
-          apiError.data &&
-          typeof apiError.data === "object" &&
-          "message" in apiError.data
-        ) {
-          const errorData = apiError.data as { message: string };
-          toast.error(errorData.message);
-        } else if (apiError.status === 401) {
-          toast.error("Session expired. Please try again.");
-          router.push("/forgot-password");
-        } else {
-          toast.error("Failed to reset password");
+          if (
+            apiError.status === 400 &&
+            apiError.data &&
+            typeof apiError.data === "object" &&
+            "message" in apiError.data &&
+            typeof window !== "undefined"
+          ) {
+            const errorData = apiError.data as { message: string };
+            toast.error(errorData.message);
+          } else if (apiError.status === 401) {
+            toast.error("Session expired. Please try again.");
+            router.push("/forgot-password");
+          } else {
+            toast.error("Failed to reset password");
+          }
         }
-      }
-      // Type guard for SerializedError
-      else if (error && typeof error === "object" && "message" in error) {
-        const serializedError = error as SerializedError;
-        toast.error(serializedError.message || "Failed to reset password");
-      }
-      // Fallback for unknown errors
-      else {
-        toast.error("An unexpected error occurred");
+        // Type guard for SerializedError
+        else if (
+          error &&
+          typeof error === "object" &&
+          "message" in error &&
+          typeof window !== "undefined"
+        ) {
+          const serializedError = error as SerializedError;
+          toast.error(serializedError.message || "Failed to reset password");
+        }
+        // Fallback for unknown errors
+        else {
+          toast.error("An unexpected error occurred");
+        }
       }
     }
   };

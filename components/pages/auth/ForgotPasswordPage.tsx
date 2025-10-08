@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ForgotPasswordResponse } from "@/interface/auth.interface";
 import { useForgotPasswordMutation } from "@/lib/redux/features/api/authApiSlice";
 import { setUserEmail } from "@/lib/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/lib/redux/hooks";
@@ -19,12 +20,6 @@ import type React from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
-
-interface ForgotPasswordResponse {
-  success: boolean;
-  data?: string;
-  message?: string;
-}
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -68,17 +63,23 @@ export default function ForgotPassword() {
       if (result?.success) {
         dispatch(setUserEmail(email));
         setOpenDialog(true);
-        toast.success("Password reset link sent successfully");
 
-        setTimeout(() => {
-          router.push("/verify-otp");
-          setOpenDialog(false);
-        }, 2000);
+        // Only use browser APIs when in browser environment
+        if (typeof window !== "undefined") {
+          toast.success("Password reset link sent successfully");
+
+          setTimeout(() => {
+            router.push("/verify-otp");
+            setOpenDialog(false);
+          }, 2000);
+        }
       }
     } catch (error) {
       console.log(error);
       // Handle error if needed
-      toast.error("Failed to send password reset link");
+      if (typeof window !== "undefined") {
+        toast.error("Failed to send password reset link");
+      }
     }
   };
 

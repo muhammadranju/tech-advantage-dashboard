@@ -68,3 +68,20 @@ export interface ProtectedRouteProps {
   redirectTo?: string;
   fallback?: React.ReactNode;
 }
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  data?: string;
+  message?: string;
+}
+export interface ResetPasswordResponse {
+  success: boolean;
+  data?: string;
+  message?: string;
+}
+
+export interface VerifyOTPResponse {
+  success: boolean;
+  data?: string;
+  message?: string;
+}

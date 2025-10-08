@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { FileText, Play, Plus, Save, Trash2, X } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import BackButtons from "../BootCamp/BackButtons";

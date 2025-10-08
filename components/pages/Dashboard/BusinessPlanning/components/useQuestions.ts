@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useState, useMemo } from "react";
 import { Question } from "./types";
 // import { Question } from "../types";

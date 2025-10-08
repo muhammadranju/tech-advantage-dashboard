@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, MoreHorizontal, Send } from "lucide-react";
 import Image from "next/image";
-import { GrGroup } from "react-icons/gr";
 
 const mainPost = {
   id: 1,

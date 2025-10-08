@@ -1,130 +1,3 @@
-// /* eslint-disable @next/next/no-img-element */
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// "use client";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { Plus } from "lucide-react";
-// import { GrGroup } from "react-icons/gr";
-
-// import {
-//   useCreateCommunityGroupMutation,
-//   useGetCommunityGroupsQuery,
-// } from "@/lib/redux/features/api/community/communitySliceApi";
-// import Link from "next/link";
-// import { useEffect, useState } from "react";
-// import { MdOutlineCloudUpload } from "react-icons/md";
-// import VideoCardSkeleton from "@/components/skeletons/VideoCardSkeleton";
-// import GroupCardSkeleton from "@/components/skeletons/GroupCardSkeleton";
-
-// const GroupCard = ({ group }: { group: any }) => (
-//   <Link href={`/dashboard/community/${group._id}`} key={group._id}>
-//     <div className="flex flex-col items-center min-w-[150px] mb-2 ">
-//       <img
-//         // src={group.image}
-//         src={
-//           group?.image
-//             ? process.env.NEXT_PUBLIC_BASE_URL + group.image
-//             : group.image
-//         }
-//         alt={group.name}
-//         className="w-full h-40 object-cover rounded-lg shadow-md border p-1"
-//       />
-//       <div className="mt-2 flex items-center">
-//         <span className="text-xl mr-1">
-//           <GrGroup />
-//         </span>
-//         <span className="text-base font-semibold">{group.name}</span>
-//       </div>
-//     </div>
-//   </Link>
-// );
-
-// const CommunityPage = () => {
-//   const [formData, setFormData] = useState<FormData>(new FormData());
-//   const [groups, setGroups] = useState<any[]>([]);
-//   const [createCommunityGroup] = useCreateCommunityGroupMutation();
-//   const { data: groupsData, isLoading } = useGetCommunityGroupsQuery(null);
-
-//   useEffect(() => {
-//     if (groupsData?.data) {
-//       setGroups(groupsData.data);
-//     }
-//   }, [groupsData]);
-
-//   return (
-//     <div className="px-10 mt-5 min-h-screen">
-//       <h1 className="text-3xl font-bold  text-black">Community Groups</h1>
-//       <div className="mx-auto my-4">
-//         {/* Create Group Form */}
-//         <div className="space-y-4">
-//           <div>
-//             <Label
-//               htmlFor="group-name"
-//               className="block text-sm font-medium text-gray-700"
-//             >
-//               Group Name
-//             </Label>
-//             <Input
-//               id="group-name"
-//               placeholder="Enter your group name"
-//               className="mt-1 py-6"
-//             />
-//           </div>
-
-//           <div>
-//             <Label
-//               htmlFor="group-picture"
-//               className="block text-sm font-medium text-gray-700"
-//             >
-//               Upload Group Picture
-//             </Label>
-//             <div className="mt-1 flex justify-center px-6 py-10 border-2 border-dashed border-gray-300 rounded-md bg-gray-50">
-//               <div className="space-y-1 text-center flex items-center justify-center flex-col">
-//                 <div className="w-20 h-20 bg-blue-500/30 rounded-full flex items-center justify-center">
-//                   <MdOutlineCloudUpload className="text-blue-500 text-6xl" />
-//                 </div>
-//                 <div className="flex text-sm text-gray-600">
-//                   <label
-//                     htmlFor="file-upload"
-//                     className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500"
-//                   >
-//                     <span>Drag & drop files here or click to browse</span>
-//                     <input
-//                       id="file-upload"
-//                       name="file-upload"
-//                       type="file"
-//                       className="sr-only"
-//                     />
-//                   </label>
-//                 </div>
-//                 <p className="text-xs text-gray-500">.jpg, .png up to 500KB</p>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="flex justify-center items-center">
-//             <Button className="w-64 py-6 bg-black text-white">
-//               <Plus /> Create Group
-//             </Button>
-//           </div>
-//         </div>
-
-//         {/* Existing Groups */}
-//         <h2 className="mt-8 text-3xl font-bold">Existing Groups</h2>
-
-//         <div className="grid grid-cols-5 mt-4 space-x-4 overflow-x-auto">
-//           {isLoading && <GroupCardSkeleton range={10} />}
-//           {!isLoading &&
-//             groups.map((group) => <GroupCard key={group.id} group={group} />)}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CommunityPage;
-
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
@@ -144,6 +17,7 @@ import { MdOutlineCloudUpload } from "react-icons/md";
 import GroupCardSkeleton from "@/components/skeletons/GroupCardSkeleton";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import Pagination from "@/components/pagination/Pagination";
 
 const GroupCard = ({ group }: { group: any }) => (
   <Link href={`/dashboard/community/${group._id}`} key={group._id}>
@@ -174,6 +48,7 @@ const CommunityPage = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [groups, setGroups] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [createCommunityGroup] = useCreateCommunityGroupMutation();
   const {
@@ -182,9 +57,17 @@ const CommunityPage = () => {
     refetch,
   } = useGetCommunityGroupsQuery(null);
 
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(groups.length / itemsPerPage);
+  const paginatedGroups = groups.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   useEffect(() => {
     if (groupsData?.data) {
       setGroups(groupsData.data);
+      setCurrentPage(1);
     }
   }, [groupsData]);
 
@@ -260,10 +143,7 @@ const CommunityPage = () => {
       // Create FormData
       const formData = new FormData();
       formData.append("name", groupName.trim());
-      formData.append("image", groupImage); // Make sure "image" matches your API field name
-
-      // If your API expects additional fields, add them here:
-      // formData.append("description", "Group description");
+      formData.append("image", groupImage);
 
       const result = await createCommunityGroup(formData).unwrap();
 
@@ -280,7 +160,6 @@ const CommunityPage = () => {
         if (input) {
           input.value = "";
         }
-
         // Refetch groups to update the list
         refetch();
       }
@@ -290,6 +169,10 @@ const CommunityPage = () => {
     } finally {
       setIsCreating(false);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -411,7 +294,7 @@ const CommunityPage = () => {
         {/* Existing Groups */}
         <h2 className="mt-8 text-3xl font-bold">Existing Groups</h2>
 
-        <div className="grid grid-cols-5 mt-4 space-x-4 overflow-x-auto">
+        <div className="grid grid-cols-5 gap-4 mt-4">
           {isLoading && <GroupCardSkeleton range={10} />}
           {!isLoading && groups.length === 0 && (
             <p className="col-span-5 text-center text-gray-500 py-8">
@@ -419,8 +302,18 @@ const CommunityPage = () => {
             </p>
           )}
           {!isLoading &&
-            groups.map((group) => <GroupCard key={group._id} group={group} />)}
+            paginatedGroups.map((group) => (
+              <GroupCard key={group._id} group={group} />
+            ))}
         </div>
+
+        {!isLoading && totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
+import Pagination from "@/components/pagination/Pagination";
 
 interface SurveyCard {
   _id: string;
@@ -36,6 +37,7 @@ const ViewLongAnswersPage = () => {
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [deleteBusinessPlanLongQuestionAnswer] =
     useDeleteBusinessPlanLongQuestionAnswerMutation();
@@ -44,6 +46,12 @@ const ViewLongAnswersPage = () => {
 
   const [updateBusinessPlanLongQuestionAnswer] =
     useUpdateBusinessPlanLongQuestionAnswerMutation();
+
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  const paginatedData =
+    data?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) ||
+    [];
 
   const startEdit = (card: SurveyCard) => {
     setEditingCardId(card._id);
@@ -114,8 +122,25 @@ const ViewLongAnswersPage = () => {
   useEffect(() => {
     if (longQuestionAnswerData?.data) {
       setData(longQuestionAnswerData.data);
+      setCurrentPage(1);
     }
   }, [longQuestionAnswerData?.data]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -135,7 +160,7 @@ const ViewLongAnswersPage = () => {
       <BackButtons backTitle="Question" title={"Answer"} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {data.map((card) => (
+        {paginatedData.map((card) => (
           <Card
             key={card._id}
             className="border border-gray-200 group hover:shadow-md transition-shadow"
@@ -204,6 +229,14 @@ const ViewLongAnswersPage = () => {
           </Card>
         ))}
       </div>
+
+      {!isLoading && totalPages > 1 && (
+     <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
         <AlertDialogContent>

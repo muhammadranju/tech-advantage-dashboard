@@ -20,9 +20,8 @@ import { LongQuestionForm } from "./components/LongQuestionForm";
 const BusinessPlanning: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("quiz");
   const [longAnswer, setLongAnswer] = useState("");
-  const { data: answers, refetch: refetchQuiz } =
-    useGetBusinessPlanQuizQuestionAnswerQuery(null);
-  const { data: longQuestionAnswerData, refetch: refetchLong } =
+  const { data: answers } = useGetBusinessPlanQuizQuestionAnswerQuery(null);
+  const { data: longQuestionAnswerData } =
     useGetBusinessPlanLongQuestionAnswerQuery(null);
   console.log(answers);
   // create quiz question answer

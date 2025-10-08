@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
+import Pagination from "@/components/pagination/Pagination";
 
 interface SurveyOption {
   answer: string;
@@ -43,14 +44,24 @@ const ViewAnswersPage = () => {
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: answers, isLoading } =
-    useGetBusinessPlanQuizQuestionAnswerQuery(null);
+  const {
+    data: answers,
+    isLoading,
+    refetch,
+  } = useGetBusinessPlanQuizQuestionAnswerQuery(null);
   const [updateBusinessPlanQuizQuestionAnswer] =
     useUpdateBusinessPlanQuizQuestionAnswerMutation();
 
   const [deleteBusinessPlanQuizQuestionAnswer] =
     useDeleteBusinessPlanQuizQuestionAnswerMutation();
+
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  const paginatedData =
+    data?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) ||
+    [];
 
   const startEdit = (card: SurveyCard) => {
     setEditingCardId(card._id);
@@ -88,29 +99,6 @@ const ViewAnswersPage = () => {
   };
 
   const saveEdit = async () => {
-    // if (editFormData) {
-    //   try {
-    //     const result = await updateBusinessPlanQuizQuestionAnswer({
-    //       body: editFormData,
-    //       id: editFormData._id,
-    //     }).unwrap();
-
-    //     if (result.success) {
-    //       setData((prevData: SurveyCard[]) =>
-    //         prevData.map((card) =>
-    //           card._id === editFormData._id ? editFormData : card
-    //         )
-    //       );
-    //       toast.success("Answer updated successfully");
-    //       setEditingCardId(null);
-    //       setEditFormData(null);
-    //     }
-    //   } catch (err) {
-    //     console.error("Failed to update:", err);
-    //     toast.error("Failed to update answer. Please try again.");
-    //     cancelEdit();
-    //   }
-    // }
     if (editFormData) {
       try {
         const result = await updateBusinessPlanQuizQuestionAnswer({
@@ -140,8 +128,15 @@ const ViewAnswersPage = () => {
   useEffect(() => {
     if (answers?.data) {
       setData(answers.data);
+      setCurrentPage(1);
+      refetch();
     }
-  }, [answers?.data]);
+  }, [answers?.data, refetch]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
 
   if (isLoading) {
     return (
@@ -162,7 +157,7 @@ const ViewAnswersPage = () => {
       <BackButtons backTitle="Question" title={"Answer"} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {data.map((card) => (
+        {paginatedData.map((card) => (
           <Card
             key={card._id}
             className="group hover:shadow-md transition-shadow"
@@ -264,6 +259,14 @@ const ViewAnswersPage = () => {
           </Card>
         ))}
       </div>
+
+      {!isLoading && totalPages > 1 && (
+       <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
 
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
         <AlertDialogContent>

@@ -24,18 +24,7 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
-
-interface SurveyOption {
-  _id: string;
-  text: string;
-  score: number | string;
-}
-
-interface SurveyCard {
-  _id: string;
-  question: string;
-  answers: SurveyOption[];
-}
+import { SurveyCard } from "./mock_interview.interface";
 
 const MockInterviewViewAnswersPage = () => {
   const [editingCardId, setEditingCardId] = useState<string | null>(null);

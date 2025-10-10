@@ -17,11 +17,7 @@ import React, { useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
-
-interface Question {
-  questionText: string;
-  answers: { text: string; score: number }[];
-}
+import { Question } from "./small_business.interface";
 
 const SmallBusinessPage = () => {
   const router = useRouter();

@@ -15,15 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, FolderOpen, Search, Send, User, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-interface NotificationItem {
-  id: string;
-  type: "success" | "error" | "suggestion" | "review" | "request";
-  message: string;
-  timestamp: string;
-}
+import { NotificationItem } from "./notification.interface";
+import NotificationSkeleton from "@/components/skeletons/NotificationSkeleton";
 
 const notifications: NotificationItem[] = [
   {
@@ -191,6 +186,7 @@ const NotificationsPage = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -211,7 +207,12 @@ const NotificationsPage = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
 
   return (
     <div className="px-10 mt-5 min-h-screen">
@@ -240,9 +241,11 @@ const NotificationsPage = () => {
 
       {/* Notifications List */}
       <div>
-        {paginatedNotifications.map((n) => (
-          <NotificationRow key={n.id} notification={n} />
-        ))}
+        {isLoading && <NotificationSkeleton />}
+        {!isLoading &&
+          paginatedNotifications.map((n) => (
+            <NotificationRow key={n.id} notification={n} />
+          ))}
       </div>
 
       {totalPages > 1 && (

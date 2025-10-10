@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { StatsCards } from "@/components/dashboard/StatsCards";
 import FilterCoaching from "@/components/coaching/FilterCoaching";
-import { CoachingUser } from "@/interface/dashboard.interface";
+import { StatsCards } from "@/components/dashboard/StatsCards";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
 import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
 import {
@@ -18,31 +17,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FileText, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import {
-  useCoachingUsersQuery,
-  useUpdateCoachingStatusMutation,
-} from "@/lib/redux/features/api/coaching/coachingApiSlice";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-
-// Types
-type StatusFilter = "All" | "PENDING" | "APPROVED" | "DENIED";
-type SortBy = "newest" | "oldest";
-type ActionType = "APPROVED" | "DENIED";
-
-interface Stat {
-  title: string;
-  value: string;
-  changeType: "positive" | "negative";
-  icon: React.ComponentType<any>;
-}
+import { Input } from "@/components/ui/input";
+import {
+  useCoachingUsersQuery,
+  useUpdateCoachingStatusMutation,
+} from "@/lib/redux/features/api/coaching/coachingApiSlice";
+import { ChevronLeft, ChevronRight, FileText, Search } from "lucide-react";
+import {
+  ActionType,
+  CoachingUser,
+  SortBy,
+  Stat,
+  StatusFilter,
+} from "./coaching.interface";
 
 // Helper functions
 const sortUsers = (users: CoachingUser[], sortBy: SortBy) =>

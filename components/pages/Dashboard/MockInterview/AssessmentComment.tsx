@@ -216,13 +216,7 @@ import {
 import { useEffect, useState } from "react";
 import { PiCheckBold, PiPencilFill, PiXBold } from "react-icons/pi";
 import { toast } from "sonner";
-
-interface Comment {
-  _id: number;
-  title: string;
-  range: string;
-  recomandedText: string;
-}
+import { Comment } from "./mock_interview.interface";
 
 export function AssessmentComment() {
   const [editingId, setEditingId] = useState<number | null>(null);

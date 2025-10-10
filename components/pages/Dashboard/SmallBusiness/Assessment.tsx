@@ -11,25 +11,9 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { PiCheckBold, PiPencilFill, PiXBold } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
+import { Assessment, EditData } from "./small_business.interface";
 
 // Type interfaces based on API data structure
-interface Assessment {
-  _id: string;
-  range: string;
-  description: string;
-  recommendedService: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-// Interface for editing data
-interface EditData {
-  _id: string;
-  range: string;
-  description: string;
-  recommendedService: string;
-}
 
 const AssessmentPage: React.FC = () => {
   const [assessments, setAssessments] = useState<Assessment[]>([]);

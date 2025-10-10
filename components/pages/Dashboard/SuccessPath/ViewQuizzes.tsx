@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SurveyCard } from "@/interface/assessments.interface";
 import {
   useDeleteSuccessPathQuizQuestionAnswerMutation,
   useGetSuccessPathQuizQuestionAnswerQuery,
@@ -29,15 +30,9 @@ import {
 import { Save, Trash, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
+import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
-import { ClipLoader } from "react-spinners";
-
-interface SurveyCard {
-  _id: string;
-  questionText: string;
-  answers: string[];
-}
 
 const QuizzesPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(

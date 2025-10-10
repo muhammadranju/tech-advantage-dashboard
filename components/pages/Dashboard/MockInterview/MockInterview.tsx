@@ -8,18 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AssessmentComment } from "./AssessmentComment";
-
-interface Answer {
-  text: string;
-  score: number | string;
-}
-
-// interface Question {
-//   question: string;
-//   answers: Answer[];
-// }
-
-type TabType = "quiz" | "assessment";
+import { Answer, TabType } from "./mock_interview.interface";
 
 const MockInterview = () => {
   const [activeTab, setActiveTab] = useState<TabType>("quiz");

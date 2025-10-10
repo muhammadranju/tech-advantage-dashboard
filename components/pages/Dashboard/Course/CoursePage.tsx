@@ -45,13 +45,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
-
-interface Course {
-  _id: string;
-  name: string;
-  modules: number;
-  slug: string;
-}
+import { Courses } from "./course.interface";
 
 export default function CoursePage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -62,7 +56,7 @@ export default function CoursePage() {
   const router = useRouter();
 
   const { data: coursesData, isLoading } = useGetCoursesQuery(null);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [courses, setCourses] = useState<Courses[]>([]);
   const [createCourse, { isLoading: createLoading }] =
     useCreateCourseMutation();
   const [updateCourse] = useUpdateCourseMutation();
@@ -89,7 +83,7 @@ export default function CoursePage() {
   const handleAddCourse = async () => {
     if (!newCourseTitle.trim()) return;
     const newId = String(Date.now());
-    const newCourse: Course = {
+    const newCourse: Courses = {
       _id: newId,
       name: newCourseTitle.trim(),
       slug: newId,

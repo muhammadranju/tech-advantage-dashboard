@@ -29,24 +29,11 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
-
-interface Assessment {
-  _id: string;
-  range: string;
-  title?: string;
-  begineerData: string;
-  IntermediateData: string;
-  proData: string;
-}
-
-interface SuccessPathTitles {
-  [key: string]: string[];
-}
-
-type CategoryType =
-  | "looking-to-get-into-tech"
-  | "small-business"
-  | "aspiring-entrepreneur";
+import {
+  Assessment,
+  CategoryType,
+  SuccessPathTitles,
+} from "./success_path.interface";
 
 const successPathTitles: SuccessPathTitles = {
   "looking-to-get-into-tech": [

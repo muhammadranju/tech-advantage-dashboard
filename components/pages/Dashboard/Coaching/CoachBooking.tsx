@@ -20,34 +20,40 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import BackButtons from "../BootCamp/BackButtons";
+import {
+  BookingData,
+  BookingDetail,
+  Coach,
+  TimeSlot,
+} from "./coaching.interface";
 
-interface TimeSlot {
-  id: string;
-  startTime: string;
-  endTime: string;
-  displayText: string;
-}
+// interface TimeSlot {
+//   id: string;
+//   startTime: string;
+//   endTime: string;
+//   displayText: string;
+// }
 
-interface BookingDetail {
-  date: string;
-  slot1?: string;
-  slot2?: string;
-  slot3?: string;
-}
+// interface BookingDetail {
+//   date: string;
+//   slot1?: string;
+//   slot2?: string;
+//   slot3?: string;
+// }
 
-interface Coach {
-  id: number;
-  name: string;
-  description: string;
-  availableDates: Date[];
-  timeSlots: TimeSlot[];
-}
+// interface Coach {
+//   id: number;
+//   name: string;
+//   description: string;
+//   availableDates: Date[];
+//   timeSlots: TimeSlot[];
+// }
 
-interface BookingData {
-  name: string;
-  description: string;
-  details: BookingDetail[];
-}
+// interface BookingData {
+//   name: string;
+//   description: string;
+//   details: BookingDetail[];
+// }
 
 const CoachBooking = () => {
   const [coachName, setCoachName] = useState<string>("");

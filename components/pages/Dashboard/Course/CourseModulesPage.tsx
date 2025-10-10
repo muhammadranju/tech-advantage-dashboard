@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { VideoUploadComponent } from "@/components/discoverStrength/VideoUpload/VideoUploadComponent";
+import { VideoUploadComponent } from "@/components/bootcamp/bootcampSection/VideoUpload/VideoUploadComponent";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -18,26 +18,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import BackButtons from "../BootCamp/BackButtons";
-
-interface Video {
-  id: string;
-  title: string;
-  duration: string;
-}
-
-interface PDF {
-  id: string;
-  title: string;
-  size: string;
-  pages: number;
-}
-
-interface CourseContent {
-  id: string;
-  title: string;
-  videos: Video[];
-  pdfs: PDF[];
-}
+import { CourseContent, PDF, Video } from "./course.interface";
 
 type MediaType = "video" | "pdf";
 

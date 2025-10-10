@@ -6,7 +6,10 @@ import {
   StatCardSkeleton,
 } from "@/components/skeletons/StatCardSkeleton";
 import { useTotalCochairingUsersQuery } from "@/lib/redux/features/api/coaching/coachingApiSlice";
-import { useGetAllUsersQuery } from "@/lib/redux/features/api/users/userApiSlice";
+import {
+  useGetAllUsersQuery,
+  useGetBlockedUsersQuery,
+} from "@/lib/redux/features/api/users/userApiSlice";
 import { FileText } from "lucide-react";
 import { useEffect } from "react";
 import { PiUsersThreeBold } from "react-icons/pi";
@@ -16,8 +19,11 @@ import { PiUsersThreeBold } from "react-icons/pi";
 export default function OverviewPage() {
   const { data, refetch, isLoading } = useGetAllUsersQuery(0);
   const { data: cochairingUsersData } = useTotalCochairingUsersQuery(null);
+  const { data: blockedUsersData } = useGetBlockedUsersQuery(null);
+
   const cochairingUsers = cochairingUsersData?.data;
   const users = data?.data?.data.length;
+  const blockedUsers = blockedUsersData?.data?.length;
 
   const stats = [
     {
@@ -28,6 +34,11 @@ export default function OverviewPage() {
     {
       title: "Total Applications",
       value: cochairingUsers ?? 0,
+      icon: FileText,
+    },
+    {
+      title: "Total Blocked Users",
+      value: blockedUsers ?? 0,
       icon: FileText,
     },
   ];

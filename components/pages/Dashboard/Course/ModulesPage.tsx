@@ -39,21 +39,17 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import BackButtons from "../BootCamp/BackButtons";
+import { Course } from "./course.interface";
 
-interface Course {
-  id: string;
-  title: string;
-  videos: number;
-  pdfs: number;
-}
+
 
 const initialCourses: Course[] = [
-  { id: "1", title: "Complete Programming Bootcamp", videos: 3, pdfs: 2 },
-  { id: "2", title: "Java Programming", videos: 3, pdfs: 2 },
-  { id: "3", title: "Python Programming", videos: 3, pdfs: 2 },
-  { id: "4", title: "C++ Programming", videos: 3, pdfs: 2 },
-  { id: "5", title: "C# Programming", videos: 3, pdfs: 2 },
-  { id: "6", title: "PHP Programming", videos: 3, pdfs: 2 },
+  { _id: "1", title: "Complete Programming Bootcamp", videos: 3, pdfs: 2 },
+  { _id: "2", title: "Java Programming", videos: 3, pdfs: 2 },
+  { _id: "3", title: "Python Programming", videos: 3, pdfs: 2 },
+  { _id: "4", title: "C++ Programming", videos: 3, pdfs: 2 },
+  { _id: "5", title: "C# Programming", videos: 3, pdfs: 2 },
+  { _id: "6", title: "PHP Programming", videos: 3, pdfs: 2 },
 ];
 
 function IconText({
@@ -94,7 +90,7 @@ function CourseCard({
 
   const handleSave = () => {
     if (editValue.trim()) {
-      onEdit(course.id, editValue.trim());
+      onEdit(course._id, editValue.trim());
     }
     onCancelEdit();
   };
@@ -111,7 +107,7 @@ function CourseCard({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onDelete(course.id)}
+            onClick={() => onDelete(course._id)}
             className="p-2 h-auto  hover:text-red-600 rounded-full"
             disabled={isEditing}
           >
@@ -120,7 +116,7 @@ function CourseCard({
           {!isEditing ? (
             <Button
               variant="ghost"
-              onClick={() => onStartEdit(course.id)}
+              onClick={() => onStartEdit(course._id)}
               className="p-2  h-auto  hover:text-gray-600  rounded-full"
             >
               <PiPencilFill className="w-10 h-10" />
@@ -171,7 +167,7 @@ function CourseCard({
 
         <Button
           onClick={() =>
-            onEnter(`/dashboard/courses/${modulesParam}/${course.id}`)
+            onEnter(`/dashboard/courses/${modulesParam}/${course._id}`)
           }
           className="w-full bg-black hover:bg-gray-800 text-white py-2 rounded-lg flex items-center justify-center gap-2"
           disabled={isEditing}
@@ -289,13 +285,13 @@ export default function ModulesPage() {
   const cancelDelete = () => setDeleteTargetId(null);
   const confirmDelete = () => {
     if (!deleteTargetId) return;
-    setCourses((prev) => prev.filter((c) => c.id !== deleteTargetId));
+    setCourses((prev) => prev.filter((c) => c._id !== deleteTargetId));
     cancelDelete();
   };
 
   const handleAddModule = (title: string) => {
     const newCourse: Course = {
-      id: String(Date.now()),
+      _id: String(Date.now()),
       title,
       videos: 0,
       pdfs: 0,
@@ -306,7 +302,7 @@ export default function ModulesPage() {
   const handleEditCourse = (id: string, newTitle: string) => {
     setCourses((prev) =>
       prev.map((course) =>
-        course.id === id ? { ...course, title: newTitle } : course
+        course._id === id ? { ...course, title: newTitle } : course
       )
     );
   };
@@ -334,13 +330,13 @@ export default function ModulesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course) => (
             <CourseCard
-              key={course.id}
+              key={course._id}
               course={course}
               onDelete={requestDelete}
               onEdit={handleEditCourse}
               onEnter={(path) => router.push(path)}
               modulesParam={modules as string}
-              isEditing={editingId === course.id}
+              isEditing={editingId === course._id}
               onStartEdit={handleStartEdit}
               onCancelEdit={handleCancelEdit}
             />

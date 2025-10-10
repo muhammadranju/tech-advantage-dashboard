@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-// import { toast } from "sonner";
 
 export default function ChangePhoto() {
   const [photo, setPhoto] = useState<File | null>(null);

@@ -14,15 +14,16 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import { DialogTriggerComponent } from "./DialogTriggerComponent";
+import { FormFieldProps } from "./profile.interface";
 
-interface FormFieldProps {
-  id: string;
-  label: string;
-  type?: string;
-  placeholder?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+// interface FormFieldProps {
+//   id: string;
+//   label: string;
+//   type?: string;
+//   placeholder?: string;
+//   value: string;
+//   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+// }
 
 const FormField: React.FC<FormFieldProps> = ({
   id,

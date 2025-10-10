@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import FilterUsers from "@/components/users/FilterUsers";
-import { useGetAllUsersQuery } from "@/lib/redux/features/api/users/userApiSlice";
+import {
+  useGetAllUsersQuery,
+  useGetBlockedUsersQuery,
+} from "@/lib/redux/features/api/users/userApiSlice";
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PiUsersThreeBold } from "react-icons/pi";
@@ -23,7 +26,7 @@ const UserPage = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-
+  const { data: blockedUsersData } = useGetBlockedUsersQuery(null);
   const { data, isLoading } = useGetAllUsersQuery({
     page: 1,
     limit: 100, // fetch all users for client-side filtering
@@ -33,6 +36,11 @@ const UserPage = () => {
     {
       title: "Total Users",
       value: users?.length,
+      icon: PiUsersThreeBold,
+    },
+    {
+      title: "Total Blocked Users",
+      value: blockedUsersData?.data?.length,
       icon: PiUsersThreeBold,
     },
   ];

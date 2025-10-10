@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.ibb.co",
       },
+      {
+        protocol: "http",
+        hostname: "localhost:3000",
+      },
+      {
+        protocol: "http",
+        hostname: "10.10.7.101:3000",
+      },
     ],
   },
   /* config options here */

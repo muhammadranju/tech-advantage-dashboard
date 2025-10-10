@@ -7,7 +7,17 @@ export const userApiSlice = apiSlice.injectEndpoints({
     // Get all users
     getAllUsers: builder.query({
       query: () => ({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/user/all`,
+        url: `user/all`,
+      }),
+      providesTags: ["User"],
+      // Transform response to handle different response structures
+      transformResponse: (response) => {
+        return response;
+      },
+    }),
+    getBlockedUsers: builder.query({
+      query: () => ({
+        url: `user/blocked`,
       }),
       providesTags: ["User"],
       // Transform response to handle different response structures
@@ -18,7 +28,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
     blockedUser: builder.mutation({
       query: (id: string) => ({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/user/block/${id}`,
+        url: `user/block/${id}`,
         method: "PATCH",
       }),
       // This is the key fix - invalidate User tags to trigger refetch
@@ -60,7 +70,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
     unblockUser: builder.mutation({
       query: (id: string) => ({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/user/unblock/${id}`,
+        url: `user/unblock/${id}`,
         method: "PATCH",
       }),
       // This is the key fix - invalidate User tags to trigger refetch
@@ -104,6 +114,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetAllUsersQuery,
+  useGetBlockedUsersQuery,
   useBlockedUserMutation,
   useUnblockUserMutation,
 } = userApiSlice;

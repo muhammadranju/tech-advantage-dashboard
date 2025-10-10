@@ -1,26 +1,27 @@
-// Users Table Skeleton - matches your original structure exactly
-export const UsersTableSkeleton = ({ rows = 5 }) => {
+import { Skeleton } from "@/components/ui/skeleton";
+
+export const UsersTableSkeleton = ({ rows = 8 }) => {
   return (
     <div className="divide-y divide-border px-3">
       {Array.from({ length: rows }).map((_, index) => (
         <div key={index} className="grid grid-cols-5 gap-4 p-4 items-center">
           {/* Name skeleton */}
-          <div className="h-4 w-24 bg-neutral-200 rounded animate-pulse"></div>
+          <Skeleton className="h-4 w-24" />
 
           {/* Email skeleton */}
-          <div className="h-4 w-32 bg-neutral-200 rounded animate-pulse"></div>
+          <Skeleton className="h-4 w-32" />
 
           {/* Badge skeleton */}
           <div>
-            <div className="h-6 w-16 bg-neutral-200 rounded-full animate-pulse"></div>
+            <Skeleton className="h-6 w-16 rounded-full" />
           </div>
 
           {/* Date skeleton */}
-          <div className="h-4 w-20 bg-neutral-200 rounded animate-pulse"></div>
+          <Skeleton className="h-4 w-20" />
 
           {/* Action button skeleton */}
           <div>
-            <div className="h-8 w-8 bg-neutral-200 rounded animate-pulse"></div>
+            <Skeleton className="h-8 w-8" />
           </div>
         </div>
       ))}

@@ -24,19 +24,7 @@ import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
 import Pagination from "@/components/pagination/Pagination";
-
-interface SurveyOption {
-  answer: string;
-}
-
-interface SurveyCard {
-  _id: string;
-  questionText: string;
-  answers: SurveyOption[];
-  createdAt?: string;
-  updatedAt?: string;
-  __v?: number;
-}
+import { SurveyCard } from "./business_planning.interface";
 
 const ViewAnswersPage = () => {
   const [data, setData] = useState<SurveyCard[]>([]);
@@ -136,7 +124,6 @@ const ViewAnswersPage = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
 
   if (isLoading) {
     return (
@@ -261,7 +248,7 @@ const ViewAnswersPage = () => {
       </div>
 
       {!isLoading && totalPages > 1 && (
-       <Pagination
+        <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}

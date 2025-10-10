@@ -1,4 +1,5 @@
 "use client";
+import Pagination from "@/components/pagination/Pagination";
 import CardSkeleton from "@/components/skeletons/CardSkeleton";
 import {
   AlertDialog,
@@ -23,13 +24,7 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
-import Pagination from "@/components/pagination/Pagination";
-
-interface SurveyCard {
-  _id: string;
-  questionText: string;
-  answer: string;
-}
+import { SurveyCard } from "./business_planning.interface";
 
 const ViewLongAnswersPage = () => {
   const [data, setData] = useState<SurveyCard[]>([]);
@@ -231,7 +226,7 @@ const ViewLongAnswersPage = () => {
       </div>
 
       {!isLoading && totalPages > 1 && (
-     <Pagination
+        <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}

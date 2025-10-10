@@ -21,11 +21,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
-
-interface Playlist {
-  _id: any;
-  title: string;
-}
+import { Playlist } from "./bootcamp.interface";
 
 function UploadPlaylist() {
   const [open, setOpen] = useState(false);

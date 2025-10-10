@@ -1,7 +1,7 @@
 "use client";
 import HeaderTitle from "@/components/bootcamp/HeaderTitle";
-import { ShowVideos } from "@/components/discoverStrength/VideoUpload/ShowVideos";
-import { VideoUploads } from "@/components/discoverStrength/VideoUpload/VideoUploads";
+import { ShowVideos } from "@/components/bootcamp/bootcampSection/VideoUpload/ShowVideos";
+import { VideoUploads } from "@/components/bootcamp/bootcampSection/VideoUpload/VideoUploads";
 import {
   Select,
   SelectContent,

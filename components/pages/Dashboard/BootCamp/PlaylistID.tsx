@@ -14,27 +14,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import BackButtons from "./BackButtons";
 import { ClipLoader } from "react-spinners";
-
-interface Video {
-  _id: string;
-  title: string;
-  filename: string;
-  filepath: string;
-  url: string;
-  category: string;
-  mark: number;
-  duration: number;
-  views: number;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-interface Playlist {
-  _id: string;
-  title: string;
-  videos: Video[];
-}
+import { Playlist, Video } from "./bootcamp.interface";
 
 function SinglePlaylist() {
   const params = useParams<{ playlistID: string }>();

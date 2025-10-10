@@ -1,10 +1,8 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
-
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -17,10 +15,8 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-
 import { logout } from "@/lib/redux/features/auth/authSlice";
 import { useAppDispatch } from "@/lib/redux/hooks";
-
 import {
   BellRing,
   ChartGantt,
@@ -28,7 +24,6 @@ import {
   Handshake,
   MessagesSquare,
 } from "lucide-react";
-
 import { CgLogOut } from "react-icons/cg";
 import { FiSidebar } from "react-icons/fi";
 import { HiMiniUserGroup } from "react-icons/hi2";
@@ -40,7 +35,6 @@ import {
   PiTentBold,
   PiUsersThreeBold,
 } from "react-icons/pi";
-
 type NavItem = {
   title: string;
   url: string;

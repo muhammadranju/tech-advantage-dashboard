@@ -10,7 +10,7 @@ import {
   useGetAllUsersQuery,
   useGetBlockedUsersQuery,
 } from "@/lib/redux/features/api/users/userApiSlice";
-import { FileText } from "lucide-react";
+import { FileText, UserLock } from "lucide-react";
 import { useEffect } from "react";
 import { PiUsersThreeBold } from "react-icons/pi";
 
@@ -39,7 +39,7 @@ export default function OverviewPage() {
     {
       title: "Total Blocked Users",
       value: blockedUsers ?? 0,
-      icon: FileText,
+      icon: UserLock,
     },
   ];
 

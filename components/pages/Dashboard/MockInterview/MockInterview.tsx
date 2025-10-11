@@ -66,7 +66,6 @@ const MockInterview = () => {
             score: a.score === "" ? 0 : a.score,
           })),
       };
-      console.log(formattedQuestion);
 
       const result = await createMockInterview({
         body: formattedQuestion,
@@ -82,8 +81,7 @@ const MockInterview = () => {
         ]);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to save question. Please try again.");
+      toast.error(  (error as string) || "Failed to save question. Please try again.");
     }
     // Here you would send formattedQuestion to your API
   };

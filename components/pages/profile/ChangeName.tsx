@@ -1,5 +1,4 @@
 "use client";
-
 import BackButton from "@/components/logo/BackButton";
 import LogoComponent from "@/components/logo/Logo";
 import { Button } from "@/components/ui/button";
@@ -15,15 +14,6 @@ import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import { DialogTriggerComponent } from "./DialogTriggerComponent";
 import { FormFieldProps } from "./profile.interface";
-
-// interface FormFieldProps {
-//   id: string;
-//   label: string;
-//   type?: string;
-//   placeholder?: string;
-//   value: string;
-//   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-// }
 
 const FormField: React.FC<FormFieldProps> = ({
   id,
@@ -49,48 +39,13 @@ const FormField: React.FC<FormFieldProps> = ({
   </div>
 );
 
-// const DialogTriggerComponent = ({
-//   isOpen,
-//   setIsOpen,
-// }: {
-//   isOpen: boolean;
-//   setIsOpen: (isOpen: boolean) => void;
-// }) => {
-//   return (
-//     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-//       <DialogContent className="sm:max-w-[380px] flex flex-col items-center justify-center shadow-lg rounded-xl">
-//         <DialogHeader className="flex flex-col items-center justify-center">
-//           <Image
-//             src="/success.gif"
-//             alt="Success"
-//             width={200}
-//             height={100}
-//             className="-mb-14 -mt-10"
-//           />
-
-//           <DialogTitle className="text-2xl text-center">
-//             Password Changed🎉
-//           </DialogTitle>
-//           <DialogDescription className="text-center text-base">
-//             Your password has been changed successfully.
-//           </DialogDescription>
-//           <DialogClose asChild>
-//             <Button className="px-6 mt-4">
-//               <X /> Close
-//             </Button>
-//           </DialogClose>
-//         </DialogHeader>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// };
-
 export default function ChangeName() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const { userProfile, refetch } = useAuthCheck();
+  const userName = userProfile?.user.data.name;
+  const [firstName, setFirstName] = useState(userName?.split(" ")[0]);
+  const [lastName, setLastName] = useState(userName?.split(" ")[1]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { userProfile, refetch } = useAuthCheck();
   const userId = userProfile?.user?.data._id;
 
   const [updateUserNameProfile, { isLoading }] =
@@ -110,18 +65,15 @@ export default function ChangeName() {
       if (result?.success) {
         setIsOpen(true);
         refetch();
-        setFirstName("");
-        setLastName("");
         toast.success("Name updated successfully");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Error updating name");
+      toast.error( (error as string) || "Error updating name");
     }
 
-    console.log("Name update attempt:", { firstName, lastName });
+   
   };
-
+  
   return (
     <>
       <BackButton />

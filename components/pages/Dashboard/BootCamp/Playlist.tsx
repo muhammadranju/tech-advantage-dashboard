@@ -22,14 +22,24 @@ import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 import { Playlist } from "./bootcamp.interface";
+import Pagination from "@/components/pagination/Pagination";
+// import Pagination from "@/components/Pagination"; // Adjust the import path as needed
 
 function UploadPlaylist() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [createPlaylist, { isLoading: isCreatingPlaylist }] =
     useCreatePlaylistMutation();
   const { data: playlistsData, isLoading } = useGetPlaylistsQuery(null);
+
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(playlists.length / itemsPerPage);
+  const paginatedPlaylists = playlists.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSubmit = async () => {
     try {
@@ -45,7 +55,6 @@ function UploadPlaylist() {
         setOpen(false);
       }
     } catch (error: any) {
-      console.log(error);
       toast.error(error?.data?.message || "Failed to create playlist");
     }
   };
@@ -53,8 +62,13 @@ function UploadPlaylist() {
   useEffect(() => {
     if (playlistsData?.data) {
       setPlaylists(playlistsData.data);
+      setCurrentPage(1);
     }
   }, [playlistsData]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="px-10 mt-5">
@@ -76,27 +90,36 @@ function UploadPlaylist() {
           <VideoCardSkeleton range={12} />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          {playlists.map((video, index) => (
-            <Link
-              key={index}
-              href={`/dashboard/boot-camp/playlist/${video?._id}`}
-            >
-              <div className="flex flex-col items-start">
-                <Image
-                  src={`https://images.unsplash.com/photo-1616356607338-fd87169ecf1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`}
-                  alt={video.title}
-                  width={400}
-                  height={250}
-                  className="rounded-lg shadow-md mb-2"
-                />
-                <p className="text-base font-bold text-neutral-800">
-                  {video.title}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+            {paginatedPlaylists.map((video, index) => (
+              <Link
+                key={video?._id || index}
+                href={`/dashboard/boot-camp/playlist/${video?._id}`}
+              >
+                <div className="flex flex-col items-start">
+                  <Image
+                    src={`https://images.unsplash.com/photo-1616356607338-fd87169ecf1a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`}
+                    alt={video.title}
+                    width={400}
+                    height={250}
+                    className="rounded-lg shadow-md mb-2"
+                  />
+                  <p className="text-base font-bold text-neutral-800">
+                    {video.title}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            showIfSinglePage={false}
+          />
+        </>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>

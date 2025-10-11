@@ -55,25 +55,21 @@ const AssessmentPage: React.FC = () => {
         recommendedService: editData.recommendedService,
       }).unwrap();
 
-      console.log("Update result:", result);
-
-      // Update local state with the new data
-      setAssessments(
-        assessments.map((assessment) =>
-          assessment._id === assessmentId
-            ? { ...assessment, ...editData }
-            : assessment
-        )
-      );
-
-      // Reset editing state
-      setEditingId(null);
-      setEditData({} as EditData);
-
-      // Refresh data from server to ensure consistency
-      refetch();
-
-      toast.success("Assessment updated successfully!");
+      if (result.success) {
+        // Update local state with the new data
+        setAssessments(
+          assessments.map((assessment) =>
+            assessment._id === assessmentId
+              ? { ...assessment, ...editData }
+              : assessment
+          )
+        );
+        toast.success("Assessment updated successfully!");
+        // Reset editing state
+        setEditingId(null);
+        setEditData({} as EditData);
+        refetch();
+      }
     } catch (error) {
       console.error("Error updating assessment:", error);
       toast.error("Failed to update assessment. Please try again.");
@@ -171,7 +167,7 @@ const AssessmentPage: React.FC = () => {
         <BackButtons backTitle="Question" title={"Answer"} />
 
         {/* Assessment Cards */}
-        <div className="space-y-6">
+        <div className="space-y-6 mt-5">
           {isLoading ? (
             <>
               <AssessmentCardSkeleton />

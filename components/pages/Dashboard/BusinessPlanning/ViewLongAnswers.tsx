@@ -58,7 +58,6 @@ const ViewLongAnswersPage = () => {
     setEditFormData(null);
   };
 
-  console.log(editFormData);
 
   const updateQuestion = (value: string) =>
     editFormData && setEditFormData({ ...editFormData, questionText: value });
@@ -107,8 +106,7 @@ const ViewLongAnswersPage = () => {
           cancelEdit();
         }
       } catch (error) {
-        console.log(error);
-        toast.error("Failed to update answer. Please try again.");
+        toast.error(error as string || "Failed to update answer. Please try again.");
         // Optionally, revert the local state if the update failed
       }
     }
@@ -123,18 +121,6 @@ const ViewLongAnswersPage = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
   };
 
   if (isLoading) {
@@ -154,7 +140,7 @@ const ViewLongAnswersPage = () => {
     <div className="w-full mx-auto p-8 rounded-xl">
       <BackButtons backTitle="Question" title={"Answer"} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
         {paginatedData.map((card) => (
           <Card
             key={card._id}

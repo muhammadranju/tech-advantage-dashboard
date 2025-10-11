@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +18,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NotificationItem } from "./notification.interface";
 import NotificationSkeleton from "@/components/skeletons/NotificationSkeleton";
+import { NotificationEmpty } from "./NotificationEmpty";
 
-const notifications: NotificationItem[] = [
+const initialNotifications: NotificationItem[] = [
   {
     id: "1",
     type: "success",
@@ -57,13 +57,7 @@ const notifications: NotificationItem[] = [
   },
   {
     id: "6",
-    type: "request",
-    message: 'User "robin_dev23" has submitted a request to review the app.',
-    timestamp: "Yesterday",
-  },
-  {
-    id: "7",
-    type: "request",
+    type: "review",
     message: 'User "robin_dev23" has submitted a request to review the app.',
     timestamp: "Yesterday",
   },
@@ -134,8 +128,7 @@ const NotificationDialog = ({
 }) => (
   <Dialog open={open} onOpenChange={setOpen}>
     <form onSubmit={handleSubmit}>
-      <DialogTrigger asChild />
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Send Custom Notification</DialogTitle>
           <DialogDescription>
@@ -163,12 +156,13 @@ const NotificationDialog = ({
               value={body}
               placeholder="Enter your notification body"
               onChange={(e) => setBody(e.target.value)}
+              rows={8}
             />
           </div>
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">
+            <Button variant="outline" type="button">
               <X /> Cancel
             </Button>
           </DialogClose>
@@ -187,19 +181,41 @@ const NotificationsPage = () => {
   const [body, setBody] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [notifications, setNotifications] =
+    useState<NotificationItem[]>(initialNotifications);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ title, body });
-    toast.success("Notification sent successfully!");
-    setTitle("");
-    setBody("");
-    setOpen(false);
+    if (!title.trim() || !body.trim()) {
+      toast.error("Please enter both title and body.");
+      return;
+    }
+
+    // Simulate API call delay
+    setIsLoading(true);
+    setTimeout(() => {
+      const newNotification: NotificationItem = {
+        id: Date.now().toString(),
+        type: "success",
+        message: title, // Use title as message for simplicity
+        timestamp: "Just now",
+      };
+      setNotifications((prev) => [newNotification, ...prev]);
+      toast.success("Notification sent successfully!");
+      setTitle("");
+      setBody("");
+      setOpen(false);
+      setIsLoading(false);
+    }, 1000);
   };
 
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(notifications.length / itemsPerPage);
-  const paginatedNotifications = notifications.slice(
+  const filteredNotifications = notifications.filter((n) =>
+    n.message.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+  const paginatedNotifications = filteredNotifications.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -207,66 +223,82 @@ const NotificationsPage = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
   useEffect(() => {
     setIsLoading(true);
+    // Simulate initial data fetch
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, []);
 
   return (
-    <div className="px-10 mt-5 min-h-screen">
-      {/* Header */}
-      <div className="flex items-center justify-between ">
-        <h1 className="text-3xl font-bold ">Notifications</h1>
-        <Button
-          onClick={() => setOpen(true)}
-          variant="default"
-          className="py-6"
-        >
-          <Send /> Send Notification
-        </Button>
-      </div>
-
-      {/* Search Bar */}
-      <div className=" my-5">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search here......"
-            className="pl-10 bg-gray-50 py-6 border-gray-200"
-          />
+    <>
+      <div className="px-10 mt-5 min-h-screen">
+        {/* Header */}
+        <div className="flex items-center justify-between ">
+          <h1 className="text-3xl font-bold ">Notifications</h1>
+          <Button
+            onClick={() => setOpen(true)}
+            variant="default"
+            className="py-6"
+          >
+            <Send /> Send Notification
+          </Button>
         </div>
-      </div>
 
-      {/* Notifications List */}
-      <div>
-        {isLoading && <NotificationSkeleton />}
-        {!isLoading &&
-          paginatedNotifications.map((n) => (
-            <NotificationRow key={n.id} notification={n} />
-          ))}
-      </div>
+        {/* Search Bar */}
+        <div className=" my-5">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search here......"
+              className="pl-10  py-6 border-gray-200"
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+          </div>
+        </div>
 
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+        {/* Notifications List */}
+        <div>
+          {isLoading && <NotificationSkeleton />}
+
+          {!isLoading && paginatedNotifications.length === 0 && (
+            <NotificationEmpty />
+          )}
+
+          {!isLoading &&
+            paginatedNotifications.map((n) => (
+              <NotificationRow key={n.id} notification={n} />
+            ))}
+        </div>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
+
+        {/* Notification Dialog */}
+        <NotificationDialog
+          open={open}
+          setOpen={setOpen}
+          title={title}
+          setTitle={setTitle}
+          body={body}
+          setBody={setBody}
+          handleSubmit={handleSubmit}
         />
-      )}
-
-      {/* Notification Dialog */}
-      <NotificationDialog
-        open={open}
-        setOpen={setOpen}
-        title={title}
-        setTitle={setTitle}
-        body={body}
-        setBody={setBody}
-        handleSubmit={handleSubmit}
-      />
-    </div>
+      </div>
+    </>
   );
 };
 

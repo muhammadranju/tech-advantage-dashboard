@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { StatsCards } from "@/components/dashboard/StatsCards";
+import Pagination from "@/components/pagination/Pagination";
 import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
 import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
 import { Button } from "@/components/ui/button";
@@ -184,48 +185,11 @@ const UserPage = () => {
         </div>
 
         {/* Pagination */}
-        {pagedUsers.length > 0 && (
-          <div className="flex items-center justify-end space-x-2 mt-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className="gap-1"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </Button>
-
-            <div className="flex space-x-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                )
-              )}
-            </div>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                setCurrentPage(Math.min(totalPages, currentPage + 1))
-              }
-              className="gap-1"
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

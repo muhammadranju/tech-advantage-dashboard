@@ -75,10 +75,9 @@ export default function ForgotPassword() {
         }
       }
     } catch (error) {
-      console.log(error);
       // Handle error if needed
       if (typeof window !== "undefined") {
-        toast.error("Failed to send password reset link");
+        toast.error((error as string) || "Failed to send password reset link");
       }
     }
   };

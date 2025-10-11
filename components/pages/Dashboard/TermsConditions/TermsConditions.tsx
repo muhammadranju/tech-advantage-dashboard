@@ -32,8 +32,6 @@ const TermsConditions = () => {
   const [createTerms] = useCreateTermsMutation();
 
   const handleSave = async () => {
-    console.log("Saving Terms & Conditions:", terms);
-
     const currentDate = new Date();
     setLastUpdated(
       currentDate.toLocaleDateString("en-US", {

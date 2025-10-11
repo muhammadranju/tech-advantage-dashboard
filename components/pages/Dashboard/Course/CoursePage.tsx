@@ -46,6 +46,7 @@ import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import { toast } from "sonner";
 import { Courses } from "./course.interface";
+import Pagination from "@/components/pagination/Pagination";
 
 export default function CoursePage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -53,6 +54,7 @@ export default function CoursePage() {
   const [editValue, setEditValue] = useState("");
   const [openAddCourse, setOpenAddCourse] = useState(false);
   const [newCourseTitle, setNewCourseTitle] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const { data: coursesData, isLoading } = useGetCoursesQuery(null);
@@ -61,6 +63,14 @@ export default function CoursePage() {
     useCreateCourseMutation();
   const [updateCourse] = useUpdateCourseMutation();
   const [deleteCourse] = useDeleteCourseMutation();
+
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(courses.length / itemsPerPage);
+  const paginatedCourses = courses.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   useEffect(() => {
     if (coursesData?.data) {
       const mappedCourses = Array.isArray(coursesData.data)
@@ -77,6 +87,7 @@ export default function CoursePage() {
           })
         : [];
       setCourses(mappedCourses);
+      setCurrentPage(1);
     }
   }, [coursesData]);
 
@@ -103,8 +114,7 @@ export default function CoursePage() {
         setOpenAddCourse(false);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to create course");
+      toast.error( (error as string) || "Failed to create course");
     }
   };
 
@@ -135,8 +145,7 @@ export default function CoursePage() {
         setEditValue("");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to update course");
+      toast.error( (error as string) || "Failed to update course");
     }
   };
 
@@ -157,9 +166,12 @@ export default function CoursePage() {
         setDeleteTargetId(null);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to delete course");
+      toast.error( (error as string) || "Failed to delete course");
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -187,7 +199,7 @@ export default function CoursePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading && <CourseCardSkeleton rows={9} />}
           {!isLoading &&
-            courses?.map((course) => (
+            paginatedCourses?.map((course) => (
               <Card
                 key={course._id}
                 className="bg-white shadow-sm border border-neutral-200 rounded-lg overflow-hidden"
@@ -271,6 +283,15 @@ export default function CoursePage() {
               </Card>
             ))}
         </div>
+
+        {!isLoading && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            showIfSinglePage={false}
+          />
+        )}
       </div>
 
       <Dialog open={openAddCourse} onOpenChange={setOpenAddCourse}>

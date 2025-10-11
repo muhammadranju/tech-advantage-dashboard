@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   AlertCircle,
+  Calendar,
   CalendarCheck,
   Check,
   ChevronLeft,
@@ -16,7 +17,6 @@ import {
   Trash2,
   User,
   X,
-  Calendar,
 } from "lucide-react";
 import { useState } from "react";
 import BackButtons from "../BootCamp/BackButtons";
@@ -26,34 +26,7 @@ import {
   Coach,
   TimeSlot,
 } from "./coaching.interface";
-
-// interface TimeSlot {
-//   id: string;
-//   startTime: string;
-//   endTime: string;
-//   displayText: string;
-// }
-
-// interface BookingDetail {
-//   date: string;
-//   slot1?: string;
-//   slot2?: string;
-//   slot3?: string;
-// }
-
-// interface Coach {
-//   id: number;
-//   name: string;
-//   description: string;
-//   availableDates: Date[];
-//   timeSlots: TimeSlot[];
-// }
-
-// interface BookingData {
-//   name: string;
-//   description: string;
-//   details: BookingDetail[];
-// }
+import { toast } from "sonner";
 
 const CoachBooking = () => {
   const [coachName, setCoachName] = useState<string>("");
@@ -447,6 +420,10 @@ const CoachBooking = () => {
         `Booking confirmed for ${selectedCoach.name}!\nCheck console for booking data.`
       );
 
+      toast.success(
+        `Booking confirmed for ${selectedCoach.name}!\nCheck console for booking data.`
+      );
+
       // Reset selections
       setSelectedDates([]);
       setSelectedDateTimeSlots({});
@@ -464,7 +441,7 @@ const CoachBooking = () => {
         <BackButtons backTitle="Applications" title={"Coach Booking"} />
 
         {/* Add New Coach */}
-        <Card className="mb-6">
+        <Card className="mb-6 mt5">
           <CardContent className="p-6">
             <Label className="text-sm font-medium text-neutral-700 mb-2 block">
               Add New Coach
@@ -837,7 +814,7 @@ const CoachBooking = () => {
                         >
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="font-semibold text-neutral-800">
-                              {date.toLocaleDateString()}
+                              {date.toLocaleDateString() || "Invalid Date"}
                             </h4>
                             <Button
                               variant="ghost"

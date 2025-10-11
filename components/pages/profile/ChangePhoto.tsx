@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import BackButton from "@/components/logo/BackButton";
 import LogoComponent from "@/components/logo/Logo";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { useUpdateUserPhotoProfileMutation } from "@/lib/redux/features/api/profile/profileSliceApi";
-import { ArrowLeft, ImageIcon, Save, X } from "lucide-react";
+import { ImageIcon, Save, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -68,7 +69,6 @@ export default function ChangePhoto() {
     if (!photo) return;
 
     const formData = new FormData();
-    console.log(photo);
     formData.append("image", photo);
 
     try {
@@ -94,12 +94,7 @@ export default function ChangePhoto() {
 
   return (
     <>
-      <Button
-        className="m-5 py-5 px-4 hover:pl-5"
-        onClick={() => router.back()}
-      >
-        <ArrowLeft /> Back
-      </Button>
+      <BackButton />
       <Card className="w-full pb-12 max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
         <LogoComponent
           title="Change Photo"

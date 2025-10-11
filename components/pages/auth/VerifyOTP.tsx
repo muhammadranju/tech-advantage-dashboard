@@ -58,7 +58,6 @@ export default function VerifyOTPPage() {
     }
 
     const otpValue = otp.join("");
-    console.log("OTP verification attempt:", { otp: otpValue });
 
     try {
       const result = (await verifyOTP({
@@ -76,7 +75,7 @@ export default function VerifyOTPPage() {
         }
       }
     } catch (error) {
-      console.log("Error:", error);
+      toast.error((error as string) || "Failed to verify OTP");
 
       // Only show toast notifications in browser environment
       if (typeof window !== "undefined") {

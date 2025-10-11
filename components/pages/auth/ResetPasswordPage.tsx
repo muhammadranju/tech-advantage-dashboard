@@ -26,7 +26,6 @@ export default function ResetPassword() {
   const authToken = useAppSelector(selectAuthToken);
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const router = useRouter();
-  console.log(authToken);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +58,8 @@ export default function ResetPassword() {
           router.push("/login");
         }
       }
-
-      console.log("Reset password attempt:", result);
     } catch (error) {
-      console.log("Error:", error);
+      toast.error((error as string) || "Failed to reset password");
 
       // Only show toast notifications in browser environment
       if (typeof window !== "undefined") {

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import Pagination from "@/components/pagination/Pagination";
 import CardSkeleton from "@/components/skeletons/CardSkeleton";
 import {
   AlertDialog,
@@ -90,7 +91,6 @@ const QuizzesPage = () => {
       console.error("Failed to update:", error);
       toast.error("Failed to update question. Please try again.");
     }
-    console.log(editFormData);
   };
 
   const handleCancel = () => {
@@ -138,27 +138,10 @@ const QuizzesPage = () => {
     }
   }, [quizData?.data?.questions]);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="w-full mx-auto p-8 rounded-xl">
         <BackButtons backTitle="Question" title={"Answer"} />
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <CardSkeleton />
           <CardSkeleton />
@@ -292,31 +275,11 @@ const QuizzesPage = () => {
       </div>
 
       {!isLoading && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <Button
-              key={page}
-              variant={currentPage === page ? "default" : "outline"}
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </Button>
-          ))}
-          <Button
-            variant="outline"
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       )}
 
       {/* Delete Confirmation Dialog */}

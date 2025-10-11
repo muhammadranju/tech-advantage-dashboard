@@ -103,14 +103,15 @@ export default function AssessmentPage() {
         setAssessments(
           assessments.map((a) => (a._id === editingId ? editForm : a))
         );
-        console.log("Saved data:", editForm); // Only logs the edited item
+
         setEditingId(null);
         setEditForm(null);
         toast.success("Assessment updated successfully");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to update assessment. Please try again.");
+      toast.error(
+        (error as string) || "Failed to update assessment. Please try again."
+      );
     }
   };
 
@@ -119,8 +120,6 @@ export default function AssessmentPage() {
       setEditForm({ ...editForm, [field]: value });
     }
   };
-
-  console.log(editForm);
 
   useEffect(() => {
     if (assessmentData?.data?.assessment) {

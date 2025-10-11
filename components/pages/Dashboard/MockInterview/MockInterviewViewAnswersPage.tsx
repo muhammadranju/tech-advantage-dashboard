@@ -122,10 +122,10 @@ const MockInterviewViewAnswersPage = () => {
   };
 
   return (
-    <div className="w-full mx-auto p-8 rounded-xl">
+    <div className="w-full mx-auto min-h-screen p-8 rounded-xl">
       <BackButtons backTitle="Quiz" title={"Answers"} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
         {isLoading ? (
           <>
             <CardSkeleton />

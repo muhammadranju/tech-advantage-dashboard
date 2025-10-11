@@ -21,7 +21,7 @@ const BusinessPlanning: React.FC = () => {
   const { data: answers } = useGetBusinessPlanQuizQuestionAnswerQuery(null);
   const { data: longQuestionAnswerData } =
     useGetBusinessPlanLongQuestionAnswerQuery(null);
-  console.log(answers);
+
   // create quiz question answer
   const [createBusinessPlanQuizQuestionAnswer, { isLoading: isCreating }] =
     useCreateBusinessPlanQuizQuestionAnswerMutation();
@@ -68,15 +68,12 @@ const BusinessPlanning: React.FC = () => {
           toast.success("Quiz question saved successfully");
         }
       } catch (error) {
-        console.log(error);
-        toast.error("Failed to save quiz question. Please try again.");
+        toast.error(
+          (error as string) || "Failed to save quiz question. Please try again."
+        );
       }
     } else {
       try {
-        console.log({
-          questionText: currentQuestion.questionText,
-          answer: longAnswer,
-        });
         const result = await createBusinessPlanLongQuestionAnswer({
           body: {
             questionText: currentQuestion.questionText,
@@ -90,8 +87,9 @@ const BusinessPlanning: React.FC = () => {
           toast.success("Long question saved successfully");
         }
       } catch (error) {
-        console.log(error);
-        toast.error("Failed to save long question. Please try again.");
+        toast.error(
+          (error as string) || "Failed to save long question. Please try again."
+        );
       }
     }
   }, [

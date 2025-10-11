@@ -33,6 +33,7 @@ import { PiPencilFill } from "react-icons/pi";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
+import Pagination from "@/components/pagination/Pagination";
 
 const SMBViewAnswersPage = () => {
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
@@ -93,7 +94,7 @@ const SMBViewAnswersPage = () => {
       setEditingCardId(null);
       setEditFormData(null);
     } catch (error: any) {
-      console.log(error);
+      toast.error(error?.data?.message || "Failed to update question");
     }
   };
 
@@ -125,7 +126,6 @@ const SMBViewAnswersPage = () => {
     }
   };
 
-  console.log(data);
   const handelChange = (e: any) => {
     setSelectedCategory(e.target.value);
   };
@@ -150,27 +150,10 @@ const SMBViewAnswersPage = () => {
         prevData.filter((card) => card._id !== deleteItemId)
       );
     } catch (error: any) {
-      console.log(error);
-      toast.error("Failed to delete question");
+      toast.error((error as string) || "Failed to delete question");
     } finally {
       setDeleteDialogOpen(false);
       setDeleteItemId(null);
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
     }
   };
 
@@ -335,31 +318,11 @@ const SMBViewAnswersPage = () => {
       </div>
 
       {!isLoading && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <Button
-              key={page}
-              variant={currentPage === page ? "default" : "outline"}
-              onClick={() => handlePageChange(page)}
-            >
-              {page}
-            </Button>
-          ))}
-          <Button
-            variant="outline"
-            onClick={handleNextPage}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </Button>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       )}
 
       {/* Delete Confirmation Dialog */}

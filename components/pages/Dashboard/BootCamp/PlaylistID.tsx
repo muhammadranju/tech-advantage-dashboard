@@ -49,8 +49,7 @@ function SinglePlaylist() {
         setSelected(new Set<number>()); // Optional: clear selection after adding
       }
     } catch (error) {
-      console.log("Failed to add videos to playlist:", error);
-      toast.error("Failed to add videos to playlist");
+      toast.error((error as string) || "Failed to add videos to playlist");
     }
   };
 
@@ -66,7 +65,7 @@ function SinglePlaylist() {
       <BackButtons backTitle="Playlists" title={playlist?.title || ""} />
 
       {/* Create Playlist Form */}
-      <div className="flex justify-between gap-x-10 items-center mb-1">
+      <div className="flex justify-between gap-x-10 items-center mb-1 mt-5">
         <h1 className="text-3xl font-bold text-neutral-900 ">
           {playlist?.title || ""}
         </h1>

@@ -37,8 +37,6 @@ export const ShowVideos = ({ title }: VideoUploadsProps) => {
     (video: VideoRange) => video.category === title
   );
 
-  console.log("All videos:", videos);
-  console.log("Filtered by category:", filteredVideos);
 
   // Separate videos by specific marks/ranges
   const range5Videos = filteredVideos.filter(

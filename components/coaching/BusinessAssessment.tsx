@@ -104,7 +104,6 @@ const BusinessAssessmentContent = () => {
       setEditFormData(null);
     }
 
-    console.log(assessmentData);
   };
 
   const handleDeleteConfirmed = () => {

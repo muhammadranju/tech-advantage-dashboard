@@ -46,8 +46,7 @@ export const VideoUploads = ({ category }: VideoUploadsProps) => {
         setVideoUrl("");
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to upload video");
+      toast.error((error as string) || "Failed to upload video");
     }
   };
 

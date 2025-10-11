@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import CoachingInformationModel from "./CoachingInformationModel";
+import { toast } from "sonner";
 
 // Interface based on your API data structure
 interface FilterCoachingProps {
@@ -28,7 +29,6 @@ const FilterCoaching = ({
   const [selected, setSelected] = useState<CoachingUser | null>(null);
 
   const handleApproveUser = async (coaching: CoachingUser) => {
-    console.log(coaching);
     onActionClick(coaching, "APPROVED");
   };
 
@@ -46,7 +46,7 @@ const FilterCoaching = ({
       const date = parseISO(isoDate);
       return format(date, "MM/dd/yyyy");
     } catch (error) {
-      console.log(error);
+      toast.error((error as string) || "Invalid Date");
       return "Invalid Date";
     }
   };
@@ -62,7 +62,7 @@ const FilterCoaching = ({
         return format(date, "MM/dd/yyyy");
       }
     } catch (error) {
-      console.log(error);
+      toast.error((error as string) || "Invalid Date");
       return "Invalid Date";
     }
   };

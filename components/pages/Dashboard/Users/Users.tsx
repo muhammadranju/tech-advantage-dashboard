@@ -17,7 +17,7 @@ import {
   useGetAllUsersQuery,
   useGetBlockedUsersQuery,
 } from "@/lib/redux/features/api/users/userApiSlice";
-import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PiUsersThreeBold } from "react-icons/pi";
 

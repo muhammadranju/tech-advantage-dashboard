@@ -9,13 +9,13 @@ const loadAuthFromStorage = (): Partial<AuthState> => {
 
   try {
     const token = localStorage.getItem("token");
-    const accessToken = Cookies.get("token");
+    // const accessToken = Cookies.get("token");
     const user = localStorage.getItem("user");
 
-    if (token && user && accessToken) {
+    if (token || user) {
       return {
         token,
-        user: JSON.parse(user),
+        user: JSON.parse(user as string),
         isAuthenticated: true,
       };
     }
@@ -69,7 +69,6 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("user");
 
-     
       // Clear localStorage
       if (typeof window !== "undefined") {
         Cookies.remove("token");

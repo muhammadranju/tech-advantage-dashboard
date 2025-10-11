@@ -20,42 +20,43 @@ const Pagination = ({
     return null;
   }
 
-  const handlePrev = () => {
-    if (currentPage > 1) {
-      onPageChange(currentPage - 1);
-    }
-  };
 
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
-    }
-  };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-8">
+    <div className="flex items-center justify-end space-x-2 mt-4">
       <Button
-        variant="outline"
-        onClick={handlePrev}
+        variant="ghost"
+        size="sm"
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
+        className="gap-1"
       >
-        <ChevronLeft className="h-4 w-4" /> Previous
+        <ChevronLeft className="h-4 w-4" />
+        Previous
       </Button>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <Button
-          key={page}
-          variant={currentPage === page ? "default" : "outline"}
-          onClick={() => onPageChange(page)}
-        >
-          {page}
-        </Button>
-      ))}
+
+      <div className="flex space-x-1">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <Button
+            key={page}
+            variant={currentPage === page ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onPageChange(page)}
+            className="w-8 h-8 p-0"
+          >
+            {page}
+          </Button>
+        ))}
+      </div>
+
       <Button
-        variant="outline"
-        onClick={handleNext}
-        disabled={currentPage === totalPages}
+        variant="ghost"
+        size="sm"
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        className="gap-1"
       >
-        Next <ChevronRight className="h-4 w-4" />
+        Next
+        <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
   );

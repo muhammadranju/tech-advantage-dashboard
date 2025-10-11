@@ -1,8 +1,4 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -22,9 +18,13 @@ import {
   ChartGantt,
   CircleDollarSign,
   Handshake,
+  LogIn,
   MessagesSquare,
 } from "lucide-react";
-import { CgLogOut } from "react-icons/cg";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import * as React from "react";
 import { FiSidebar } from "react-icons/fi";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { MdOutlinePolicy } from "react-icons/md";
@@ -92,8 +92,13 @@ function SidebarNavItem({ item, active }: { item: NavItem; active: boolean }) {
   return (
     <SidebarMenuItem key={item.title}>
       <SidebarMenuButton className="text-base" asChild isActive={active}>
-        <Link className="p-6 my-1 flex items-center" href={item.url}>
+        <Link className="p-6 my-1 flex items-center relative" href={item.url}>
+          {active && (
+            <span className="w-2 h-full bg-neutral-400 rounded-l absolute left-0 top-0"></span>
+          )}
+
           <span className="mr-2 text-lg">{item.icon}</span>
+
           <span>{item.title}</span>
         </Link>
       </SidebarMenuButton>
@@ -149,12 +154,12 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </div>
 
-      <div className="mt-auto p-4 border-t border-gray-600">
+      <div className="mt-auto p-4 border-t border-neutral-600">
         <Button
           onClick={handleLogout}
           className="bg-neutral-600 hover:bg-neutral-700 py-6 w-full text-lg text-white"
         >
-          <CgLogOut className="rotate-180 h-6 w-6 mr-2" />
+          <LogIn className=" h-6 w-6 -mr-1" />
           Logout
         </Button>
       </div>

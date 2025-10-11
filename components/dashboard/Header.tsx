@@ -11,7 +11,7 @@ import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { Bell, Camera, Lock } from "lucide-react";
 import Link from "next/link";
 import { PiPencilFill } from "react-icons/pi";
-import { ClipLoader } from "react-spinners";
+import { SpinnerCustom } from "../ui/SpinnerCustom";
 
 interface MenuItemProps {
   href: string;
@@ -50,28 +50,26 @@ export function Header() {
 
         <div className="flex items-center space-x-2">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              {isLoading ? (
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <ClipLoader
-                    color="#9CA3AF"
-                    size={20}
-                    cssOverride={{ display: "inline-block" }}
-                  />
-                </div>
-              ) : (
-                <Avatar className="w-10 h-10 object-cover cursor-pointer hover:ring-2 hover:ring-neutral-300 transition-all border-2 shadow-lg">
+            {isLoading ? (
+              <>
+                <SpinnerCustom />
+                Loading...
+              </>
+            ) : (
+              <DropdownMenuTrigger asChild>
+                <Avatar className="w-10 h-10 rounded-full hover:ring-4 ring-neutral-200 transition-all cursor-pointer">
+                  {/* or rounded-lg for more rounded corners */}
+                  <AvatarFallback>
+                    <SpinnerCustom />
+                  </AvatarFallback>
                   <AvatarImage
-                    src={
-                      user?.image
-                        ? process.env.NEXT_PUBLIC_BASE_URL + user.image
-                        : undefined
-                    }
+                    className="w-full h-full object-cover"
+                    src={process.env.NEXT_PUBLIC_BASE_URL?.concat(user?.image)}
+                    alt={user?.name || "User avatar"}
                   />
-                  <AvatarFallback>{user?.name}</AvatarFallback>
                 </Avatar>
-              )}
-            </DropdownMenuTrigger>
+              </DropdownMenuTrigger>
+            )}
 
             <DropdownMenuContent className="w-56 p-0 rounded" align="end">
               <UserMenuItem
@@ -94,12 +92,15 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="text-sm">
-            <p className="font-bold">{user?.name}</p>
-            <p className="text-neutral-500 text-xs capitalize">
-              {user?.role?.toLowerCase()}
-            </p>
-          </div>
+          {!isLoading && (
+            <div className="text-sm">
+              <p className="font-bold">{user?.name}</p>
+              <p className="text-neutral-500 text-xs capitalize">
+                {/* {user?.role?.toLowerCase()} */}
+                {user?.role === "SUPER_ADMIN" ? "Super Admin" : "Admin"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </header>

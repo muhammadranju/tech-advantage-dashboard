@@ -95,7 +95,7 @@ export function RevenueChart() {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-black text-white px-3 py-2 rounded text-sm">
-                        <p>{`${payload[0]?.value?.toLocaleString()} Application Rate`}</p>
+                        <p>{`${payload[0]?.value?.toLocaleString() || "0"}`}</p>
                         <p>{`${payload[0].payload.month}`}</p>
                       </div>
                     );

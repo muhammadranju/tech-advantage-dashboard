@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable}`}>
+    <div className={`${geistSans.variable} ${geistMono.variable}`} dir="ltr">
       <SidebarProvider className="bg-neutral-100">
         <AppSidebar />
         <SidebarInset>
@@ -45,4 +45,3 @@ export default function RootLayout({
     </div>
   );
 }
- 

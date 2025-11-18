@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,112 +13,209 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  useCreateCoachMutation,
+  useGetAllCoachesQuery,
+  useGetSlotsByIdWithDateQuery,
+  useUpdateSlotMutation,
+  useAddDateMutation,
+} from "@/lib/redux/features/api/coaching/coachsApiSlice";
+import {
   AlertCircle,
   Calendar,
   CalendarCheck,
   Check,
   ChevronLeft,
   ChevronRight,
-  Edit,
+  Clock,
   Plus,
-  Save,
   Search,
-  Trash2,
   User,
   X,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
-import {
-  BookingData,
-  BookingDetail,
-  Coach,
-  TimeSlot,
-} from "./coaching.interface";
+import { Spinner } from "@/components/ui/spinner";
 
-const CoachBooking = () => {
-  const [coachName, setCoachName] = useState<string>("");
-  const [coachDescription, setCoachDescription] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+type Coach = {
+  _id: string;
+  name: string;
+  description: string;
+  details: Array<{
+    date: string;
+    _id: string;
+  }>;
+};
+
+type Slot = {
+  value: string;
+  flag: number;
+  _id: string;
+};
+
+export default function CoachBooking() {
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [open, setOpen] = useState(false);
-  const [selectedDateTimeSlots, setSelectedDateTimeSlots] = useState<{
-    [key: string]: TimeSlot[];
-  }>({});
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [editingTimeSlots, setEditingTimeSlots] = useState<boolean>(false);
-  const [newTimeSlot, setNewTimeSlot] = useState<{
-    startTime: string;
-    endTime: string;
-  }>({
-    startTime: "",
-    endTime: "",
-  });
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  const [selectedSlots, setSelectedSlots] = useState<Record<string, Slot[]>>(
+    {}
+  );
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [newCoachName, setNewCoachName] = useState("");
+  const [newCoachDesc, setNewCoachDesc] = useState("");
+  const [mockMode] = useState(true);
+  const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
+  const [bookingPreview, setBookingPreview] = useState<string | null>(null);
 
-  // Default time slots
-  const defaultTimeSlots: TimeSlot[] = [
-    {
-      id: "1",
-      startTime: "10:00",
-      endTime: "12:00",
-      displayText: "10:00 AM - 12:00 PM",
-    },
-    {
-      id: "2",
-      startTime: "12:00",
-      endTime: "14:00",
-      displayText: "12:00 PM - 02:00 PM",
-    },
-    {
-      id: "3",
-      startTime: "15:00",
-      endTime: "17:00",
-      displayText: "03:00 PM - 05:00 PM",
-    },
-  ];
+  const [openAddDateDialog, setOpenAddDateDialog] = useState(false);
+  const [newDate, setNewDate] = useState("");
+  const [newSlots, setNewSlots] = useState<string[]>(["", "", ""]);
 
-  // Sample coaches with future dates only
-  const [coaches, setCoaches] = useState<Coach[]>([
-    {
-      id: 1,
-      name: "Shawn",
-      description: "Small Business Coach with 10+ years experience",
-      availableDates: [],
-      timeSlots: [...defaultTimeSlots],
-    },
-    {
-      id: 2,
-      name: "Emily",
-      description: "Marketing Strategy Coach specializing in digital marketing",
-      availableDates: [],
-      timeSlots: [...defaultTimeSlots],
-    },
-    {
-      id: 3,
-      name: "Emily",
-      description: "Marketing Strategy Coach specializing in digital marketing",
-      availableDates: [],
-      timeSlots: [...defaultTimeSlots],
-    },
-    {
-      id: 4,
-      name: "Emily",
-      description: "Marketing Strategy Coach specializing in digital marketing",
-      availableDates: [],
-      timeSlots: [...defaultTimeSlots],
-    },
-    {
-      id: 5,
-      name: "Emily",
-      description: "Marketing Strategy Coach specializing in digital marketing",
-      availableDates: [],
-      timeSlots: [...defaultTimeSlots],
-    },
-  ]);
+  const { data: coachesData, isLoading, refetch } = useGetAllCoachesQuery({});
+  const [createCoach] = useCreateCoachMutation();
+  const [updateSlot] = useUpdateSlotMutation();
+  const [addDate] = useAddDateMutation();
 
-  const monthNames: string[] = [
+  // FIXED + IMPROVED DateSlots - Only change needed!
+  function DateSlots({
+    coachId,
+    dateKey,
+    selected,
+    onToggle,
+    onRemove,
+  }: {
+    coachId: string;
+    dateKey: string;
+    selected: Slot[];
+    onToggle: (slot: Slot) => void;
+    onRemove: () => void;
+  }) {
+    const query = useGetSlotsByIdWithDateQuery(
+      { coachId, date: dateKey },
+      { skip: !coachId || !dateKey }
+    );
+
+    const slotData = query.data?.data;
+
+    // Available slots (flag === 1)
+    const availableSlots: Slot[] = [];
+    if (slotData?.slot1?.flag === 1) availableSlots.push(slotData.slot1);
+    if (slotData?.slot2?.flag === 1) availableSlots.push(slotData.slot2);
+    if (slotData?.slot3?.flag === 1) availableSlots.push(slotData.slot3);
+
+    // Booked slots (flag === 0)
+    const bookedSlots: Slot[] = [];
+    if (slotData?.slot1?.flag === 0) bookedSlots.push(slotData.slot1);
+    if (slotData?.slot2?.flag === 0) bookedSlots.push(slotData.slot2);
+    if (slotData?.slot3?.flag === 0) bookedSlots.push(slotData.slot3);
+
+    return (
+      <div className="border rounded-lg p-4">
+        <div className="flex justify-between items-center mb-3">
+          <h4 className="font-semibold">
+            {parseDateKey(dateKey).toLocaleDateString()}
+          </h4>
+          <Button variant="ghost" size="icon" onClick={onRemove}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {query.isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading slots...</p>
+        ) : availableSlots.length === 0 && bookedSlots.length === 0 ? (
+          <p className="text-sm text-orange-600">No slots on this date</p>
+        ) : (
+          <div className="space-y-2">
+            {/* Available Slots */}
+            {availableSlots.map((slot) => {
+              const isSelected = selected.some((s) => s._id === slot._id);
+              return (
+                <button
+                  key={slot._id}
+                  onClick={() => onToggle(slot)}
+                  className={`w-full p-3 rounded text-left transition-all flex justify-between items-center ${
+                    isSelected
+                      ? "bg-green-600 text-white"
+                      : "bg-neutral-100 hover:bg-neutral-200"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    {slot.value}
+                  </span>
+                  {isSelected && <Check className="h-5 w-5" />}
+                </button>
+              );
+            })}
+
+            {/* Booked Slots - Shown in gray */}
+            {bookedSlots.map((slot) => (
+              <div
+                key={slot._id}
+                className="w-full p-3 rounded bg-gray-100 text-gray-500 flex justify-between items-center opacity-70"
+              >
+                <span className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  {slot.value}
+                </span>
+                <span className="text-xs font-medium">Booked</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const coaches: Coach[] = coachesData?.data || [];
+
+  const filteredCoaches = coaches.filter(
+    (c) =>
+      c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleAddCoach = async () => {
+    if (!newCoachName.trim() || !newCoachDesc.trim()) return;
+    try {
+      await createCoach({
+        body: { name: newCoachName, description: newCoachDesc },
+      }).unwrap();
+      toast.success("Coach added!");
+      setNewCoachName("");
+      setNewCoachDesc("");
+      setOpenAddDialog(false);
+      refetch();
+    } catch {
+      toast.error("Failed to add coach");
+    }
+  };
+
+  const handleAddNewDate = async () => {
+    if (!newDate) {
+      toast.error("Please select a date");
+      return;
+    }
+    try {
+      const [y, m, d] = newDate.split("-");
+      const formattedDate = `${d}-${m}-${y}`;
+      await addDate({
+        coachId: selectedCoach!._id,
+        date: formattedDate,
+      }).unwrap();
+      toast.success("New date & slots added successfully!");
+      setOpenAddDateDialog(false);
+      setNewDate("");
+      setNewSlots(["", "", ""]);
+      refetch();
+    } catch (err) {
+      toast.error("Failed to add date. Check console.");
+      console.error(err);
+    }
+  };
+
+  const monthNames = [
     "January",
     "February",
     "March",
@@ -132,313 +230,93 @@ const CoachBooking = () => {
     "December",
   ];
 
-  const daysOfWeek: string[] = [
-    "Sun",
-    "Mon",
-    "Tue",
-    "Wed",
-    "Thu",
-    "Fri",
-    "Sat",
-  ];
-
-  // Get today's date for comparison
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Filter coaches based on search term
-  const filteredCoaches = coaches.filter(
-    (coach) =>
-      coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      coach.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Add new coach
-  const handleAddCoach = async () => {
-    if (coachName.trim() && coachDescription.trim()) {
-      const newCoach: Coach = {
-        id: coaches.length + 1,
-        name: coachName,
-        description: coachDescription,
-        availableDates: [],
-        timeSlots: [...defaultTimeSlots],
-      };
-
-      try {
-        setCoaches([...coaches, newCoach]);
-        setCoachName("");
-        setCoachDescription("");
-        toast.success("Coach added successfully!");
-        setOpen(false);
-      } catch (error) {
-        toast.error((error as string) || "Failed to add coach");
-      }
-    }
-  };
-
-  // Select a coach (single selection)
-  const handleCoachSelection = (coach: Coach) => {
-    setSelectedCoach(coach);
-    setSelectedDates([]);
-    setSelectedDateTimeSlots({});
-  };
-
-  // Get calendar days for current month
-  const getDaysInMonth = (date: Date): (Date | null)[] => {
+  const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
     const days: (Date | null)[] = [];
-
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
-    }
-
+    for (let i = 0; i < first.getDay(); i++) days.push(null);
+    for (let d = 1; d <= last.getDate(); d++)
+      days.push(new Date(year, month, d));
     return days;
   };
 
-  // Check if date is available for selected coach
-  const isDateAvailable = (date: Date): boolean => {
+  const formatDateKey = (date: Date) => {
+    return `${String(date.getDate()).padStart(2, "0")}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${date.getFullYear()}`;
+  };
+
+  const parseDateKey = (key: string): Date => {
+    const [d, m, y] = key.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  };
+
+  const isDateAvailable = (date: Date) => {
     if (!selectedCoach) return false;
-    if (date < today) return false;
-
-    return selectedCoach.availableDates.some(
-      (availableDate) => availableDate.getTime() === date.getTime()
-    );
+    const key = formatDateKey(date);
+    return selectedCoach.details.some((d) => d.date === key);
   };
 
-  // Check if date is selected for booking
-  const isDateSelected = (date: Date): boolean => {
-    return selectedDates.some(
-      (selectedDate) => selectedDate.getTime() === date.getTime()
-    );
-  };
-
-  // Add/remove date from coach's availability
-  const toggleDateAvailability = async (date: Date) => {
-    if (!selectedCoach || date < today) return;
-
-    const updatedCoach = { ...selectedCoach };
-    const dateIndex = updatedCoach.availableDates.findIndex(
-      (d) => d.getTime() === date.getTime()
-    );
-
-    if (dateIndex > -1) {
-      // Remove date
-      updatedCoach.availableDates.splice(dateIndex, 1);
-      // Also remove from selected dates if it was selected
-      const selectedIndex = selectedDates.findIndex(
-        (d) => d.getTime() === date.getTime()
-      );
-      if (selectedIndex > -1) {
-        const newSelectedDates = [...selectedDates];
-        newSelectedDates.splice(selectedIndex, 1);
-        setSelectedDates(newSelectedDates);
-
-        // Remove time slots for this date
-        const dateKey = date.toISOString().split("T")[0];
-        const newSelectedDateTimeSlots = { ...selectedDateTimeSlots };
-        delete newSelectedDateTimeSlots[dateKey];
-        setSelectedDateTimeSlots(newSelectedDateTimeSlots);
-      }
-    } else {
-      // Add date
-      updatedCoach.availableDates.push(date);
-    }
-
-    setCoaches(
-      coaches.map((coach) =>
-        coach.id === selectedCoach.id ? updatedCoach : coach
-      )
-    );
-    setSelectedCoach(updatedCoach);
-  };
-
-  // Toggle date selection for booking
-  const toggleDateSelection = (date: Date) => {
+  const toggleDate = (date: Date) => {
+    const key = formatDateKey(date);
     if (!isDateAvailable(date)) return;
 
-    const dateIndex = selectedDates.findIndex(
-      (d) => d.getTime() === date.getTime()
-    );
-    const dateKey = date.toISOString().split("T")[0];
-
-    if (dateIndex > -1) {
-      // Remove date
-      const newSelectedDates = [...selectedDates];
-      newSelectedDates.splice(dateIndex, 1);
-      setSelectedDates(newSelectedDates);
-
-      // Remove time slots for this date
-      const newSelectedDateTimeSlots = { ...selectedDateTimeSlots };
-      delete newSelectedDateTimeSlots[dateKey];
-      setSelectedDateTimeSlots(newSelectedDateTimeSlots);
+    if (selectedDates.includes(key)) {
+      setSelectedDates(selectedDates.filter((d) => d !== key));
+      setSelectedSlots((prev) => {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      });
     } else {
-      // Add date
-      setSelectedDates([...selectedDates, date]);
-      setSelectedDateTimeSlots({ ...selectedDateTimeSlots, [dateKey]: [] });
+      setSelectedDates([...selectedDates, key]);
     }
   };
 
-  // Add time slot to selected date
-  const addTimeSlotToDate = (dateKey: string, timeSlot: TimeSlot) => {
-    const currentSlots = selectedDateTimeSlots[dateKey] || [];
-
-    if (currentSlots.some((slot) => slot.id === timeSlot.id)) {
-      // Remove time slot
-      setSelectedDateTimeSlots({
-        ...selectedDateTimeSlots,
-        [dateKey]: currentSlots.filter((slot) => slot.id !== timeSlot.id),
-      });
-    } else {
-      // Add time slot only if under limit
-      if (currentSlots.length >= 3) {
-        alert("Maximum 3 time slots per date allowed");
-        return;
-      }
-      setSelectedDateTimeSlots({
-        ...selectedDateTimeSlots,
-        [dateKey]: [...currentSlots, timeSlot],
-      });
-    }
+  const toggleSlotSelection = (dateKey: string, slot: Slot) => {
+    setSelectedSlots((prev) => ({
+      ...prev,
+      [dateKey]: prev[dateKey]?.some((s) => s._id === slot._id)
+        ? prev[dateKey].filter((s) => s._id !== slot._id)
+        : [...(prev[dateKey] || []), slot],
+    }));
   };
 
-  // Add new time slot
-  const handleAddTimeSlot = async () => {
-    if (!selectedCoach || !newTimeSlot.startTime || !newTimeSlot.endTime)
-      return;
-
-    const formatTime = (time: string) => {
-      const [hour, minute] = time.split(":");
-      const h = parseInt(hour);
-      const ampm = h >= 12 ? "PM" : "AM";
-      const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
-      return `${displayHour.toString().padStart(2, "0")}:${minute} ${ampm}`;
-    };
-
-    const newSlot: TimeSlot = {
-      id: Date.now().toString(),
-      startTime: newTimeSlot.startTime,
-      endTime: newTimeSlot.endTime,
-      displayText: `${formatTime(newTimeSlot.startTime)} - ${formatTime(
-        newTimeSlot.endTime
-      )}`,
-    };
-
-    const updatedCoach = {
-      ...selectedCoach,
-      timeSlots: [...selectedCoach.timeSlots, newSlot],
-    };
-
-    setCoaches(
-      coaches.map((coach) =>
-        coach.id === selectedCoach.id ? updatedCoach : coach
-      )
-    );
-    setSelectedCoach(updatedCoach);
-    setNewTimeSlot({ startTime: "", endTime: "" });
-  };
-
-  // Remove time slot
-  const handleRemoveTimeSlot = async (timeSlotId: string) => {
-    if (!selectedCoach) return;
-
-    const updatedCoach = {
-      ...selectedCoach,
-      timeSlots: selectedCoach.timeSlots.filter(
-        (slot) => slot.id !== timeSlotId
-      ),
-    };
-
-    setCoaches(
-      coaches.map((coach) =>
-        coach.id === selectedCoach.id ? updatedCoach : coach
-      )
-    );
-    setSelectedCoach(updatedCoach);
-
-    // Remove this time slot from all selected dates
-    const newSelectedDateTimeSlots = { ...selectedDateTimeSlots };
-    Object.keys(newSelectedDateTimeSlots).forEach((dateKey) => {
-      newSelectedDateTimeSlots[dateKey] = newSelectedDateTimeSlots[
-        dateKey
-      ].filter((slot) => slot.id !== timeSlotId);
-    });
-    setSelectedDateTimeSlots(newSelectedDateTimeSlots);
-  };
-
-  // Navigate months
-  const navigateMonth = (direction: number): void => {
-    setCurrentMonth((prev) => {
-      const newDate = new Date(prev);
-      newDate.setMonth(prev.getMonth() + direction);
-      return newDate;
-    });
-  };
-
-  // Generate booking data in requested format
-  const generateBookingData = (): BookingData => {
-    const details: BookingDetail[] = [];
-
-    selectedDates.forEach((date) => {
-      const dateKey = date.toISOString().split("T")[0];
-      const timeSlots = selectedDateTimeSlots[dateKey] || [];
-
-      if (timeSlots.length > 0) {
-        const detail: BookingDetail = { date: dateKey };
-
-        timeSlots.forEach((slot, index) => {
-          if (index === 0) detail.slot1 = slot.displayText;
-          else if (index === 1) detail.slot2 = slot.displayText;
-          else if (index === 2) detail.slot3 = slot.displayText;
-        });
-
-        details.push(detail);
-      }
-    });
-
-    return {
-      name: selectedCoach?.name || "",
-      description: selectedCoach?.description || "",
-      details: details,
-    };
-  };
-
-  // Confirm booking
   const confirmBooking = async () => {
     if (!selectedCoach || selectedDates.length === 0) return;
 
-    const bookingData = generateBookingData();
-
-    if (bookingData.details.length === 0) {
-      alert("Please select at least one time slot for your selected dates");
+    const totalSelected = Object.values(selectedSlots).flat().length;
+    if (totalSelected === 0) {
+      toast.error("Please select at least one time slot");
       return;
     }
 
     try {
-      console.log("Booking Data:", JSON.stringify(bookingData, null, 2));
-      alert(
-        `Booking confirmed for ${selectedCoach.name}!\nCheck console for booking data.`
-      );
-
-      toast.success(
-        `Booking confirmed for ${selectedCoach.name}!\nCheck console for booking data.`
-      );
-
-      // Reset selections
-      setSelectedDates([]);
-      setSelectedDateTimeSlots({});
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      alert("Failed to create booking");
+      if (mockMode) {
+        const details = selectedDates
+          .map((date) => ({
+            date,
+            slots: (selectedSlots[date] || []).map((s) => ({
+              slotId: s._id,
+              value: s.value,
+            })),
+          }))
+          .filter((d) => d.slots.length > 0);
+        const payload = {
+          coachId: selectedCoach._id,
+          coachName: selectedCoach.name,
+          details,
+          totalSlots: totalSelected,
+          createdAt: new Date().toISOString(),
+        };
+        setBookingPreview(JSON.stringify(payload, null, 2));
+        setOpenPreviewDialog(true);
+        return;
+      }
+    } catch (err) {
+      toast.error("Booking failed. Please try again.");
+      console.error(err);
     }
   };
 
@@ -446,480 +324,322 @@ const CoachBooking = () => {
 
   return (
     <div className="px-10 mt-5 min-h-screen">
-      <div className="">
-        <div className="flex justify-between gap-x-10 items-center mb-5">
-          <BackButtons backTitle="Applications" title={"Coach Booking"} />
-          <Button
-            onClick={() => setOpen(true)}
-            className="bg-black hover:bg-neutral-800 py-6 text-white"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add Coach
-          </Button>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Coaches Section */}
-          <Card className="lg:col-span-1">
-            <CardContent className="p-6">
-              <h3 className="text-2xl font-bold text-neutral-800 mb-4">
-                Select Coach
-              </h3>
-
-              <div className="mb-4">
-                <Label htmlFor="searchCoaches">Search Coaches</Label>
-                <div className="relative">
-                  <Input
-                    id="searchCoaches"
-                    placeholder="Search coaches..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="py-6 my-3 peer ps-11"
-                  />
-                  <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                    <Search size={28} aria-hidden="true" />
-                  </div>
-                </div>
-              </div>
-
-              <div className={`space-y-3 overflow-auto  max-h-[540px]`}>
-                {filteredCoaches.map((coach) => (
-                  <div
-                    key={coach.id}
-                    onClick={() => handleCoachSelection(coach)}
-                    className={`
-                      p-4 rounded-lg cursor-pointer transition-all border-2
-                      ${
-                        selectedCoach?.id === coach.id
-                          ? "bg-blue-50 border-neutral-500 shadow-sm"
-                          : "bg-white border-neutral-200 hover:border-neutral-300 hover:shadow-sm"
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`
-                            w-10 h-10 rounded-full flex items-center justify-center
-                            ${
-                              selectedCoach?.id === coach.id
-                                ? "bg-neutral-800"
-                                : "bg-neutral-200"
-                            }
-                          `}
-                        >
-                          {selectedCoach?.id === coach.id ? (
-                            <Check className="h-5 w-5 text-white" />
-                          ) : (
-                            <User className="h-5 w-5 text-neutral-500" />
-                          )}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-neutral-800">
-                            {coach.name}
-                          </h4>
-                          <p className="text-sm text-neutral-600">
-                            {coach.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Calendar Section */}
-          <Card className="lg:col-span-1">
-            <CardContent className="p-6">
-              <h3 className="text-2xl font-bold text-neutral-800 mb-4 text-center">
-                Manage Dates
-              </h3>
-
-              {!selectedCoach && (
-                <div className="text-center py-8 text-neutral-500">
-                  <AlertCircle className="h-12 w-12 mx-auto mb-3 text-neutral-400" />
-                  <p>Please select a coach to manage dates</p>
-                </div>
-              )}
-
-              {selectedCoach && (
-                <>
-                  {/* Month Navigation */}
-                  <div className="flex items-center justify-center gap-x-8 mb-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigateMonth(-1)}
-                      className="p-2 rounded-full hover:bg-black hover:text-white"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </Button>
-                    <h4 className="text-lg font-semibold">
-                      {monthNames[currentMonth.getMonth()]}{" "}
-                      {currentMonth.getFullYear()}
-                    </h4>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigateMonth(1)}
-                      className="p-2 rounded-full hover:bg-black hover:text-white"
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </Button>
-                  </div>
-
-                  {/* Days of Week Header */}
-                  <div className="grid grid-cols-7 gap-1 mb-2">
-                    {daysOfWeek.map((day) => (
-                      <div
-                        key={day}
-                        className="text-center text-xs font-medium text-neutral-500 py-1"
-                      >
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Calendar Days */}
-                  <div className="grid grid-cols-7 gap-1">
-                    {days.map((day, index) => {
-                      if (!day) {
-                        return <div key={index} className="invisible"></div>;
-                      }
-
-                      const isAvailable = isDateAvailable(day);
-                      const isSelected = isDateSelected(day);
-                      const isPast = day < today;
-
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            if (!isPast) {
-                              // Right click or ctrl+click to manage availability, regular click to select for booking
-                              toggleDateAvailability(day);
-                            }
-                          }}
-                          onDoubleClick={() => {
-                            if (isAvailable) {
-                              toggleDateSelection(day);
-                            }
-                          }}
-                          className={`
-                            aspect-square flex items-center justify-center text-sm rounded-full
-                            transition-all relative
-                            ${
-                              isPast
-                                ? "bg-neutral-100 text-neutral-300 cursor-not-allowed"
-                                : ""
-                            }
-                            ${
-                              !isPast && isAvailable && !isSelected
-                                ? "bg-green-100 text-green-800 hover:bg-green-200 font-medium"
-                                : ""
-                            }
-                            ${
-                              isSelected
-                                ? "bg-blue-500 text-white font-bold ring-2 ring-blue-300"
-                                : ""
-                            }
-                            ${
-                              !isPast && !isAvailable
-                                ? "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 cursor-pointer"
-                                : ""
-                            }
-                          `}
-                          disabled={isPast}
-                          title={
-                            isAvailable
-                              ? "Double-click to select for booking"
-                              : "Click to add to availability"
-                          }
-                        >
-                          {day.getDate()}
-                          {isAvailable && !isSelected && (
-                            <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-green-400 rounded-full"></div>
-                          )}
-                          {isSelected && (
-                            <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-200 rounded-full"></div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Legend */}
-                  <div className="mt-4 text-xs space-y-2">
-                    <div className="flex items-center justify-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-green-300 rounded-full"></div>
-                        <span className="text-neutral-600">Available</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <span className="text-neutral-600">Selected</span>
-                      </div>
-                    </div>
-                    <p className="text-center text-neutral-500">
-                      Click: Add to availability | Double-click: Select for
-                      booking
-                    </p>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Date-Time Selection */}
-          <Card className="lg:col-span-1">
-            <CardContent className="px-6 pt-6">
-              <div className="flex items-center  justify-between mb-4">
-                <h3 className="text-2xl font-bold text-neutral-800">
-                  Time Slots
-                </h3>
-                {selectedCoach && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditingTimeSlots(!editingTimeSlots)}
-                    className="text-sm"
-                  >
-                    {editingTimeSlots ? (
-                      <Save className="h-4 w-4 mr-2" />
-                    ) : (
-                      <Edit className="h-4 w-4 mr-2" />
-                    )}
-                    {editingTimeSlots ? "Done" : "Edit"}
-                  </Button>
-                )}
-              </div>
-
-              {!selectedCoach && (
-                <div className="text-center py-8 text-neutral-500 ">
-                  <AlertCircle className="h-12 w-12 mx-auto mb-3 text-neutral-400" />
-                  <p>Please select a coach first</p>
-                </div>
-              )}
-
-              {selectedCoach && (
-                <>
-                  {/* Add New Time Slot */}
-                  {editingTimeSlots && (
-                    <div className="mb-4 p-4 border-2 border-dashed border-neutral-200 rounded-lg">
-                      <Label className="text-xm font-medium mb-2 block">
-                        Add Time Slot
-                      </Label>
-                      <div className="flex gap-2 mb-2">
-                        <Input
-                          type="time"
-                          value={newTimeSlot.startTime}
-                          onChange={(e) =>
-                            setNewTimeSlot({
-                              ...newTimeSlot,
-                              startTime: e.target.value,
-                            })
-                          }
-                          className="flex-1"
-                        />
-                        <Input
-                          type="time"
-                          value={newTimeSlot.endTime}
-                          onChange={(e) =>
-                            setNewTimeSlot({
-                              ...newTimeSlot,
-                              endTime: e.target.value,
-                            })
-                          }
-                          className="flex-1"
-                        />
-                      </div>
-                      <Button
-                        onClick={handleAddTimeSlot}
-                        size="sm"
-                        className="w-full"
-                        disabled={
-                          !newTimeSlot.startTime || !newTimeSlot.endTime
-                        }
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add Slot
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Time Slots List */}
-                  <div className=" grid grid-cols-3 gap-1 items-center">
-                    {selectedCoach.timeSlots.map((slot) => (
-                      <div
-                        key={slot.id}
-                        className=" text-xs  rounded-lg bg-neutral-50 hover:bg-neutral-100 text-neutral-800 border-2 border-neutral-200 transition-all p-2 text-center flex items-center justify-center"
-                      >
-                        <span className="font-medium">{slot.displayText}</span>
-
-                        {editingTimeSlots && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRemoveTimeSlot(slot.id)}
-                            className="ml-2 text-center text-xs hover:bg-red-100 text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </CardContent>
-
-            <CardContent className="px-6">
-              <h3 className="text-2xl font-bold text-neutral-800 mb-4">
-                Book Sessions
-              </h3>
-
-              {selectedDates.length === 0 && (
-                <div className="text-center py-8 text-neutral-500">
-                  <Calendar className="h-12 w-12 mx-auto mb-3 text-neutral-400" />
-                  <p>Select dates to book sessions</p>
-                </div>
-              )}
-
-              {selectedDates.length > 0 && (
-                <div className="h-[540px] flex flex-col">
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-                    {selectedDates.map((date) => {
-                      const dateKey = date.toISOString().split("T")[0];
-                      const selectedSlots =
-                        selectedDateTimeSlots[dateKey] || [];
-
-                      return (
-                        <div
-                          key={dateKey}
-                          className="border rounded-lg p-4 flex-shrink-0"
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-neutral-800">
-                              {date.toLocaleDateString() || "Invalid Date"}
-                            </h4>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleDateSelection(date)}
-                              className="text-red-600 hover:bg-red-50"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-1 items-center">
-                            {selectedCoach?.timeSlots.map((slot) => {
-                              const isSelected = selectedSlots.some(
-                                (s) => s.id === slot.id
-                              );
-                              const canSelect =
-                                selectedSlots.length < 3 || isSelected;
-
-                              return (
-                                <button
-                                  key={slot.id}
-                                  onClick={() =>
-                                    canSelect &&
-                                    addTimeSlotToDate(dateKey, slot)
-                                  }
-                                  disabled={!canSelect}
-                                  className={`
-                                    w-full p-2 text-sm rounded transition-all
-                                    ${
-                                      isSelected
-                                        ? "bg-green-500 text-white"
-                                        : canSelect
-                                        ? "bg-green-50 text-green-800 hover:bg-green-100 border border-green-200"
-                                        : "bg-neutral-100 text-neutral-400 cursor-not-allowed"
-                                    }
-                                  `}
-                                >
-                                  {slot.displayText}
-                                  {isSelected && (
-                                    <Check className="inline h-4 w-4 ml-2" />
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          <p className="text-xs text-neutral-500 mt-2">
-                            {selectedSlots.length}/3 slots selected
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Book Button */}
-                  <div className="flex justify-center mt-4 pt-4 border-t flex-shrink-0">
-                    <Button
-                      onClick={confirmBooking}
-                      className="py-6 text-white w-full bg-black hover:bg-neutral-800"
-                      disabled={Object.values(selectedDateTimeSlots).every(
-                        (slots) => slots.length === 0
-                      )}
-                    >
-                      <CalendarCheck className="h-4 w-4 mr-2" />
-                      Book Sessions (
-                      {Object.values(selectedDateTimeSlots).flat().length}{" "}
-                      slots)
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+      <div className="flex justify-between items-center mb-6">
+        <BackButtons backTitle="Applications" title="Coach Booking" />
+        <Button
+          onClick={() => setOpenAddDialog(true)}
+          className="bg-black hover:bg-neutral-800 py-6 text-white"
+        >
+          <Plus className="mr-2" /> Add Coach
+        </Button>
       </div>
 
-      {/* Add New Coach */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <form>
-          <DialogContent className="sm:max-w-[550px]">
-            <DialogHeader>
-              <DialogTitle>Add Coach</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="name">Coach Name</Label>
-                <Input
-                  placeholder="Enter coach name..."
-                  value={coachName}
-                  onChange={(e) => setCoachName(e.target.value)}
-                  className="flex-1 py-6"
-                />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="description">Coach Description</Label>
-                <Input
-                  placeholder="Enter coach description..."
-                  value={coachDescription}
-                  onChange={(e) => setCoachDescription(e.target.value)}
-                  className="flex-1 py-6"
-                />
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 1. Coaches List - Your Original Design */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-2xl font-bold mb-4">Select Coach</h3>
+            <div className="relative mb-4">
+              <Input
+                placeholder="Search coaches..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="py-6 ps-11"
+              />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                size={28}
+              />
             </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit" onClick={handleAddCoach}>
-                <Save /> Save changes
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </form>
+            <div className="space-y-3 max-h-[620px] overflow-y-auto">
+              {isLoading ? (
+                <p className="text-center py-8 text-muted-foreground mx-auto">
+                  Loading...
+                </p>
+              ) : (
+                filteredCoaches.map((coach) => (
+                  <div
+                    key={coach._id}
+                    onClick={() => {
+                      setSelectedCoach(coach);
+                      setSelectedDates([]);
+                      setSelectedSlots({});
+                    }}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedCoach?._id === coach._id
+                        ? "border-black bg-blue-50"
+                        : "border-neutral-200 hover:border-neutral-400"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          selectedCoach?._id === coach._id
+                            ? "bg-black"
+                            : "bg-neutral-200"
+                        }`}
+                      >
+                        {selectedCoach?._id === coach._id ? (
+                          <Check className="text-white" />
+                        ) : (
+                          <User className="text-neutral-600" />
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">{coach.name}</h4>
+                        <p className="text-sm text-neutral-600">
+                          {coach.description}
+                        </p>
+                        {coach.details.length > 0 && (
+                          <p className="text-xs text-green-600 mt-1">
+                            {coach.details.length} available dates
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 2. Calendar - Your Original Design */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-2xl font-bold">Available Dates</h3>
+              {selectedCoach && (
+                <Button
+                  onClick={() => setOpenAddDateDialog(true)}
+                  size="sm"
+                  className="bg-black hover:bg-neutral-800 text-white"
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Add Date & Slots
+                </Button>
+              )}
+            </div>
+
+            {!selectedCoach ? (
+              <div className="text-center py-16 text-muted-foreground">
+                <AlertCircle className="mx-auto mb-3 h-12 w-12" />
+                <p>Select a coach first</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-8 mb-4">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      setCurrentMonth(
+                        new Date(
+                          currentMonth.getFullYear(),
+                          currentMonth.getMonth() - 1
+                        )
+                      )
+                    }
+                  >
+                    <ChevronLeft />
+                  </Button>
+                  <h4 className="text-lg font-medium">
+                    {monthNames[currentMonth.getMonth()]}{" "}
+                    {currentMonth.getFullYear()}
+                  </h4>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      setCurrentMonth(
+                        new Date(
+                          currentMonth.getFullYear(),
+                          currentMonth.getMonth() + 1
+                        )
+                      )
+                    }
+                  >
+                    <ChevronRight />
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-muted-foreground mb-2">
+                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                    (d) => (
+                      <div key={d}>{d}</div>
+                    )
+                  )}
+                </div>
+
+                <div className="grid grid-cols-7 gap-1">
+                  {days.map((day, i) => {
+                    if (!day) return <div key={i} />;
+                    const key = formatDateKey(day);
+                    const available = isDateAvailable(day);
+                    const selected = selectedDates.includes(key);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const past = day < today;
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => !past && toggleDate(day)}
+                        disabled={!available || past}
+                        className={`aspect-square rounded-full text-sm flex-center transition-all ${
+                          past
+                            ? "text-neutral-300"
+                            : selected
+                            ? "bg-blue-600 text-white"
+                            : available
+                            ? "bg-green-100 hover:bg-green-200"
+                            : "bg-neutral-50"
+                        }`}
+                      >
+                        {day.getDate()}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 3. Time Slots & Booking - Your Original Design */}
+        <Card>
+          <CardContent className="p-6 h-full flex flex-col">
+            <h3 className="text-2xl font-bold mb-4">Select Time Slots</h3>
+
+            {selectedDates.length === 0 ? (
+              <div className="flex-1 flex-center text-center text-muted-foreground">
+                <Calendar className="mx-auto mb-3 h-12 w-12" />
+                <p>Pick available dates to see time slots</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                  {selectedDates.map((dateKey) => (
+                    <DateSlots
+                      key={dateKey}
+                      coachId={selectedCoach?._id || ""}
+                      dateKey={dateKey}
+                      selected={selectedSlots[dateKey] || []}
+                      onToggle={(slot) => toggleSlotSelection(dateKey, slot)}
+                      onRemove={() => toggleDate(parseDateKey(dateKey))}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Your Original Dialogs - Unchanged */}
+      <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Coach</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Name</Label>
+              <Input
+                value={newCoachName}
+                onChange={(e) => setNewCoachName(e.target.value)}
+                placeholder="Coach name"
+              />
+            </div>
+            <div>
+              <Label>Description</Label>
+              <Input
+                value={newCoachDesc}
+                onChange={(e) => setNewCoachDesc(e.target.value)}
+                placeholder="e.g. Spanish Coach"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={handleAddCoach}>Add Coach</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openAddDateDialog} onOpenChange={setOpenAddDateDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Available Date & Slots</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-5 py-4">
+            <div>
+              <Label>Date</Label>
+              <Input
+                type="date"
+                value={newDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setNewDate(e.target.value)}
+              />
+            </div>
+            {[0, 1, 2].map((i) => (
+              <div key={i}>
+                <Label>Time Slot {i + 1} (optional)</Label>
+                <Input
+                  placeholder="e.g. 9am-10am"
+                  value={newSlots[i]}
+                  onChange={(e) => {
+                    const temp = [...newSlots];
+                    temp[i] = e.target.value;
+                    setNewSlots(temp);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOpenAddDateDialog(false);
+                setNewDate("");
+                setNewSlots(["", "", ""]);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAddNewDate}>Save Date & Slots</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openPreviewDialog} onOpenChange={setOpenPreviewDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Booking JSON</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <pre className="bg-neutral-100 p-3 rounded max-h-[300px] overflow-auto text-sm">
+              {bookingPreview}
+            </pre>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (bookingPreview) {
+                  navigator.clipboard.writeText(bookingPreview);
+                  toast.success("JSON copied");
+                }
+              }}
+            >
+              Copy JSON
+            </Button>
+            <Button onClick={() => setOpenPreviewDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );
-};
-
-export default CoachBooking;
+}

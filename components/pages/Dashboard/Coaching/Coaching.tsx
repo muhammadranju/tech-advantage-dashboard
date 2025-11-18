@@ -72,6 +72,7 @@ const CoachingPage = () => {
   const [actionType, setActionType] = useState<ActionType | null>(null);
 
   const { data, isLoading, error } = useCoachingUsersQuery(null);
+
   const [updateCoachingStatus] = useUpdateCoachingStatusMutation();
   const router = useRouter();
   const usersPerPage = 5;

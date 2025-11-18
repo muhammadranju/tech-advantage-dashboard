@@ -1,13 +1,11 @@
-"use client";
 import SuccessPathPage from "@/components/pages/Dashboard/SuccessPath/SuccessPath";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Success Path - TechAdvantage",
+};
 
 const page = () => {
-  return (
-    <div>
-      <title>Success Path - TechAdvantage</title>
-      <SuccessPathPage />
-    </div>
-  );
+  return <SuccessPathPage />;
 };
 
 export default page;

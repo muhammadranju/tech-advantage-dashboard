@@ -1,12 +1,12 @@
 import AssessmentPage from "@/components/pages/Dashboard/SmallBusiness/Assessment";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Small Business Assessment - TechAdvantage",
+};
 
 const page = () => {
-  return (
-    <div>
-      <title>Small Business Assessment - TechAdvantage</title>
-      <AssessmentPage />
-    </div>
-  );
+  return <AssessmentPage />;
 };
 
 export default page;

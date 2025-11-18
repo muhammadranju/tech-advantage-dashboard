@@ -1,12 +1,10 @@
 import ModulesPage from "@/components/pages/Dashboard/Course/ModulesPage";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Modules - TechAdvantage",
+};
 const page = () => {
-  return (
-    <div>
-      <title>Modules - TechAdvantage</title>
-      <ModulesPage />
-    </div>
-  );
+  return <ModulesPage />;
 };
 
 export default page;

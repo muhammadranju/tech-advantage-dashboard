@@ -1,13 +1,12 @@
-"use client";
 import QuizzesPage from "@/components/pages/Dashboard/SuccessPath/ViewQuizzes";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Login - TechAdvantage",
+};
 
 const page = () => {
-  return (
-    <div>
-      <title>Success Path View Quizzes - TechAdvantage</title>
-      <QuizzesPage />
-    </div>
-  );
+  return <QuizzesPage />;
 };
 
 export default page;

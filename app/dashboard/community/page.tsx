@@ -1,12 +1,10 @@
 import CommunityPage from "@/components/pages/Dashboard/Community/Community";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Community - TechAdvantage",
+};
 const page = () => {
-  return (
-    <div>
-      <title>Community - TechAdvantage</title>
-      <CommunityPage />
-    </div>
-  );
+  return <CommunityPage />;
 };
 
 export default page;

@@ -78,7 +78,9 @@ export function LoginForm() {
 
       // user successfully logged in
       if (result.role === process.env.NEXT_PUBLIC_ROLE) {
-        router.push("/dashboard/overview");
+        window.location.href = "/dashboard/overview";
+        // router.push("/dashboard/overview");
+
         toast.success("Login successful", { position: "top-right" });
       }
     } catch (error: any) {

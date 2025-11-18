@@ -27,7 +27,9 @@ export interface Courses {
 
 export interface Course {
   _id: string;
-  title: string;
-  videos: number;
-  pdfs: number;
+  name: string;
+  typeCounts: {
+    video: number;
+    pdf: number;
+  };
 }

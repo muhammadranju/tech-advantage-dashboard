@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { VideoUploadComponent } from "@/components/bootcamp/bootcampSection/VideoUpload/VideoUploadComponent";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,22 +11,25 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
+import { Label } from "@/components/ui/label";
+import {
+  useCreateContentMutation,
+  useDeleteContentMutation,
+  useGetContentsQuery,
+  useUpdateContentMutation,
+} from "@/lib/redux/features/api/courses/contentSliceApi";
 import { FileText, Play, Plus, Save, Trash2, X } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
 import BackButtons from "../BootCamp/BackButtons";
 import { CourseContent, PDF, Video } from "./course.interface";
 
 type MediaType = "video" | "pdf";
 
-function IconForType({ type }: { type: MediaType }) {
-  return type === "video" ? (
-    <Play className="w-5 h-5 text-neutral-600" />
-  ) : (
-    <FileText className="w-5 h-5 text-neutral-600" />
-  );
+interface EditingItem {
+  id: string;
+  title: string;
 }
 
 function EmptyCard({ type }: { type: MediaType }) {
@@ -57,219 +59,226 @@ function EmptyCard({ type }: { type: MediaType }) {
   );
 }
 
-function MediaList<T extends { id: string }>(props: {
-  items: T[];
-  type: MediaType;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-  renderMeta?: (item: any) => React.ReactNode;
-}) {
-  const { items, type, onEdit, onDelete, renderMeta } = props;
-
-  return (
-    <Card className="bg-white shadow-sm border border-neutral-200 rounded-lg">
-      <CardContent className="p-8">
-        <div className="flex items-center gap-2 mb-8">
-          <IconForType type={type} />
-          <h2 className="text-lg font-medium text-neutral-900">
-            {type === "video" ? "Videos" : "PDF"} ({items.length})
-          </h2>
-        </div>
-
-        <div className="space-y-4">
-          {items.map((it: any) => (
-            <div
-              key={it.id}
-              className="flex items-center justify-between p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors "
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center cursor-pointer">
-                  {type === "video" ? (
-                    <Play className="w-5 h-5 text-neutral-600" />
-                  ) : (
-                    <FileText className="w-5 h-5 text-neutral-600" />
-                  )}
-                </div>
-                <div>
-                  <h3 className="font-medium text-neutral-900">{it.title}</h3>
-                  <p className="text-sm text-neutral-500">
-                    {renderMeta ? renderMeta(it) : null}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onEdit(it.id)}
-                  className="p-2 rounded-full h-auto text-neutral-400 hover:text-neutral-600"
-                >
-                  <PiPencilFill className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onDelete(it.id)}
-                  className="p-1 h-auto text-neutral-400 hover:text-red-600"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function AddDialog({
-  open,
-  setOpen,
-  type,
-  onSave,
-}: {
-  open: boolean;
-  setOpen: (v: boolean) => void;
-  type: MediaType;
-  onSave: (payload: any) => void;
-}) {
-  const title = type === "video" ? "Add Video" : "Add PDF";
-  const inputId = type === "video" ? "videoTitle" : "pdfTitle";
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          // minimal payload since original handlers just logged
-          onSave({ title: (e.target as any)[inputId].value });
-        }}
-      >
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-          </DialogHeader>
-
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor={inputId}>
-                {type === "video" ? "Video Title" : "PDF Title"}
-              </Label>
-              <Input
-                id={inputId}
-                name={inputId}
-                placeholder={`Enter your ${type} title`}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="upload">
-                Upload {type === "video" ? "Video" : "PDF"}
-              </Label>
-              <VideoUploadComponent />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">
-                <X />
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit">
-              <Save /> Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
-  );
-}
-
 export default function CourseContentPage() {
-  const { moduleID } = useParams();
-  const params = moduleID as string;
+  const { modules, videoID } = useParams();
+  const searchParams = useSearchParams();
+  const newModuleTitle = searchParams.get("module-title");
+  const moduleId = modules as string;
+  const videoId = videoID as string;
 
   const [openDialog, setOpenDialog] = useState<MediaType | null>(null);
-
   const [courseContent, setCourseContent] = useState<CourseContent>({
-    id: params,
+    id: videoId,
     title: "Introduction to Programming",
-    videos: [
-      {
-        id: "1",
-        title: "Setting Up Your Development Environment",
-        duration: "8:45",
-      },
-      { id: "2", title: "Intro to Variables", duration: "6:12" },
-      { id: "3", title: "Control Flow Basics", duration: "10:00" },
-    ],
-    pdfs: [
-      {
-        id: "1",
-        title: "Business Fundamentals Guide",
-        size: "1.8 MB",
-        pages: 2,
-      },
-      { id: "2", title: "API Design Checklist", size: "900 KB", pages: 12 },
-      { id: "3", title: "Testing Guide", size: "2.1 MB", pages: 8 },
-    ],
+    videos: [],
+    pdfs: [],
   });
+  const [addTitle, setAddTitle] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: courseData } = useGetContentsQuery({
+    videoID: videoId,
+    moduleId,
+  });
+
+  const [createContent] = useCreateContentMutation();
+  const [updateContent] = useUpdateContentMutation();
+  const [deleteContent] = useDeleteContentMutation();
+
+  useEffect(() => {
+    if (courseData?.data) {
+      const videos: Video[] = courseData.data
+        .filter((item: any) => item.type === "video")
+        .map((item: any) => ({
+          id: item._id,
+          title: item.title,
+          duration: "", // Default, as not provided in API
+        }));
+
+      const pdfs: PDF[] = courseData.data
+        .filter((item: any) => item.type === "pdf")
+        .map((item: any) => ({
+          id: item._id,
+          title: item.title,
+          size: "", // Default, as not provided in API
+          pages: 0, // Default, as not provided in API
+        }));
+
+      setCourseContent((prev) => ({ ...prev, videos, pdfs }));
+    }
+  }, [courseData]);
 
   const handleEditTitle = () => {
     console.log("Edit course title");
   };
 
-  const handleAdd = (type: MediaType, payload: any) => {
-    setOpenDialog(null);
-    if (type === "video") {
-      setCourseContent((prev) => ({
-        ...prev,
-        videos: [
-          ...prev.videos,
-          {
-            id: String(Date.now()),
-            title: payload.title || "New Video",
-            duration: "0:00",
-          },
-        ],
-      }));
-      console.log("Add video", payload);
-    } else {
-      setCourseContent((prev) => ({
-        ...prev,
-        pdfs: [
-          ...prev.pdfs,
-          {
-            id: String(Date.now()),
-            title: payload.title || "New PDF",
-            size: "0 KB",
-            pages: 0,
-          },
-        ],
-      }));
-      console.log("Add PDF", payload);
+  const handleEdit = (type: MediaType, id: string) => {
+    const item =
+      type === "video"
+        ? courseContent.videos.find((v) => v.id === id)
+        : courseContent.pdfs.find((p) => p.id === id);
+    if (item) {
+      setEditingItem({ id: item.id, title: item.title });
+      setAddTitle(item.title);
+      setOpenDialog(type);
     }
   };
 
-  const handleEdit = (type: MediaType, id: string) => {
-    if (type === "video") console.log("Edit video:", id);
-    else console.log("Edit PDF:", id);
+  const handleDelete = (type: MediaType, id: string) => {
+    if (confirm(`Are you sure you want to delete this ${type}?`)) {
+      deleteContent({ id, moduleId, videoID: videoId }).unwrap();
+    }
   };
 
-  const handleDelete = (type: MediaType, id: string) => {
-    setCourseContent((prev) => ({
-      ...prev,
-      videos:
-        type === "video" ? prev.videos.filter((v) => v.id !== id) : prev.videos,
-      pdfs: type === "pdf" ? prev.pdfs.filter((p) => p.id !== id) : prev.pdfs,
-    }));
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const title = addTitle.trim();
+    if (!title || !openDialog) {
+      alert("Please enter a title.");
+      return;
+    }
+    if (!editingItem && !selectedFile) {
+      alert("Please select a file to upload.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    console.log("Submitting:", {
+      title,
+      type: openDialog,
+      hasFile: !!selectedFile,
+      isEdit: !!editingItem,
+    });
+
+    try {
+      if (editingItem) {
+        await updateContent({
+          id: editingItem.id,
+          title,
+          file: selectedFile,
+          moduleId,
+          videoID: videoId,
+        }).unwrap();
+        setEditingItem(null);
+      } else {
+        await createContent({
+          title,
+          type: openDialog,
+          file: selectedFile,
+          moduleId,
+          videoID: videoId,
+        }).unwrap();
+      }
+
+      setAddTitle("");
+      setSelectedFile(null);
+      setOpenDialog(null);
+    } catch (error) {
+      console.error("Error saving content:", error);
+      alert("Failed to save. Please check console for details.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const handleDialogClose = () => {
+    setOpenDialog(null);
+    setAddTitle("");
+    setSelectedFile(null);
+    setEditingItem(null);
+  };
+
+  const renderMediaList = (
+    items: Video[] | PDF[],
+    type: MediaType,
+    renderMeta?: (item: Video | PDF) => string
+  ) => {
+    if (items.length === 0) {
+      return <EmptyCard type={type} />;
+    }
+
+    return (
+      <Card className="bg-white shadow-sm border border-neutral-200 rounded-lg">
+        <CardContent className="p-8">
+          <div className="flex items-center gap-2 mb-8">
+            {type === "video" ? (
+              <Play className="w-5 h-5 text-neutral-600" />
+            ) : (
+              <FileText className="w-5 h-5 text-neutral-600" />
+            )}
+            <h2 className="text-lg font-medium text-neutral-900">
+              {type === "video" ? "Videos" : "PDFs"} ({items.length})
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {items.map((it) => (
+              <div
+                key={it.id}
+                className="flex items-center justify-between p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors "
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center cursor-pointer">
+                    {type === "video" ? (
+                      <Play className="w-5 h-5 text-neutral-600" />
+                    ) : (
+                      <FileText className="w-5 h-5 text-neutral-600" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-neutral-900">{it.title}</h3>
+                    <p className="text-sm text-neutral-500">
+                      {renderMeta ? renderMeta(it) : null}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEdit(type, it.id)}
+                    className="p-2 rounded-full h-auto text-neutral-400 hover:text-neutral-600"
+                  >
+                    <PiPencilFill className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(type, it.id)}
+                    className="p-1 h-auto text-neutral-400 hover:text-red-600"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const currentType = openDialog;
+  let title = "";
+  let inputId = "";
+  let labelText = "";
+  let placeholder = "";
+  let uploadLabel = "";
+  let accept = "";
+  if (currentType) {
+    title = currentType === "video" ? "Add Video" : "Add PDF";
+    if (editingItem) {
+      title = currentType === "video" ? "Edit Video" : "Edit PDF";
+    }
+    inputId = currentType === "video" ? "videoTitle" : "pdfTitle";
+    labelText = currentType === "video" ? "Video Title" : "PDF Title";
+    placeholder = `Enter your ${currentType} title`;
+    uploadLabel = `Upload ${currentType === "video" ? "Video" : "PDF"}`;
+    accept = currentType === "video" ? "video/*" : ".pdf";
+  }
 
   return (
     <div className="min-h-screen px-10">
@@ -278,19 +287,11 @@ export default function CourseContentPage() {
         {/* Header */}
         <BackButtons backTitle="Modules" title={"Contents"} />
 
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-12 mt-5">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold text-neutral-900">
-              {courseContent.title}
+              {newModuleTitle || ""}
             </h1>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleEditTitle}
-              className="p-2 h-auto rounded-full text-neutral-400 hover:text-neutral-600 "
-            >
-              <PiPencilFill className="w-5 h-5" />
-            </Button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -314,44 +315,87 @@ export default function CourseContentPage() {
 
         {/* Content Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <MediaList
-            items={courseContent.videos}
-            type="video"
-            onEdit={(id) => handleEdit("video", id)}
-            onDelete={(id) => handleDelete("video", id)}
-            renderMeta={(v: Video) => v.duration}
-          />
-
-          <MediaList
-            items={courseContent.pdfs}
-            type="pdf"
-            onEdit={(id) => handleEdit("pdf", id)}
-            onDelete={(id) => handleDelete("pdf", id)}
-            renderMeta={(p: PDF) => `${p.size} - ${p.pages} Pages`}
-          />
-        </div>
-
-        {/* Empty states (kept as separate row similar to original) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-1">
-          <EmptyCard type="video" />
-          <EmptyCard type="pdf" />
+          {renderMediaList(
+            courseContent.videos,
+            "video",
+            (v: any) => v.duration || ""
+          )}
+          {renderMediaList(
+            courseContent.pdfs,
+            "pdf",
+            (p: any) => `${p.size || ""} - ${p.pages || 0} Pages`
+          )}
         </div>
       </div>
 
-      {/* Dialogs (one component handles both) */}
-      <AddDialog
-        open={openDialog === "video"}
-        setOpen={(v) => (v ? setOpenDialog("video") : setOpenDialog(null))}
-        type="video"
-        onSave={(payload) => handleAdd("video", payload)}
-      />
+      {/* Add/Edit Dialog */}
+      {currentType && (
+        <Dialog open={!!openDialog} onOpenChange={handleDialogClose}>
+          <form onSubmit={handleAddSubmit}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>{title}</DialogTitle>
+              </DialogHeader>
 
-      <AddDialog
-        open={openDialog === "pdf"}
-        setOpen={(v) => (v ? setOpenDialog("pdf") : setOpenDialog(null))}
-        type="pdf"
-        onSave={(payload) => handleAdd("pdf", payload)}
-      />
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <Label htmlFor={inputId}>{labelText}</Label>
+                  <Input
+                    id={inputId}
+                    name={inputId}
+                    value={addTitle}
+                    onChange={(e) => setAddTitle(e.target.value)}
+                    placeholder={placeholder}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <Label htmlFor="file">{uploadLabel}</Label>
+                  <Input
+                    id="file"
+                    type="file"
+                    accept={accept}
+                    onChange={(e) =>
+                      setSelectedFile(e.target.files?.[0] || null)
+                    }
+                    required={!editingItem}
+                  />
+                  {selectedFile && (
+                    <p className="text-sm text-neutral-500">
+                      Selected: {selectedFile.name}
+                    </p>
+                  )}
+                  {editingItem && !selectedFile && (
+                    <p className="text-sm text-neutral-500">
+                      No new file selected. Current file will remain unchanged.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSubmitting}
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" disabled={isSubmitting}>
+                  <Save className="mr-2 h-4 w-4" />
+                  {isSubmitting ? "Saving..." : editingItem ? "Update" : "Save"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </form>
+        </Dialog>
+      )}
     </div>
   );
 }

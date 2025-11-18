@@ -114,7 +114,7 @@ export default function CoursePage() {
         setOpenAddCourse(false);
       }
     } catch (error) {
-      toast.error( (error as string) || "Failed to create course");
+      toast.error((error as string) || "Failed to create course");
     }
   };
 
@@ -145,7 +145,7 @@ export default function CoursePage() {
         setEditValue("");
       }
     } catch (error) {
-      toast.error( (error as string) || "Failed to update course");
+      toast.error((error as string) || "Failed to update course");
     }
   };
 
@@ -166,7 +166,7 @@ export default function CoursePage() {
         setDeleteTargetId(null);
       }
     } catch (error) {
-      toast.error( (error as string) || "Failed to delete course");
+      toast.error((error as string) || "Failed to delete course");
     }
   };
 
@@ -197,7 +197,7 @@ export default function CoursePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isLoading && <CourseCardSkeleton rows={9} />}
+          {isLoading && <CourseCardSkeleton rows={6} />}
           {!isLoading &&
             paginatedCourses?.map((course) => (
               <Card

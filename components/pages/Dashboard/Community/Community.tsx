@@ -20,13 +20,16 @@ import { Spinner } from "@/components/ui/spinner";
 import Pagination from "@/components/pagination/Pagination";
 
 const GroupCard = ({ group }: { group: any }) => (
-  <Link href={`/dashboard/community/${group._id}`} key={group._id}>
+  <Link
+    href={`/dashboard/community/${group._id}?image=${group.image}&group-title=${group.name}`}
+    key={group._id}
+  >
     <div className="flex flex-col items-center min-w-[150px] mb-2">
       <img
         src={
           group?.image
             ? process.env.NEXT_PUBLIC_BASE_URL + group.image
-            : "/placeholder-image.png"
+            : "https://i.ibb.co/z5YHLV9/profile.png"
         }
         alt={group.name}
         className="w-full h-40 object-cover rounded-lg shadow-md border p-1"

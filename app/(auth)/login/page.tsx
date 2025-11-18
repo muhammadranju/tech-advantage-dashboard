@@ -1,4 +1,4 @@
-import LoginPage from "@/components/pages/auth/login";
+import { LoginPage } from "@/components/pages/auth/login";
 import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Login - TechAdvantage",

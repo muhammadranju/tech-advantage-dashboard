@@ -1,12 +1,11 @@
 import SinglePlaylist from "@/components/pages/Dashboard/BootCamp/PlaylistID";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Boot Camp Playlist - TechAdvantage",
+};
 const page = () => {
-  return (
-    <div>
-      <title>Boot Camp Playlist - TechAdvantage</title>
-      <SinglePlaylist />
-    </div>
-  );
+  return <SinglePlaylist />;
 };
 
 export default page;

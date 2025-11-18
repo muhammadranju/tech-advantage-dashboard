@@ -18,6 +18,7 @@ export interface AuthState {
   isLoading: boolean;
   userEmail: string;
   logout: boolean;
+  moduleTitle: string;
 }
 export interface ProtectedRouteProps {
   children: React.ReactNode;

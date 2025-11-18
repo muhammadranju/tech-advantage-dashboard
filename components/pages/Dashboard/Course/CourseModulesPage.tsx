@@ -110,10 +110,6 @@ export default function CourseContentPage() {
     }
   }, [courseData]);
 
-  const handleEditTitle = () => {
-    console.log("Edit course title");
-  };
-
   const handleEdit = (type: MediaType, id: string) => {
     const item =
       type === "video"

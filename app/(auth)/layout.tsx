@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Auth - TechAdvantage",

@@ -20,7 +20,7 @@ ProtectedRouteProps) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push(redirectTo);
+      router.replace(redirectTo);
     }
   }, [isAuthenticated, isLoading, router, redirectTo]);
 

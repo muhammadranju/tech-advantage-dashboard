@@ -10,9 +10,10 @@ import { useUpdateUserPasswordProfileMutation } from "@/lib/redux/features/api/p
 import { Save } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
-import toast from "react-hot-toast";
+
 import { ClipLoader } from "react-spinners";
 import { DialogTriggerComponent } from "./DialogTriggerComponent";
+import { toast } from "sonner";
 
 export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");

@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/lib/redux/hooks";
 import { selectIsAuthenticated } from "@/lib/redux/features/auth/authSlice";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const RedirectIfAuthenticated: React.FC = () => {
   const [redirect, setRedirect] = useState<string | null>(null);
@@ -19,10 +19,12 @@ const RedirectIfAuthenticated: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && redirect !== null) {
-      router.push(`/${(redirect?.slice(1) as string) || "dashboard/overview"}`);
+      router.replace(
+        `/${(redirect?.slice(1) as string) || "dashboard/overview"}`
+      );
     } else if (isAuthenticated) {
       // Fallback if no redirect param
-      router.push("/dashboard/overview");
+      router.replace("/dashboard/overview");
     }
   }, [isAuthenticated, router, redirect]);
 

@@ -4,8 +4,8 @@ export const modulesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Module - Get All Modules
     getModules: builder.query({
-      query: () => ({
-        url: `bootcamp/modules`,
+      query: ({ id }) => ({
+        url: `bootcamp/courses/${id}/modules`,
         method: "GET",
       }),
       providesTags: ["Modules"],
@@ -18,7 +18,7 @@ export const modulesApiSlice = apiSlice.injectEndpoints({
     //  Get Single Module
     getSingleModule: builder.query({
       query: ({ moduleId }) => ({
-        url: `bootcamp/${moduleId}/modules`,
+        url: `bootcamp/courses/${moduleId}/modules`,
         method: "GET",
       }),
       providesTags: ["Modules"],
@@ -30,8 +30,8 @@ export const modulesApiSlice = apiSlice.injectEndpoints({
 
     // Module - Create Module
     createModule: builder.mutation({
-      query: ({ body, moduleId }) => ({
-        url: `bootcamp/${moduleId}/modules`,
+      query: ({ body, id }) => ({
+        url: `bootcamp/courses/${id}/modules`,
         method: "POST",
         body: {
           name: body.name,
@@ -47,8 +47,8 @@ export const modulesApiSlice = apiSlice.injectEndpoints({
     // Module - Update Module
     updateModule: builder.mutation({
       query: ({ moduleId, id, body }) => ({
-        url: `bootcamp/${moduleId}/modules/${id}`,
-        method: "PUT",
+        url: `bootcamp/courses/${moduleId}/modules/${id}`,
+        method: "PATCH",
         body: {
           name: body.name,
         },
@@ -63,7 +63,7 @@ export const modulesApiSlice = apiSlice.injectEndpoints({
     // Module - Delete Module
     deleteModule: builder.mutation({
       query: ({ moduleId, id }) => ({
-        url: `bootcamp/${moduleId}/modules/${id}`,
+        url: `bootcamp/courses/${moduleId}/modules/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Modules"],
@@ -75,4 +75,10 @@ export const modulesApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const {} = modulesApiSlice;
+export const {
+  useGetModulesQuery,
+  useGetSingleModuleQuery,
+  useCreateModuleMutation,
+  useUpdateModuleMutation,
+  useDeleteModuleMutation,
+} = modulesApiSlice;

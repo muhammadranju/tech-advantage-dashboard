@@ -34,6 +34,7 @@ const initialState: AuthState = {
   isLoading: false,
   userEmail: "",
   logout: false,
+  moduleTitle: "",
   ...loadAuthFromStorage(),
 };
 
@@ -109,6 +110,10 @@ const authSlice = createSlice({
         )}`;
       }
     },
+
+    setModuleTitle: (state, action: PayloadAction<string>) => {
+      state.moduleTitle = action.payload;
+    },
   },
 });
 
@@ -131,5 +136,7 @@ export const selectAuthLoading = (state: RootState) => state.auth.isLoading;
 export const selectAuthToken = (state: RootState) => state.auth.authToken;
 export const selectUserEmail = (state: RootState) => state.auth.userEmail;
 export const selectLogout = (state: RootState) => state.auth.logout;
+
+export const selectModuleTitle = (state: RootState) => state.auth.moduleTitle;
 
 export default authSlice.reducer;

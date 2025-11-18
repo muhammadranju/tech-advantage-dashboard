@@ -17,7 +17,7 @@ export const communitySliceApi = apiSlice.injectEndpoints({
 
     getSingleCommunityGroup: builder.query({
       query: ({ groupId }) => ({
-        url: `groups/${groupId}`,
+        url: `groups/${groupId}/posts`,
         method: "GET",
       }),
       providesTags: ["Community"],
@@ -81,13 +81,42 @@ export const communitySliceApi = apiSlice.injectEndpoints({
         return response;
       },
     }),
+
+    getAllCommunityPosts: builder.query({
+      query: ({ groupId }) => ({
+        url: `groups/${groupId}/posts`,
+        method: "GET",
+      }),
+      providesTags: ["Community"],
+      // Transform response to handle different response structures
+      transformResponse: (response) => {
+        return response;
+      },
+    }),
+
+    getAllCommunityPostsComments: builder.query({
+      query: ({ postId }) => ({
+        url: `groups/${postId}/comments`,
+        method: "GET",
+      }),
+      providesTags: ["Community"],
+      // Transform response to handle different response structures
+      transformResponse: (response) => {
+        return response;
+      },
+    }),
   }),
 });
 
 export const {
   useGetCommunityGroupsQuery,
   useCreateCommunityGroupMutation,
+  useGetSingleCommunityGroupQuery,
   useUpdateCommunityGroupMutation,
   useDeleteCommunityGroupMutation,
   useReplayCommunityGroupQuery,
+
+  useGetAllCommunityPostsQuery,
+
+  useGetAllCommunityPostsCommentsQuery,
 } = communitySliceApi;

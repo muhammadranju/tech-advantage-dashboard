@@ -1,12 +1,12 @@
 # TechAdvantage — Dashboard (Next.js + Tailwind + TypeScript)
 
-A starter dashboard application built with Next.js 14 (app router), TypeScript, Tailwind CSS and a small Redux store. The project contains authentication pages, a multi-section dashboard (bootcamps, coaching, mock interviews, users, notifications, etc.), shared UI components and lightweight local data fixtures for development.
+A starter dashboard application built with Next.js 15 page router, TypeScript, Tailwind CSS and a small Redux store. The project contains authentication pages, a multi-section dashboard (bootcamps, coaching, mock interviews, users, notifications, etc.), shared UI components and lightweight local data fixtures for development. This project is a good starting point for your own dashboard application. It's also a great way to learn Next.js and TypeScript. 🚀
 
 This README explains how to run the project locally, build for production, the repository layout, environment variables you may need, and a short contribution guide.
 
 ## Key features
 
-- Next.js (app router) + TypeScript
+- Next.js (page router) + TypeScript
 - Tailwind CSS utility-first styling
 - Small Redux toolkit store with typed hooks
 - Reusable component library (ui/, sidebar/, dashboard/ components)

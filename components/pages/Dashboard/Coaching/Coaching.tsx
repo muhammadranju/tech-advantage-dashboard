@@ -2,9 +2,7 @@
 "use client";
 import FilterCoaching from "@/components/coaching/FilterCoaching";
 import { StatsCards } from "@/components/dashboard/StatsCards";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import Pagination from "@/components/pagination/Pagination";
 import { StatCardSkeleton } from "@/components/skeletons/StatCardSkeleton";
 import { UsersTableSkeleton } from "@/components/skeletons/UsersTableSkeleton";
 import {
@@ -29,7 +27,10 @@ import {
   useCoachingUsersQuery,
   useUpdateCoachingStatusMutation,
 } from "@/lib/redux/features/api/coaching/coachingApiSlice";
-import { ChevronLeft, ChevronRight, FileText, Search } from "lucide-react";
+import { ChevronRight, FileText, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   ActionType,
   CoachingUser,
@@ -73,7 +74,7 @@ const CoachingPage = () => {
   const { data, isLoading, error } = useCoachingUsersQuery(null);
   const [updateCoachingStatus] = useUpdateCoachingStatusMutation();
   const router = useRouter();
-  const usersPerPage = 8;
+  const usersPerPage = 5;
 
   const coachingUsers = useMemo<CoachingUser[]>(() => data?.data || [], [data]);
 
@@ -265,39 +266,11 @@ const CoachingPage = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-end space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" /> Previous
-            </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <Button
-                key={p}
-                variant={currentPage === p ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentPage(p)}
-                className="w-8 h-8 p-0"
-              >
-                {p}
-              </Button>
-            ))}
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                setCurrentPage(Math.min(totalPages, currentPage + 1))
-              }
-              disabled={currentPage === totalPages}
-            >
-              Next <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         )}
 
         {/* No data */}

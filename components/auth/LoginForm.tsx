@@ -32,7 +32,8 @@ export function LoginForm() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard/overview");
+      router.replace("/dashboard/overview");
+      window.location.href = "/dashboard/overview";
     }
   }, [isAuthenticated, router]);
 
@@ -80,7 +81,7 @@ export function LoginForm() {
       // user successfully logged in
       if (result.role === process.env.NEXT_PUBLIC_ROLE) {
         // window.location.href = "/dashboard/overview";
-        router.replace("/dashboard/overview");
+        router.refresh();
         toast.success("Login successful");
       }
     } catch (error: any) {

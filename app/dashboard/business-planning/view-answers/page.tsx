@@ -1,13 +1,10 @@
 import ViewAnswersPage from "@/components/pages/Dashboard/BusinessPlanning/ViewAnswers";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Business Planning View Answers - TechAdvantage",
+};
 const page = () => {
-  return (
-    <div>
-      <title>Business Planning View Answers - TechAdvantage</title>
-      {/* <ViewAnswersPage /> */}
-      <ViewAnswersPage />
-    </div>
-  );
+  return <ViewAnswersPage />;
 };
 
 export default page;

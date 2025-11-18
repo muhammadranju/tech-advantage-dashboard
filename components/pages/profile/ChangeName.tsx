@@ -10,10 +10,11 @@ import { useUpdateUserNameProfileMutation } from "@/lib/redux/features/api/profi
 import { Save } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
-import toast from "react-hot-toast";
+
 import { ClipLoader } from "react-spinners";
 import { DialogTriggerComponent } from "./DialogTriggerComponent";
 import { FormFieldProps } from "./profile.interface";
+import { toast } from "sonner";
 
 const FormField: React.FC<FormFieldProps> = ({
   id,
@@ -68,12 +69,10 @@ export default function ChangeName() {
         toast.success("Name updated successfully");
       }
     } catch (error) {
-      toast.error( (error as string) || "Error updating name");
+      toast.error((error as string) || "Error updating name");
     }
-
-   
   };
-  
+
   return (
     <>
       <BackButton />

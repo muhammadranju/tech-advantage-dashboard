@@ -15,8 +15,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import { toast } from "sonner";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");

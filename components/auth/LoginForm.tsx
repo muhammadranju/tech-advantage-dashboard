@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/lib/redux/features/api/authApiSlice";
+import { logout } from "@/lib/redux/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import type React from "react";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+
 import { ClipLoader } from "react-spinners";
 import LogoComponent from "../logo/Logo";
 import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
-import { logout } from "@/lib/redux/features/auth/authSlice";
+import { toast } from "sonner";
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,10 +80,8 @@ export function LoginForm() {
       // user successfully logged in
       if (result.role === process.env.NEXT_PUBLIC_ROLE) {
         // window.location.href = "/dashboard/overview";
-
         router.replace("/dashboard/overview");
-
-        toast.success("Login successful", { position: "top-right" });
+        toast.success("Login successful");
       }
     } catch (error: any) {
       if (error?.status === 400) {

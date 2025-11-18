@@ -1,12 +1,12 @@
 import OverviewPage from "@/components/pages/Dashboard/Overview/Overview";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Overview - TechAdvantage",
+};
 
 const page = () => {
-  return (
-    <div>
-      <title>Overview - TechAdvantage</title>
-      <OverviewPage />
-    </div>
-  );
+  return <OverviewPage />;
 };
 
 export default page;

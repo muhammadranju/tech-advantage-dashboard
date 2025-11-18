@@ -16,6 +16,20 @@ const sourceCodePro = Source_Code_Pro({
 export const metadata: Metadata = {
   title: "Dashboard Overview - TechAdvantage",
   description: "Dashboard Overview",
+  openGraph: {
+    title: "Dashboard Overview - TechAdvantage",
+    description: "Dashboard Overview",
+    url: "https://www.techadvantage.com/dashboard/overview",
+    images: [
+      {
+        url: "https://www.techadvantage.com/images/dashboard/overview.png",
+        width: 1200,
+        height: 630,
+        alt: "Dashboard Overview",
+      },
+    ],
+    siteName: "TechAdvantage",
+  },
 };
 
 export default function RootLayout({

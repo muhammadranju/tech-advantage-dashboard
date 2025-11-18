@@ -1,12 +1,10 @@
 import GroupThread from "@/components/pages/Dashboard/Community/ReplyThread";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Replies - TechAdvantage",
+};
 const page = () => {
-  return (
-    <div>
-      <title>View Community - TechAdvantage</title>
-      <GroupThread />
-    </div>
-  );
+  return <GroupThread />;
 };
 
 export default page;

@@ -1,12 +1,10 @@
 import ViewCommunity from "@/components/pages/Dashboard/Community/ViewCommunity";
-
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Post - TechAdvantage",
+};
 const page = () => {
-  return (
-    <div>
-      <title>View Community - TechAdvantage</title>
-      <ViewCommunity />
-    </div>
-  );
+  return <ViewCommunity />;
 };
 
 export default page;

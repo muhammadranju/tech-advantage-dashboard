@@ -1,12 +1,12 @@
 import FeedbackPage from "@/components/pages/Dashboard/Feedback/FeedbackPage";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Feedback - TechAdvantage",
+};
 
 const page = () => {
-  return (
-    <div>
-      <title>Feedback - TechAdvantage</title>
-      <FeedbackPage />
-    </div>
-  );
+  return <FeedbackPage />;
 };
 
 export default page;

@@ -1,6 +1,26 @@
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "404 - TechAdvantage",
+  description: "404",
+  openGraph: {
+    title: "404 - TechAdvantage",
+    description: "404",
+    url: "https://www.techadvantage.com/404",
+    images: [
+      {
+        url: "https://www.techadvantage.com/images/404.png",
+        width: 1200,
+        height: 630,
+        alt: "404",
+      },
+    ],
+    siteName: "TechAdvantage",
+  },
+};
 
 const notFound = () => {
   return (

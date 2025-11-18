@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { StatsCards } from "@/components/dashboard/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,92 +9,118 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuizSmallBusinessQuestionAnswerMutation } from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
 import { ListCollapse, Save } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
-import { MdOutlineQuiz } from "react-icons/md";
-
-const stats = [
-  {
-    title: "Total Questions",
-    value: "8,642",
-    changeType: "positive" as const,
-    icon: MdOutlineQuiz,
-  },
-];
+import { ClipLoader } from "react-spinners";
+import { toast } from "sonner";
+import { Question } from "./small_business.interface";
 
 const SmallBusinessPage = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [questions, setQuestions] = useState([
-    { question: "", answers: ["", "", ""], mark: 0 },
-  ]);
   const router = useRouter();
-
+  const [activeTab, setActiveTab] = useState("quiz");
+  const [question, setQuestion] = useState<Question>({
+    questionText: "",
+    answers: [
+      { text: "", score: 0 },
+      { text: "", score: 0 },
+      { text: "", score: 0 },
+    ],
+  });
+  const [selectCategory, setSelectCategory] = useState("business-overview");
+  const [quizSmallBusinessQuestionAnswer, { isLoading }] =
+    useQuizSmallBusinessQuestionAnswerMutation();
   const handelGoToUpload = () => {
     setActiveTab("upload");
     router.push("/dashboard/small-business/assessment");
   };
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex].question = e.target.value;
-    setQuestions(updatedQuestions);
+    setQuestion({
+      ...question,
+      questionText: e.target.value,
+    });
   };
 
   const handleAnswerChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    answerIndex: number
+    index: number,
+    field: "text" | "score",
+    value: string
   ) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex].answers[answerIndex] =
-      e.target.value;
-    setQuestions(updatedQuestions);
+    const updatedAnswers = [...question.answers];
+    if (field === "score") {
+      updatedAnswers[index].score = parseInt(value || "0");
+    } else {
+      updatedAnswers[index].text = value;
+    }
+    setQuestion({
+      ...question,
+      answers: updatedAnswers,
+    });
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < 4) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+  const handleAddAnswer = () => {
+    setQuestion({
+      ...question,
+      answers: [...question.answers, { text: "", score: 0 }],
+    });
+  };
+
+  const handleRemoveAnswer = (index: number) => {
+    if (question.answers.length > 1) {
+      const updatedAnswers = question.answers.filter((_, i) => i !== index);
+      setQuestion({
+        ...question,
+        answers: updatedAnswers,
+      });
     }
   };
 
-  // Check if all fields for the current question are filled
-  const isCurrentQuestionValid = () => {
-    const currentQuestion = questions[currentQuestionIndex];
-    return currentQuestion.question !== "";
+  const isQuestionValid = () => {
+    return (
+      question.questionText.trim() !== "" &&
+      question.answers.every((a) => a.text.trim() !== "")
+    );
   };
 
-  // Handle adding new answer field
-  const handleAddMoreAnswers = () => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex].answers.push(""); // Add an empty answer field
-    setQuestions(updatedQuestions);
-  };
+  const handleSave = async () => {
+    try {
+      const result = await quizSmallBusinessQuestionAnswer({
+        body: question,
+        category: selectCategory,
+      }).unwrap();
 
-  // Handle removing an answer field
-  const handleRemoveAnswer = (answerIndex: number) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex].answers.splice(answerIndex, 1); // Remove the answer at the given index
-    setQuestions(updatedQuestions);
-  };
-
-  const handleSave = () => {
-    console.log(questions);
+      if (result.success) {
+        setQuestion({
+          questionText: "",
+          answers: [
+            { text: "", score: 0 },
+            { text: "", score: 0 },
+            { text: "", score: 0 },
+          ],
+        });
+        toast.success("Question saved successfully");
+      } else {
+      }
+    } catch (error: any) {
+      if (error?.data.message) {
+        toast.error(
+          error?.data.message + "Provide a valid question at least 3 questions"
+        );
+      }
+      // toast.error("Something went wrong");
+    }
   };
 
   return (
-    <div className="px-10 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards stat={stat} key={stat.title} />
-        ))}
-      </div>
-      <div className="mx-auto bg-white rounded-lg border p-6 mt-16">
-        {/* Tab Navigation */}
+    <div className="px-10 mt-5 min-h-screen">
+      <h1 className="text-3xl font-bold  text-black">Small Business</h1>
+      <div className="mx-auto bg-white border rounded-lg p-10 mt-5">
         <div className="flex gap-8 justify-between mb-8">
-          <div className="flex gap-8 ">
+          <div className="flex gap-8">
             <button
               onClick={() => setActiveTab("quiz")}
               className={`pb-2 text-lg font-medium ${
@@ -116,24 +142,30 @@ const SmallBusinessPage = () => {
               Assessment
             </button>
           </div>
-          <Select>
+          <Select
+            value={selectCategory}
+            onValueChange={(value) => setSelectCategory(value)}
+          >
             <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
-              <SelectValue placeholder="Select a category" />
+              <SelectValue />
             </SelectTrigger>
-            <SelectContent className="py-2 ">
-              <SelectItem value="Business Overview">
+            <SelectContent className="py-2">
+              <SelectItem value="business-overview">
                 Business Overview
               </SelectItem>
-              <SelectItem value="Current Processes & Pain Points">
+              <SelectItem value="aspiring-business">
+                Aspiring Business
+              </SelectItem>
+              <SelectItem value="current-processes-pain-points">
                 Current Processes & Pain Points
               </SelectItem>
-              <SelectItem value="Operations & Growth">
+              <SelectItem value="operations-growth">
                 Operations & Growth
               </SelectItem>
-              <SelectItem value="Future Goals & Integration Needs">
+              <SelectItem value="future-goals-integration-needs">
                 Future Goals & Integration Needs
               </SelectItem>
-              <SelectItem value="Readiness & Budget">
+              <SelectItem value="readiness-budget">
                 Readiness & Budget
               </SelectItem>
             </SelectContent>
@@ -143,70 +175,72 @@ const SmallBusinessPage = () => {
         <div className="space-y-6">
           {/* Question Section */}
           <div>
-            <label className="block text-lg font-medium mb-2">Questions</label>
+            <label className="block text-lg font-medium mb-2">Question</label>
             <Input
               placeholder="Enter your question"
-              value={questions[currentQuestionIndex].question}
+              value={question.questionText}
               onChange={handleQuestionChange}
               className="py-6"
             />
           </div>
 
-          {/* Answer Sections */}
-          {questions[currentQuestionIndex].answers.map(
-            (answer: string, index: number) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="w-full flex gap-x-2">
-                  <div className="w-full">
-                    <label className="block text-lg font-medium mb-2">
-                      {index + 1}. Answer (User will get mark)
-                    </label>
-                    <Input
-                      placeholder="Enter question answer"
-                      value={answer}
-                      onChange={(e) => handleAnswerChange(e, index)}
-                      className="py-6 flex-1"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-lg font-medium mb-2">
-                      Mark
-                    </label>
-                    <Input
-                      value={answer}
-                      onChange={(e) => handleAnswerChange(e, index)}
-                      className="py-6 w-16"
-                    />
-                  </div>
+          {/* Answers */}
+          {question.answers.map((answer, index) => (
+            <div key={index} className="flex items-center space-x-4">
+              <div className="w-full flex gap-x-2">
+                <div className="w-full">
+                  <label className="block text-lg font-medium mb-2">
+                    {index + 1}. Answer
+                  </label>
+                  <Input
+                    placeholder="Enter answer"
+                    value={answer.text}
+                    onChange={(e) =>
+                      handleAnswerChange(index, "text", e.target.value)
+                    }
+                    className="py-6 flex-1"
+                  />
                 </div>
-                {/* Remove Icon */}
-                {questions[currentQuestionIndex].answers.length > 1 && (
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleRemoveAnswer(index)}
-                    className="text-neutral-900 mt-9 hover:text-red-700"
-                  >
-                    <IoMdRemove className="text-xl" />
-                  </Button>
-                )}
+                <div>
+                  <label className="block text-lg font-medium mb-2">
+                    Score
+                  </label>
+                  <Input
+                    placeholder="0"
+                    type="number"
+                    value={answer.score}
+                    required
+                    onChange={(e) =>
+                      handleAnswerChange(index, "score", e.target.value)
+                    }
+                    className="py-6 w-16"
+                  />
+                </div>
               </div>
-            )
-          )}
+              {question.answers.length > 1 && (
+                <Button
+                  variant="ghost"
+                  onClick={() => handleRemoveAnswer(index)}
+                  className="text-neutral-900 mt-9 hover:text-red-700"
+                >
+                  <IoMdRemove className="text-xl" />
+                </Button>
+              )}
+            </div>
+          ))}
 
-          {/* Add More Button */}
-          <div className="flex justify-end items-center gap-8 ">
+          <div className="flex justify-end items-center gap-8">
             <Button
               variant="default"
               className="flex items-center gap-2 py-5"
-              onClick={handleAddMoreAnswers}
+              onClick={handleAddAnswer}
             >
               Add More
               <IoMdAdd className="text-2xl" />
             </Button>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 ">
+          <div className="flex gap-4">
             <Link
               className="flex-1"
               href={"/dashboard/small-business/view-answers"}
@@ -218,9 +252,18 @@ const SmallBusinessPage = () => {
             <Button
               className="flex-1 py-6 hover:bg-neutral-800"
               onClick={handleSave}
-              disabled={!isCurrentQuestionValid()}
+              disabled={!isQuestionValid() || isLoading}
             >
-              <Save /> Save
+              {isLoading ? (
+                <>
+                  <ClipLoader color="#ffffff" size={16} />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save /> Save
+                </>
+              )}
             </Button>
           </div>
         </div>

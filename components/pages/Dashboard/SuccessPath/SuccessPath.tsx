@@ -2,15 +2,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ListCollapse, Save } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-// import DropdownAndLinks from "./DropdownAndLinks";
-import { StatsCards } from "@/components/dashboard/StatsCards";
-import DropdownAndLinks from "@/components/discoverStrength/DropdownAndLinks";
-import { FileText } from "lucide-react";
-import { SiQuizlet } from "react-icons/si";
 import {
   Select,
   SelectContent,
@@ -18,78 +9,66 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const stats = [
-  {
-    title: "Total Participant",
-    value: "8,642",
-
-    changeType: "positive" as const,
-    icon: FileText,
-  },
-  {
-    title: "Total Quizzes",
-    value: "12",
-
-    changeType: "positive" as const,
-    icon: SiQuizlet,
-  },
-];
+import { Category, Question, TabType } from "@/interface/successPath.interface";
+import { useCreateSuccessPathQuizQuestionAnswerMutation } from "@/lib/redux/features/api/successPath/successPathSliceApi";
+import { ListCollapse, Save } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ClipLoader } from "react-spinners";
+import { toast } from "sonner";
 
 const SuccessPathPage = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
-
-  // Simplified questions object with one question and answers
-  const [question, setQuestion] = useState({
-    question: "",
-    answers: {
-      answer1: "",
-      answer2: "",
-      answer3: "",
-    },
-  });
-
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabType>("quiz");
+  const [selectedCategory, setSelectedCategory] = useState(
+    "aspiring-entrepreneur"
+  ); // Simplified questions object with one question and answers
+  const [question, setQuestion] = useState<Question>({
+    question: "",
+  });
+  const [createSuccessPathQuizQuestionAnswer, { isLoading: isCreating }] =
+    useCreateSuccessPathQuizQuestionAnswerMutation();
 
-  const handelGoToUpload = () => {
-    setActiveTab("upload");
-    router.push("/dashboard/success-path/small-business?q=small-business");
-  };
-
-  const handleQuestionChange = (e: any) => {
+  const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, question: e.target.value }));
-  };
-
-  const handleAnswerChange = (e: any, answerIndex: string) => {
-    setQuestion((prev) => ({
-      ...prev,
-      answers: { ...prev.answers, [answerIndex]: e.target.value },
-    }));
   };
 
   // Check if all fields for the current question are filled
   const isQuestionValid = () => {
-    return (
-      question.question !== "" &&
-      question.answers.answer1 !== "" &&
-      question.answers.answer2 !== ""
-    );
+    return question.question !== "";
   };
 
-  const handleSave = () => {
-    console.log(question);
+  const handleSave = async () => {
+    try {
+      const result = await createSuccessPathQuizQuestionAnswer({
+        body: {
+          questionText: question.question,
+        },
+        category: selectedCategory,
+      }).unwrap();
+
+      if (result.success) {
+        setQuestion({
+          question: "",
+        });
+        toast.success("Question saved successfully");
+      } else {
+      }
+    } catch (error: any) {
+      if (error?.data.message) {
+        toast.error(
+          error?.data.message + "Provide a valid question at least 3 questions"
+        );
+      }
+    }
   };
   return (
-    <div className="px-10 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards stat={stat} key={stat.title} />
-        ))}
-      </div>
-
-      <div className="mx-auto bg-white rounded-lg border p-6 mt-16">
+    <div className="px-10 mt-5 min-h-screen">
+      <h1 className="text-3xl font-bold text-black">Success Path</h1>
+      <div className="mx-auto bg-white rounded-lg border p-6 my-5 pb-16">
         {/* Tab Navigation */}
-        <div className="flex justify-between">
+        <div className="flex justify-between ">
           <div className="flex gap-8 mb-8">
             <button
               onClick={() => setActiveTab("quiz")}
@@ -102,7 +81,7 @@ const SuccessPathPage = () => {
               Quiz
             </button>
             <button
-              onClick={handelGoToUpload}
+              onClick={() => router.push("/dashboard/success-path/assessment")}
               className={`pb-2 text-lg font-medium ${
                 activeTab === "upload"
                   ? "text-black border-b-2 border-black"
@@ -112,16 +91,19 @@ const SuccessPathPage = () => {
               Assessment
             </button>
           </div>
-          <Select>
+          <Select
+            value={selectedCategory}
+            onValueChange={(value) => setSelectedCategory(value as Category)}
+          >
             <SelectTrigger className="w-[180px] rounded-md py-5 border-neutral-400 text-black">
-              <SelectValue placeholder="Select a category" />
+              <SelectValue />
             </SelectTrigger>
-            <SelectContent className="py-2 ">
-              <SelectItem value="Aspiring Entrepreneur">
+            <SelectContent className="py-2">
+              <SelectItem value="aspiring-entrepreneur">
                 Aspiring Entrepreneur
               </SelectItem>
-              <SelectItem value="  Small Business">Small Business</SelectItem>
-              <SelectItem value="Looking to Get Into Tech">
+              <SelectItem value="small-business">Small Business</SelectItem>
+              <SelectItem value="looking-to-get-into-tech">
                 Looking to Get Into Tech
               </SelectItem>
             </SelectContent>
@@ -141,28 +123,30 @@ const SuccessPathPage = () => {
           </div>
 
           {/* Answer Sections */}
-          <div>
-            <label className="block text-lg font-medium mb-3">
-              1.Yes (User will get 1 mark)
-            </label>
-            <Input
-              placeholder="Enter Answer"
-              value={question.answers.answer1}
-              onChange={(e) => handleAnswerChange(e, "answer1")}
-              className="py-6"
-            />
-          </div>
+          <div className="flex gap-4 flex-row">
+            <div className="flex-1">
+              <label className="block text-lg font-medium mb-3">
+                1.Yes (User will get 1 mark)
+              </label>
+              <Input
+                placeholder="Enter Answer"
+                className="py-6"
+                disabled
+                defaultValue={"Yes"}
+              />
+            </div>
 
-          <div>
-            <label className="block text-lg font-medium mb-3">
-              1.Yes (User will get 0 mark)
-            </label>
-            <Input
-              placeholder="Enter Answer"
-              value={question.answers.answer2}
-              onChange={(e) => handleAnswerChange(e, "answer2")}
-              className="py-6"
-            />
+            <div className="flex-1">
+              <label className="block text-lg font-medium mb-3">
+                2. No (User will get 0 mark)
+              </label>
+              <Input
+                placeholder="Enter Answer"
+                className="py-6"
+                disabled
+                defaultValue={"No"}
+              />
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -178,9 +162,18 @@ const SuccessPathPage = () => {
             <Button
               className="flex-1 py-6 hover:bg-neutral-800"
               onClick={handleSave}
-              disabled={!isQuestionValid()}
+              disabled={!isQuestionValid() || isCreating}
             >
-              <Save /> Save
+              {isCreating ? (
+                <>
+                  <ClipLoader color="#ffffff" size={16} />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save /> Save
+                </>
+              )}
             </Button>
           </div>
         </div>

@@ -1,173 +1,206 @@
 "use client";
+import CardSkeleton from "@/components/skeletons/CardSkeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Save, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {
+  useDeleteBusinessPlanQuizQuestionAnswerMutation,
+  useGetBusinessPlanQuizQuestionAnswerQuery,
+  useUpdateBusinessPlanQuizQuestionAnswerMutation,
+} from "@/lib/redux/features/api/businessPlanning/businessPlanningApiSlice";
+import { Save, Trash, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PiPencilFill } from "react-icons/pi";
-
-interface SurveyOption {
-  id: string;
-  text: string;
-}
-
-interface SurveyCard {
-  id: string;
-  question: string;
-  options: SurveyOption[];
-}
-
-const surveyData: SurveyCard[] = [
-  {
-    id: "1",
-    question: "What motivates you most in business?",
-    options: [
-      { id: "1a", text: "Solving problems" },
-      { id: "1b", text: "Creating innovative products" },
-      { id: "1c", text: "Leading and inspiring team" },
-    ],
-  },
-  {
-    id: "2",
-    question: "What motivates you most in business?",
-    options: [
-      { id: "2a", text: "Solving problems" },
-      { id: "2b", text: "Creating innovative products" },
-      { id: "2c", text: "Leading and inspiring team" },
-    ],
-  },
-  {
-    id: "3",
-    question: "What motivates you most in business?",
-    options: [
-      { id: "3a", text: "Solving problems" },
-      { id: "3b", text: "Creating innovative products" },
-      { id: "3c", text: "Leading and inspiring team" },
-    ],
-  },
-  {
-    id: "4",
-    question: "What motivates you most in business?",
-    options: [
-      { id: "4a", text: "Solving problems" },
-      { id: "4b", text: "Creating innovative products" },
-      { id: "4c", text: "Leading and inspiring team" },
-    ],
-  },
-  {
-    id: "5",
-    question: "What motivates you most in business?",
-    options: [
-      { id: "5a", text: "Solving problems" },
-      { id: "5b", text: "Creating innovative products" },
-      { id: "5c", text: "Leading and inspiring team" },
-    ],
-  },
-];
+import { toast } from "sonner";
+import BackButtons from "../BootCamp/BackButtons";
+import Pagination from "@/components/pagination/Pagination";
+import { SurveyCard } from "./business_planning.interface";
 
 const ViewAnswersPage = () => {
-  const [data, setData] = useState(surveyData || []);
+  const [data, setData] = useState<SurveyCard[]>([]);
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<SurveyCard | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const router = useRouter();
+  const {
+    data: answers,
+    isLoading,
+    refetch,
+  } = useGetBusinessPlanQuizQuestionAnswerQuery(null);
+  const [updateBusinessPlanQuizQuestionAnswer] =
+    useUpdateBusinessPlanQuizQuestionAnswerMutation();
 
-  const handleEdit = (card: SurveyCard) => {
-    setEditingCardId(card.id);
+  const [deleteBusinessPlanQuizQuestionAnswer] =
+    useDeleteBusinessPlanQuizQuestionAnswerMutation();
+
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil((data?.length || 0) / itemsPerPage);
+  const paginatedData =
+    data?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) ||
+    [];
+
+  const startEdit = (card: SurveyCard) => {
+    setEditingCardId(card._id);
     setEditFormData({ ...card });
   };
 
-  const handleSave = () => {
-    console.log(editFormData);
-    if (editFormData) {
-      setData((prevData) =>
-        prevData.map((card) =>
-          card.id === editFormData.id ? editFormData : card
-        )
+  const cancelEdit = () => {
+    setEditingCardId(null);
+    setEditFormData(null);
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeleteId(id);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      await deleteBusinessPlanQuizQuestionAnswer({
+        id: deleteId!,
+      }).unwrap();
+      toast.success("Answer deleted successfully");
+
+      setData((prevData: SurveyCard[]) =>
+        prevData.filter((card) => card._id !== deleteId)
       );
+
+      setOpenDeleteDialog(false);
+      setEditingCardId(null);
+      setEditFormData(null);
+    } catch (err) {
+      console.error("Failed to delete:", err);
+      toast.error("Failed to delete answer. Please try again.");
     }
-    setEditingCardId(null);
-    setEditFormData(null);
   };
 
-  const handleCancel = () => {
-    setEditingCardId(null);
-    setEditFormData(null);
-  };
-
-  const updateQuestion = (value: string) => {
+  const saveEdit = async () => {
     if (editFormData) {
-      setEditFormData({ ...editFormData, question: value });
+      try {
+        const result = await updateBusinessPlanQuizQuestionAnswer({
+          body: editFormData,
+          id: editFormData._id,
+        }).unwrap();
+
+        if (result.success) {
+          setData((prev) =>
+            prev.map((card) =>
+              card._id === editFormData._id ? editFormData : card
+            )
+          );
+          toast.success("Answer updated successfully");
+          setEditingCardId(null);
+          setEditFormData(null);
+          cancelEdit();
+        }
+      } catch (error) {
+        toast.error(
+          (error as string) || "Failed to update answer. Please try again."
+        );
+       
+      }
     }
   };
 
-  const updateOption = (optionId: string, value: string) => {
-    if (editFormData) {
-      setEditFormData({
-        ...editFormData,
-        options: editFormData.options.map((option) =>
-          option.id === optionId ? { ...option, text: value } : option
-        ),
-      });
+  useEffect(() => {
+    if (answers?.data) {
+      setData(answers.data);
+      setCurrentPage(1);
+      refetch();
     }
+  }, [answers?.data, refetch]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
-  return (
-    <div className="w-full mx-auto p-8  rounded-xl">
-      <div className="flex gap-8 mb-5">
-        <button
-          onClick={() => router.back()}
-          className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-        >
-          Question
-        </button>
-        {/* </Link> */}
-        <button className={`pb-2 text-lg font-medium border-b-2 border-black`}>
-          Answer
-        </button>
+
+  if (isLoading) {
+    return (
+      <div className="w-full mx-auto p-8 rounded-xl">
+        <BackButtons backTitle="Question" title={"Answer"} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {data.map((card) => (
+    );
+  }
+
+  return (
+    <div className="w-full mx-auto p-8 rounded-xl">
+      <BackButtons backTitle="Question" title={"Answer"} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+        {paginatedData.map((card) => (
           <Card
-            key={card.id}
-            className="border border-gray-200 group hover:shadow-md transition-shadow"
+            key={card._id}
+            className="group hover:shadow-md transition-shadow"
           >
-            {editingCardId === card.id ? (
+            {editingCardId === card._id ? (
               <>
                 <CardHeader>
-                  <div className="space-y-4">
-                    <Input
-                      value={editFormData?.question || ""}
-                      onChange={(e) => updateQuestion(e.target.value)}
-                      placeholder="Enter question"
-                      className="text-base py-7 font-medium"
-                    />
-                  </div>
+                  <Input
+                    type="text"
+                    value={editFormData?.questionText || ""}
+                    onChange={(e) =>
+                      setEditFormData((prev) =>
+                        prev ? { ...prev, questionText: e.target.value } : null
+                      )
+                    }
+                    placeholder="Enter question"
+                    className="text-base py-7 font-medium"
+                  />
                 </CardHeader>
-                <CardContent className="pt-0">
+                <CardContent className="pt-6">
                   <div className="space-y-3 mb-4">
-                    {editFormData?.options.map((option) => (
+                    {editFormData?.answers.map((opt, index) => (
                       <Input
-                        key={option.id}
-                        value={option.text}
-                        onChange={(e) =>
-                          updateOption(option.id, e.target.value)
-                        }
-                        placeholder="Enter option text"
-                        className="py-7 px-4 bg-gray-50 rounded-2xl border"
+                        key={index}
+                        type="text"
+                        value={opt.answer}
+                        onChange={(e) => {
+                          setEditFormData((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  answers: prev.answers.map((a, i) =>
+                                    i === index
+                                      ? { ...a, answer: e.target.value }
+                                      : a
+                                  ),
+                                }
+                              : null
+                          );
+                        }}
+                        placeholder="Enter option text "
+                        className="py-7 px-4 bg-gray-50 rounded-2xl border min-h-[120px]"
                       />
                     ))}
                   </div>
                   <div className="flex gap-2 justify-end">
                     <Button
-                      variant="outline"
                       className="py-5"
-                      onClick={handleCancel}
+                      onClick={cancelEdit}
+                      variant="outline"
                     >
-                      <X /> Cancel
+                      <X className="w-4 h-4 mr-2" /> Cancel
                     </Button>
-                    <Button className="py-5" onClick={handleSave}>
-                      <Save /> Save
+                    <Button className="py-5" onClick={saveEdit}>
+                      <Save className="w-4 h-4 mr-2 " /> Save
                     </Button>
                   </div>
                 </CardContent>
@@ -177,24 +210,34 @@ const ViewAnswersPage = () => {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <h3 className="text-base font-medium leading-relaxed">
-                      {card.question}
+                      {card.questionText}
                     </h3>
-                    <button
-                      onClick={() => handleEdit(card)}
-                      className=" p-2 cursor-pointer rounded-full hover:bg-gray-200 "
-                    >
-                      <PiPencilFill className="text-2xl font-bold" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startEdit(card)}
+                        // size="icon"
+                        className="p-2 cursor-pointer rounded-full hover:bg-gray-200"
+                      >
+                        <PiPencilFill className="text-2xl font-bold" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(card._id)}
+                        // size="icon"
+                        className="p-2 cursor-pointer rounded-full hover:bg-red-200"
+                      >
+                        <Trash className="text-2xl text-red-500 font-bold " />
+                      </button>
+                    </div>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-0">
+                <CardContent className="pt-6">
                   <div className="space-y-3">
-                    {card.options.map((option) => (
+                    {card.answers.map((opt, index) => (
                       <div
-                        key={option.id}
-                        className="py-4 px-4 bg-gray-50 rounded-2xl border"
+                        key={index}
+                        className="py-4 px-4 bg-gray-50 rounded-2xl border border-gray-200"
                       >
-                        {option.text}
+                        {opt.answer}
                       </div>
                     ))}
                   </div>
@@ -204,6 +247,35 @@ const ViewAnswersPage = () => {
           </Card>
         ))}
       </div>
+
+      {!isLoading && totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              answer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirmed}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

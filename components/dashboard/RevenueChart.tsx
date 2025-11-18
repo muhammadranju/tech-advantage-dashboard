@@ -1,6 +1,6 @@
 "use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardApplicationRateQuery } from "@/lib/redux/features/api/coaching/coachingApiSlice";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
@@ -20,27 +20,23 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const data = [
-  { month: "JAN", value: 2000 },
-  { month: "FEB", value: 2800 },
-  { month: "MAR", value: 2200 },
-  { month: "APR", value: 3200 },
-  { month: "MAY", value: 2900 },
-  { month: "JUN", value: 3800 },
-  { month: "JUL", value: 3348 },
-  { month: "AUG", value: 2800 },
-  { month: "SEP", value: 3200 },
-  { month: "OCT", value: 2900 },
-  { month: "NOV", value: 3100 },
-  { month: "DEC", value: 2700 },
-];
-
 export function RevenueChart() {
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const { data: dashboardApplicationRate } =
+    useDashboardApplicationRateQuery(null);
+  const date = new Date();
+  const years = ["2021", "2022", "2023", "2024", `${date.getFullYear()}`];
+  const applicantsData = [
+    { month: "January", value: 3 },
+    { month: "February", value: 2 },
+    { month: "March", value: 4 },
+    { month: "April", value: 2 },
+    ...(dashboardApplicationRate?.data || []),
+  ];
 
-  const years = ["2021", "2022", "2023", "2024", "2025"];
   return (
-    <Card className="bg-white">
+    <Card className="bg-white ">
+      {/* Application Rate Chart Header */}
       <CardHeader className="flex justify-between items-center">
         <CardTitle className="text-2xl font-bold">
           Coaching Application Rate
@@ -67,14 +63,16 @@ export function RevenueChart() {
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
+
+      {/*  Application Rate Chart */}
       <CardContent>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <AreaChart data={applicantsData}>
               <defs>
                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9CA3AF" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#9CA3AF" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="#262626 " stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#a3a3a3  " stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" />
@@ -82,14 +80,14 @@ export function RevenueChart() {
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                className="text-xs text-gray-500 px-10 mt-10"
+                className="text-xs"
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                className="text-xs  text-gray-500 mr-10"
-                tickFormatter={(value) => `${value / 1000}k`}
-                orientation="right"
+                className="text-xs"
+                tickFormatter={(value) => `${value}%`}
+                // orientation="right"
               />
 
               <Tooltip
@@ -97,8 +95,8 @@ export function RevenueChart() {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-black text-white px-3 py-2 rounded text-sm">
-                        <p>{`1,348 Application Rate`}</p>
-                        {/* <p>{`$${payload[0].value?.toLocaleString()}`}</p> */}
+                        <p>{`${payload[0]?.value?.toLocaleString() || "0"}`}</p>
+                        <p>{`${payload[0].payload.month}`}</p>
                       </div>
                     );
                   }
@@ -108,8 +106,8 @@ export function RevenueChart() {
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#9CA3AF"
-                strokeWidth={2}
+                stroke="#171717"
+                strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorUsers)"
               />

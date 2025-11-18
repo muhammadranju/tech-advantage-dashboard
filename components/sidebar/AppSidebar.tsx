@@ -1,156 +1,3 @@
-// "use client";
-// import { Button } from "@/components/ui/button";
-// import {
-//   Sidebar,
-//   SidebarGroup,
-//   SidebarGroupContent,
-//   SidebarHeader,
-//   SidebarMenu,
-//   SidebarMenuButton,
-//   SidebarMenuItem,
-//   SidebarRail,
-//   useSidebar,
-// } from "@/components/ui/sidebar";
-// import { ChartGantt, CircleDollarSign, Handshake } from "lucide-react";
-// import Image from "next/image";
-// import Link from "next/link";
-// import { usePathname } from "next/navigation";
-// import type * as React from "react";
-// import { CgLogOut } from "react-icons/cg";
-// import { FiSidebar } from "react-icons/fi";
-// import { HiMiniUserGroup } from "react-icons/hi2";
-// import { LuSettings } from "react-icons/lu";
-// import {
-//   PiGraduationCapBold,
-//   PiPersonSimpleRunBold,
-//   PiStudentBold,
-//   PiTentBold,
-//   PiUsersThreeBold,
-// } from "react-icons/pi";
-
-// // This is sample data.
-// const data = {
-//   navMain: [
-//     {
-//       items: [
-//         {
-//           title: "Dashboard",
-//           url: "/dashboard/overview",
-//           icon: <CircleDollarSign />,
-//         },
-//         {
-//           title: "Users",
-//           url: "/dashboard/users",
-//           icon: <PiUsersThreeBold />,
-//         },
-//         {
-//           title: "Small Business",
-//           url: "/dashboard/small-business",
-//           icon: <Handshake />,
-//         },
-//         {
-//           title: "Business Planning",
-//           url: "/dashboard/business-planning",
-//           icon: <ChartGantt />,
-//         },
-//         {
-//           title: "Success Path",
-//           url: "/dashboard/success-path",
-//           icon: <PiPersonSimpleRunBold />,
-//         },
-//         {
-//           title: "Coaching",
-//           url: "/dashboard/coaching",
-//           icon: <PiGraduationCapBold />,
-//         },
-//         {
-//           title: "Boot Camp",
-//           url: "/dashboard/boot-camp",
-//           icon: <PiTentBold />,
-//         },
-//         {
-//           title: "Community",
-//           url: "/dashboard/community",
-//           icon: <HiMiniUserGroup />,
-//         },
-//         {
-//           title: "Mock Interview",
-//           url: "/dashboard/mock-interview",
-//           icon: <PiStudentBold />,
-//         },
-//         {
-//           title: "Notification",
-//           url: "/dashboard/notification",
-//           icon: <LuSettings />,
-//         },
-//       ],
-//     },
-//   ],
-// };
-
-// export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-//   const pathname = usePathname();
-//   const { toggleSidebar } = useSidebar();
-
-//   const handelLogout = () => {
-//     console.log("logout");
-//     window.location.href = "/login";
-//   };
-
-//   return (
-//     <Sidebar {...props} className="text-white">
-//       <div
-//         className="flex items-center gap-2 cursor-pointer absolute  -right-[34px] top-5  w-fit rounded-full"
-//         onClick={toggleSidebar}
-//       >
-//         <FiSidebar className="text-black w-10 hover:text-gray-600 transition-colors  rounded-full" />
-//       </div>
-//       <SidebarHeader className="text-white relative ">
-//         <div className="flex items-center ">
-//           <Image src="/logo.png" alt="logo" width={45} height={61} />
-//           <h1 className="font-bold text-lg text-white">TECH ADVANTAGE</h1>
-//         </div>
-//       </SidebarHeader>
-
-//       {/* We create a SidebarGroup for each parent. */}
-//       {data.navMain.map((item, idx) => (
-//         <SidebarGroup key={idx}>
-//           <SidebarGroupContent>
-//             <SidebarMenu>
-//               {item.items.map((item) => (
-//                 <SidebarMenuItem key={item.title}>
-//                   <SidebarMenuButton
-//                     className="text-base"
-//                     asChild
-//                     isActive={pathname === item.url}
-//                   >
-//                     <Link className="p-6 my-2" href={item.url}>
-//                       <span className="mr-2 text-lg"> {item.icon}</span>{" "}
-//                       {item.title}
-//                     </Link>
-//                   </SidebarMenuButton>
-//                 </SidebarMenuItem>
-//               ))}
-//             </SidebarMenu>
-//           </SidebarGroupContent>
-//         </SidebarGroup>
-//       ))}
-
-//       <div className="flex flex-col justify-center items-center gap-4   px-4 ">
-//         <Button
-//           onClick={handelLogout}
-//           className="bg-neutral-600 hover:bg-neutral-700 py-6 w-full text-lg text-white"
-//         >
-//           <CgLogOut className="rotate-180 h-24 w-24" />{" "}
-//           {/* Increased icon size to h-24 w-24 */}
-//           Logout
-//         </Button>
-//       </div>
-//       <SidebarRail />
-//     </Sidebar>
-//   );
-// }
-
 "use client";
 import { Button } from "@/components/ui/button";
 import {
@@ -164,17 +11,20 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logout } from "@/lib/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/lib/redux/hooks";
 import {
   BellRing,
   ChartGantt,
   CircleDollarSign,
   Handshake,
+  LogIn,
+  MessagesSquare,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type * as React from "react";
-import { CgLogOut } from "react-icons/cg";
+import * as React from "react";
 import { FiSidebar } from "react-icons/fi";
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { MdOutlinePolicy } from "react-icons/md";
@@ -185,136 +35,131 @@ import {
   PiTentBold,
   PiUsersThreeBold,
 } from "react-icons/pi";
-
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      items: [
-        {
-          title: "Dashboard",
-          url: "/dashboard/overview",
-          icon: <CircleDollarSign />,
-        },
-        {
-          title: "Users",
-          url: "/dashboard/users",
-          icon: <PiUsersThreeBold />,
-        },
-        {
-          title: "Small Business",
-          url: "/dashboard/small-business",
-          icon: <Handshake />,
-        },
-        {
-          title: "Business Planning",
-          url: "/dashboard/business-planning",
-          icon: <ChartGantt />,
-        },
-        {
-          title: "Success Path",
-          url: "/dashboard/success-path",
-          icon: <PiPersonSimpleRunBold />,
-        },
-        {
-          title: "Coaching",
-          url: "/dashboard/coaching",
-          icon: <PiGraduationCapBold />,
-        },
-        {
-          title: "Boot Camp",
-          url: "/dashboard/boot-camp",
-          icon: <PiTentBold />,
-        },
-        {
-          title: "Community",
-          url: "/dashboard/community",
-          icon: <HiMiniUserGroup />,
-        },
-        {
-          title: "Mock Interview",
-          url: "/dashboard/mock-interview",
-          icon: <PiStudentBold />,
-        },
-        {
-          title: "Notification",
-          url: "/dashboard/notification",
-          icon: <BellRing />,
-        },
-        {
-          title: "Terms & Conditions",
-          url: "/dashboard/terms-conditions",
-          icon: <MdOutlinePolicy />,
-        },
-      ],
-    },
-  ],
+type NavItem = {
+  title: string;
+  url: string;
+  icon: React.ReactNode;
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const NAV_MAIN: NavItem[] = [
+  { title: "Overview", url: "/dashboard/overview", icon: <CircleDollarSign /> },
+  { title: "Users", url: "/dashboard/users", icon: <PiUsersThreeBold /> },
+  {
+    title: "Small Business",
+    url: "/dashboard/small-business",
+    icon: <Handshake />,
+  },
+  {
+    title: "Business Planning",
+    url: "/dashboard/business-planning",
+    icon: <ChartGantt />,
+  },
+  {
+    title: "Success Path",
+    url: "/dashboard/success-path",
+    icon: <PiPersonSimpleRunBold />,
+  },
+  {
+    title: "Coaching",
+    url: "/dashboard/coaching",
+    icon: <PiGraduationCapBold />,
+  },
+  { title: "Boot Camp", url: "/dashboard/boot-camp", icon: <PiTentBold /> },
+  {
+    title: "Community",
+    url: "/dashboard/community",
+    icon: <HiMiniUserGroup />,
+  },
+  {
+    title: "Mock Interview",
+    url: "/dashboard/mock-interview",
+    icon: <PiStudentBold />,
+  },
+  {
+    title: "Feedback",
+    url: "/dashboard/feedback",
+    icon: <MessagesSquare />,
+  },
+  { title: "Notification", url: "/dashboard/notification", icon: <BellRing /> },
+  {
+    title: "Terms & Conditions",
+    url: "/dashboard/terms-conditions",
+    icon: <MdOutlinePolicy />,
+  },
+];
+
+function SidebarNavItem({ item, active }: { item: NavItem; active: boolean }) {
+  return (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton className="text-base" asChild isActive={active}>
+        <Link className="p-6 my-1 flex items-center relative" href={item.url}>
+          {active && (
+            <span className="w-2 h-full bg-neutral-400 rounded-l absolute left-0 top-0"></span>
+          )}
+
+          <span className="mr-2 text-lg">{item.icon}</span>
+
+          <span>{item.title}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { toggleSidebar } = useSidebar();
+  const dispatch = useAppDispatch();
 
-  const handelLogout = () => {
-    console.log("logout");
-    window.location.href = "/login";
-  };
+  const handleLogout = React.useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
 
   return (
     <Sidebar {...props} className="text-white flex flex-col z-50 fixed">
       <div
-        className="flex items-center gap-2 cursor-pointer absolute  -right-[34px] top-5  w-fit rounded-full"
+        className="flex items-center gap-2 cursor-pointer absolute -right-[34px] top-5 w-fit rounded-full"
         onClick={toggleSidebar}
       >
-        <FiSidebar className="text-black w-10 hover:text-gray-600 transition-colors  rounded-full" />
+        <FiSidebar className="text-black w-10 hover:text-gray-600 transition-colors rounded-full" />
       </div>
 
-      <SidebarHeader className="text-white relative ">
-        <div className="flex items-center ">
+      <SidebarHeader className="text-white relative mt-3 px-3">
+        <div className="flex items-center">
           <Image
-            src="/dashboard-logo.png"
+            src="/logo.png"
             alt="logo"
-            className="mr-2"
-            width={45}
-            height={61}
+            blurDataURL="/logo.svg"
+            className="mr-2 rounded-md bg-white w-12 h-12 object-cover"
+            width={100}
+            height={100}
           />
           <h1 className="font-bold text-lg text-white">TECH ADVANTAGE</h1>
         </div>
       </SidebarHeader>
 
-      {/* Navigation Menu - flex-1 to take available space */}
       <div className="flex-1 overflow-y-auto">
-        {data.navMain.map((item, idx) => (
-          <SidebarGroup key={idx}>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      className="text-base"
-                      asChild
-                      isActive={pathname === item.url}
-                    >
-                      <Link className="p-6 my-1" href={item.url}>
-                        <span className="mr-2 text-lg"> {item.icon}</span>{" "}
-                        {item.title}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {NAV_MAIN.map((item) => (
+                <SidebarNavItem
+                  key={item.title}
+                  item={item}
+                  active={pathname === item.url}
+                />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </div>
 
-      {/* Fixed Bottom Logout Button */}
-      <div className="mt-auto p-4 border-t border-gray-600 ">
+      <div className="mt-auto p-4 border-t border-neutral-600">
         <Button
-          onClick={handelLogout}
+          onClick={handleLogout}
           className="bg-neutral-600 hover:bg-neutral-700 py-6 w-full text-lg text-white"
         >
-          <CgLogOut className="rotate-180 h-6 w-6 mr-2" />
+          <LogIn className=" h-6 w-6 -mr-1" />
           Logout
         </Button>
       </div>

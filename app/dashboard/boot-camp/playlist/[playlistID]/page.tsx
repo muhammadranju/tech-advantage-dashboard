@@ -3,7 +3,7 @@ import SinglePlaylist from "@/components/pages/Dashboard/BootCamp/PlaylistID";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Boot Camp Playlist</title>
+      <title>Boot Camp Playlist - TechAdvantage</title>
       <SinglePlaylist />
     </div>
   );

@@ -3,7 +3,7 @@ import CoachBooking from "@/components/pages/Dashboard/Coaching/CoachBooking";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Coach Booking</title>
+      <title>Coach Booking - TechAdvantage</title>
       <CoachBooking />
     </div>
   );

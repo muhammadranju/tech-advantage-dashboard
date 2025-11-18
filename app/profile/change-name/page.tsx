@@ -2,8 +2,8 @@ import ChangeName from "@/components/pages/profile/ChangeName";
 
 const page = () => {
   return (
-    <div>
-      <title>TechAdvantage - Change Name</title>
+    <div className="min-h-screen bg-neutral-50 ">
+      <title>Change Name - TechAdvantage</title>
       <ChangeName />
     </div>
   );

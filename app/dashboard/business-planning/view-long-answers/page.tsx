@@ -3,7 +3,7 @@ import ViewLongAnswersPage from "@/components/pages/Dashboard/BusinessPlanning/V
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Business Planning View Long Answers</title>
+      <title>Business Planning View Long Answers - TechAdvantage</title>
       <ViewLongAnswersPage />
     </div>
   );

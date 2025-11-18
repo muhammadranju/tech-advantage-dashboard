@@ -1,88 +1,95 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { StatsCards } from "@/components/dashboard/StatsCards";
-import { AssessmentComment } from "@/components/mockInterview/AssessmentComment";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  ListCollapseIcon,
-  Save,
-} from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import { useCreateMockInterviewMutation } from "@/lib/redux/features/api/mockInterview/mockInterviewSliceApi";
+import { ListCollapseIcon, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-const stats = [
-  {
-    title: "Total Participant",
-    value: "124,563",
-    change: "+12.5%",
-    changeType: "positive" as const,
-    icon: FileText,
-  },
-];
+import { toast } from "sonner";
+import { AssessmentComment } from "./AssessmentComment";
+import { Answer, TabType } from "./mock_interview.interface";
 
 const MockInterview = () => {
-  const [activeTab, setActiveTab] = useState("quiz");
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [questions, setQuestions] = useState<any>([
-    { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
-    { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
-    { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
-    { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
-    { question: "", answers: { answer1: "", answer2: "", answer3: "" } },
-  ]);
+  const [activeTab, setActiveTab] = useState<TabType>("quiz");
 
+  // Single question with multiple answers
+  const [question, setQuestion] = useState<string>("");
+  const [answers, setAnswers] = useState<Answer[]>([
+    { text: "", score: "3" },
+    { text: "", score: "2" },
+    { text: "", score: "1" },
+  ]);
+  const [createMockInterview, { isLoading }] = useCreateMockInterviewMutation();
   const router = useRouter();
 
-  const handleQuestionChange = (e: any) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex].question = e.target.value;
-    setQuestions(updatedQuestions);
+  const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion(e.target.value);
   };
 
-  const handleAnswerChange = (e: any, answerIndex: any) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[currentQuestionIndex].answers[`answer${answerIndex}`] =
-      e.target.value;
-    setQuestions(updatedQuestions);
+  const handleAnswerTextChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    answerIndex: number
+  ) => {
+    const updatedAnswers = [...answers];
+    updatedAnswers[answerIndex].text = e.target.value;
+    setAnswers(updatedAnswers);
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < 4) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
+  const handleAnswerScoreChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    answerIndex: number
+  ) => {
+    const updatedAnswers = [...answers];
+    const value = e.target.value;
+    updatedAnswers[answerIndex].score = value === "" ? "" : parseFloat(value);
+    setAnswers(updatedAnswers);
   };
 
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  // Check if all fields for the current question are filled
-  const isCurrentQuestionValid = () => {
-    const currentQuestion = questions[currentQuestionIndex];
+  const isQuestionValid = () => {
     return (
-      currentQuestion.question !== "" &&
-      currentQuestion.answers.answer1 !== "" &&
-      currentQuestion.answers.answer2 !== "" &&
-      currentQuestion.answers.answer3 !== ""
+      question.trim() !== "" &&
+      answers.every((a) => a.text.trim() !== "" && a.score !== "")
     );
   };
 
-  const handleSave = () => {
-    console.log(questions);
+  const handleSave = async () => {
+    // Format as a single object with question and answers array
+
+    try {
+      const formattedQuestion = {
+        question: question,
+        answers: answers
+          .filter((a) => a.text.trim() !== "")
+          .map((a) => ({
+            text: a.text,
+            score: a.score === "" ? 0 : a.score,
+          })),
+      };
+
+      const result = await createMockInterview({
+        body: formattedQuestion,
+      }).unwrap();
+
+      if (result.success) {
+        toast.success("Question saved successfully");
+        setQuestion("");
+        setAnswers([
+          { text: "", score: "3" },
+          { text: "", score: "2" },
+          { text: "", score: "1" },
+        ]);
+      }
+    } catch (error) {
+      toast.error(  (error as string) || "Failed to save question. Please try again.");
+    }
+    // Here you would send formattedQuestion to your API
   };
+
   return (
-    <div className="px-10 py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat) => (
-          <StatsCards stat={stat} key={stat.title} />
-        ))}
-      </div>
-      <div className="mx-auto bg-white rounded-lg p-6 mt-16">
+    <div className="px-10 mt-5 min-h-screen">
+      <h1 className="text-3xl font-bold  text-black">Mock Interview</h1>
+      <div className="mx-auto bg-white rounded-lg p-10 mt-5 border ">
         {/* Tab Navigation */}
         <div className="flex gap-8 mb-8">
           <button
@@ -110,77 +117,44 @@ const MockInterview = () => {
         {/* Tab Content */}
         {activeTab === "quiz" && (
           <div className="space-y-6">
-            {/* Question Section */}
+            {/* Question */}
             <div>
-              <label className="block text-lg font-medium mb-3">
-                {currentQuestionIndex + 1}. Question
-              </label>
+              <label className="block text-lg font-medium mb-3">Question</label>
               <Input
                 placeholder="Enter quiz question"
-                value={questions[currentQuestionIndex].question}
+                value={question}
                 onChange={handleQuestionChange}
                 className="py-6"
               />
             </div>
 
-            {/* Answer Sections */}
-            <div>
-              <label className="block text-lg font-medium mb-3">
-                1. Answer (User will get 1 marks)
-              </label>
-              <Input
-                placeholder="Enter quiz answer"
-                value={questions[currentQuestionIndex].answers.answer1}
-                onChange={(e) => handleAnswerChange(e, 1)}
-                className="py-6"
-              />
-            </div>
-
-            <div>
-              <label className="block text-lg font-medium mb-3">
-                2. Answer (User will get 0.5 marks)
-              </label>
-              <Input
-                placeholder="Enter quiz answer"
-                value={questions[currentQuestionIndex].answers.answer2}
-                onChange={(e) => handleAnswerChange(e, 2)}
-                className="py-6"
-              />
-            </div>
-
-            <div>
-              <label className="block text-lg font-medium mb-3">
-                3. Answer (User will get 0 mark)
-              </label>
-              <Input
-                placeholder="Enter quiz answer"
-                value={questions[currentQuestionIndex].answers.answer3}
-                onChange={(e) => handleAnswerChange(e, 3)}
-                className="py-6"
-              />
-            </div>
-
-            {/* Navigation */}
-            <div className="flex justify-end items-center gap-8 py-6">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 text-neutral-600"
-                onClick={handlePreviousQuestion}
-                disabled={currentQuestionIndex === 0}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Previous Question
-              </Button>
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 text-neutral-600"
-                onClick={handleNextQuestion}
-                disabled={currentQuestionIndex === 4}
-              >
-                Next Question
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+            {/* Answers */}
+            {answers.map((answer, index) => (
+              <div key={index} className="flex gap-4 items-center">
+                <div className="flex-1">
+                  <label className="block text-lg font-medium mb-2">
+                    {index + 1}. Answer
+                  </label>
+                  <Input
+                    placeholder="Enter answer text"
+                    value={answer.text}
+                    onChange={(e) => handleAnswerTextChange(e, index)}
+                    className="py-6"
+                  />
+                </div>
+                <div className="w-16">
+                  <label className="block text-lg font-medium mb-2">
+                    Score
+                  </label>
+                  <Input
+                    type="number"
+                    value={answer.score}
+                    onChange={(e) => handleAnswerScoreChange(e, index)}
+                    className="py-6"
+                  />
+                </div>
+              </div>
+            ))}
 
             {/* Action Buttons */}
             <div className="flex gap-4 pt-4">
@@ -197,9 +171,17 @@ const MockInterview = () => {
               <Button
                 className="flex-1 py-6 hover:bg-neutral-800"
                 onClick={handleSave}
-                disabled={!isCurrentQuestionValid()}
+                disabled={!isQuestionValid() || isLoading}
               >
-                <Save /> Save
+                {isLoading ? (
+                  <>
+                    <Spinner className="size-6" /> Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save /> Save
+                  </>
+                )}
               </Button>
             </div>
           </div>

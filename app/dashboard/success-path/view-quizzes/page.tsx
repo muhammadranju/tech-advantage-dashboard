@@ -4,7 +4,7 @@ import QuizzesPage from "@/components/pages/Dashboard/SuccessPath/ViewQuizzes";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Success Path View Quizzes</title>
+      <title>Success Path View Quizzes - TechAdvantage</title>
       <QuizzesPage />
     </div>
   );

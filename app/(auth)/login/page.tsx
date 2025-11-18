@@ -3,7 +3,7 @@ import LoginPage from "@/components/pages/auth/login";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Login</title>
+      <title> Login - TechAdvantage</title>
       <LoginPage />
     </div>
   );

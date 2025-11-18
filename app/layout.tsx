@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google"; // Importing Inter and Source Code Pro
 import "./globals.css";
+import StoreProvider from "@/lib/redux/provider";
+import { Toaster } from "react-hot-toast";
 
 // Importing the Inter font
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -12,7 +14,7 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "TechAdvantage - Dashboard Overview",
+  title: "Dashboard Overview - TechAdvantage",
   description: "Dashboard Overview",
 };
 
@@ -26,7 +28,8 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceCodePro.variable} antialiased`}
       >
-        {children}
+        <StoreProvider>{children}</StoreProvider>
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

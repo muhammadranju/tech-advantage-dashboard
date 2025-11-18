@@ -3,7 +3,7 @@ import MockInterviewViewAnswersPage from "@/components/pages/Dashboard/MockInter
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Mock Interview View Answers</title>
+      <title>Mock Interview View Answers - TechAdvantage</title>
       <MockInterviewViewAnswersPage />
     </div>
   );

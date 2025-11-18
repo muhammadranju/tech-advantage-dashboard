@@ -1,81 +1,130 @@
 "use client";
-
-import type React from "react";
-
+import BackButton from "@/components/logo/BackButton";
+import LogoComponent from "@/components/logo/Logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Image from "next/image";
+import { useAuthCheck } from "@/hooks/useAuthCheck";
+import { useUpdateUserNameProfileMutation } from "@/lib/redux/features/api/profile/profileSliceApi";
+import { Save } from "lucide-react";
+import type React from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { ClipLoader } from "react-spinners";
+import { DialogTriggerComponent } from "./DialogTriggerComponent";
+import { FormFieldProps } from "./profile.interface";
+
+const FormField: React.FC<FormFieldProps> = ({
+  id,
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+}) => (
+  <div className="space-y-2">
+    <Label htmlFor={id} className="text-sm font-medium">
+      {label}
+    </Label>
+    <Input
+      id={id}
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      className="h-12 bg-gray-50 border-gray-200 focus:bg-white rounded-xl"
+      required
+    />
+  </div>
+);
 
 export default function ChangeName() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const { userProfile, refetch } = useAuthCheck();
+  const userName = userProfile?.user.data.name;
+  const [firstName, setFirstName] = useState(userName?.split(" ")[0]);
+  const [lastName, setLastName] = useState(userName?.split(" ")[1]);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const userId = userProfile?.user?.data._id;
+
+  const [updateUserNameProfile, { isLoading }] =
+    useUpdateUserNameProfileMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt:", { firstName, lastName });
+    try {
+      const result = await updateUserNameProfile({
+        userId: userId,
+        body: {
+          name: `${firstName} ${lastName}`,
+          userId: userId,
+        },
+      }).unwrap();
+
+      if (result?.success) {
+        setIsOpen(true);
+        refetch();
+        toast.success("Name updated successfully");
+      }
+    } catch (error) {
+      toast.error( (error as string) || "Error updating name");
+    }
+
+   
   };
-
+  
   return (
-    <Card className="w-full mt-20 max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
-      <CardHeader className="text-center pb-8 pt-8">
-        <div className="flex justify-center">
-          <Image
-            src="/T3-logo.svg"
-            className=" w-52 h-52"
-            alt="logo"
-            width={500}
-            height={600}
-          />
-        </div>
+    <>
+      <BackButton />
+      <Card className="w-full mt-8 max-w-xl mx-auto shadow-[2px_4px_4px_rgba(0,0,0,0.1)] border-0">
+        <LogoComponent
+          title="Change Name"
+          paragraph="Tech Advantage Admin Access"
+        />
 
-        <h2 className="text-xl font-semibold  mt-8">
-          Tech Advantage Admin Access
-        </h2>
-      </CardHeader>
-
-      <CardContent className="px-8 pb-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-sm font-medium ">
-              First Name
-            </Label>
-            <Input
+        <CardContent className="px-8 pb-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <FormField
               id="firstName"
-              type="text"
+              label="First Name"
               placeholder="Enter your First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 focus:bg-white rounded-xl"
-              required
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lastName" className="text-sm font-medium ">
-              Last Name
-            </Label>
-            <Input
+            <FormField
               id="lastName"
-              type="text"
+              label="Last Name"
               placeholder="Enter your Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="h-12 bg-gray-50 border-gray-200 focus:bg-white rounded-xl"
-              required
             />
-          </div>
 
-          <Button
-            type="submit"
-            className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
-          >
-            Save & Continue
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+            <Button
+              type="submit"
+              className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <ClipLoader color="#ffffff" size={16} />
+                </>
+              ) : (
+                <>
+                  <Save />
+                  Save & Continue
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+      <DialogTriggerComponent
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Name Updated🎉"
+        description="Your name has been updated successfully."
+      />
+    </>
   );
 }

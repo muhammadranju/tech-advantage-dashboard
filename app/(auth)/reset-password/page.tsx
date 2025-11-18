@@ -3,7 +3,7 @@ import ResetPassword from "@/components/pages/auth/ResetPasswordPage";
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Reset Password</title>
+      <title>Reset Password - TechAdvantage</title>
       <ResetPassword />
     </div>
   );

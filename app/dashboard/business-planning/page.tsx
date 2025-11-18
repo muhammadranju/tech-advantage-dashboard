@@ -3,7 +3,7 @@ import BusinessPlanning from "@/components/pages/Dashboard/BusinessPlanning/Busi
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Business Planning</title>
+      <title>Business Planning - TechAdvantage</title>
       <BusinessPlanning />
     </div>
   );

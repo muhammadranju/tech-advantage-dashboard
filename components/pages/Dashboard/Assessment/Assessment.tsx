@@ -20,8 +20,6 @@ const AssessmentUpdatePage = () => {
     }
   }, [search]);
 
-  console.log(search);
-  console.log(queryName);
 
   const handelUpdateComment = () => {
     console.log(commentID);

@@ -1,262 +1,291 @@
 "use client";
 
+import { AssessmentCardSkeleton } from "@/components/skeletons/AssessmentCardSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import {
+  useGetAssessmentsQuery,
+  useUpdateAssessmentsMutation,
+} from "@/lib/redux/features/api/assessments/assessmentsApiSlice";
+import { ChangeEvent, useEffect, useState } from "react";
 import { PiCheckBold, PiPencilFill, PiXBold } from "react-icons/pi";
 import { toast } from "sonner";
+import BackButtons from "../BootCamp/BackButtons";
+import { Assessment, EditData } from "./small_business.interface";
 
-// Type interfaces
-interface Recommend {
-  title: string;
-  options: string;
-}
-
-interface Comment {
-  id: number;
-  title: string;
-  content: string;
-  range: string;
-  recommend?: Recommend;
-}
-
-interface EditData extends Comment {
-  recommend?: Recommend;
-}
-
-const initialComments: Comment[] = [
-  {
-    id: 1,
-    title: "Minor Tweaks",
-    content:
-      "Based on your answers, your current setup needs targeted improvements rather than a full rebuild.",
-    range: "Range - 0-4",
-    recommend: {
-      title: "We recommend",
-      options:
-        "add automations for X. connect Y to Z. deploy 3–5 key reports. 1 coaching session to lock a simple process",
-    },
-  },
-  {
-    id: 2,
-    title: "Growth Solution",
-    content:
-      "You're ready for a tailored system that connects tools and automates your workflows.",
-    range: "Range - 5-7",
-    recommend: {
-      title: "We recommend",
-      options:
-        "custom CRM layer. 1–2 integrations. marketing funnel. dashboard. a quarterly strategy cadence",
-    },
-  },
-  {
-    id: 3,
-    title: "End-to-End Solution",
-    content:
-      "Your needs point to a complete solution: data model, CRM, multi-integration, compliance-grade reporting, advanced automations, migration, training, and KPI governance",
-    range: "Range - 8-10",
-  },
-];
+// Type interfaces based on API data structure
 
 const AssessmentPage: React.FC = () => {
-  const router = useRouter();
-  const [comments, setComments] = useState<Comment[]>(initialComments);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<EditData>({} as EditData);
 
-  const handleEdit = (commentId: number): void => {
-    const comment = comments.find((c) => c.id === commentId);
-    if (comment) {
-      setEditData({ ...comment });
+  // Fetch assessments data from API
+  const { data, error, refetch, isLoading } = useGetAssessmentsQuery(null);
+  const [updateAssessments, { isLoading: isUpdating }] =
+    useUpdateAssessmentsMutation();
 
-      setEditingId(commentId);
+  // Update local state when API data changes
+  useEffect(() => {
+    if (data?.data) {
+      setAssessments(data.data);
+    }
+  }, [data]);
+
+  const handleEdit = (assessmentId: string): void => {
+    const assessment = assessments.find((a) => a._id === assessmentId);
+    if (assessment) {
+      setEditData({
+        _id: assessment._id,
+        range: assessment.range,
+        description: assessment.description,
+        recommendedService: assessment.recommendedService,
+      });
+      setEditingId(assessmentId);
     }
   };
 
-  const handleSave = (commentId: number): void => {
-    setComments(
-      comments.map((comment) => (comment.id === commentId ? editData : comment))
-    );
-    setEditingId(null);
-    toast.success("Assessment saved successfully!");
-    setEditData({} as EditData);
+  const handleSave = async (assessmentId: string): Promise<void> => {
+    try {
+      // Make API call to update the assessment
+      const result = await updateAssessments({
+        userId: assessmentId,
+        range: editData.range,
+        description: editData.description,
+        recommendedService: editData.recommendedService,
+      }).unwrap();
+
+      if (result.success) {
+        // Update local state with the new data
+        setAssessments(
+          assessments.map((assessment) =>
+            assessment._id === assessmentId
+              ? { ...assessment, ...editData }
+              : assessment
+          )
+        );
+        toast.success("Assessment updated successfully!");
+        // Reset editing state
+        setEditingId(null);
+        setEditData({} as EditData);
+        refetch();
+      }
+    } catch (error) {
+      console.error("Error updating assessment:", error);
+      toast.error("Failed to update assessment. Please try again.");
+    }
   };
 
-  const handleDelete = (commentId: number): void => {
-    setComments(comments.filter((comment) => comment.id !== commentId));
-    toast.success("Assessment deleted successfully!");
-  };
+  // const handleDelete = async (assessmentId: string): Promise<void> => {
+  //   try {
+  //     // Here you would make an API call to delete the assessment
+  //     // Since you don't have delete mutation yet, I'll just update local state
+  //     setAssessments(
+  //       assessments.filter((assessment) => assessment._id !== assessmentId)
+  //     );
+
+  //     toast.success("Assessment deleted successfully!");
+
+  //     // You'll need to implement delete API call when ready:
+  //     // await deleteAssessmentMutation(assessmentId).unwrap();
+  //   } catch (error) {
+  //     console.error("Error deleting assessment:", error);
+  //     toast.error("Failed to delete assessment. Please try again.");
+  //   }
+  // };
 
   const handleCancel = (): void => {
     setEditingId(null);
     setEditData({} as EditData);
-    toast.warning("Assessment canceled!");
+    toast.info("Assessment editing canceled!");
   };
 
-  const handleInputChange = (field: keyof Comment, value: string): void => {
+  const handleInputChange = (field: keyof EditData, value: string): void => {
     setEditData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleOptionsChange = (value: string): void => {
-    setEditData((prev) => ({
-      ...prev,
-      recommend: {
-        ...prev.recommend,
-        title: prev.recommend?.title || "",
-        options: value,
-      },
-    }));
-  };
-
   const handleTextareaChange = (
     e: ChangeEvent<HTMLTextAreaElement>,
-    field: keyof Comment
+    field: keyof EditData
   ): void => {
     handleInputChange(field, e.target.value);
   };
 
   const handleInputFieldChange = (
     e: ChangeEvent<HTMLInputElement>,
-    field: keyof Comment
+    field: keyof EditData
   ): void => {
     handleInputChange(field, e.target.value);
   };
 
-  return (
-    <div className="space-y-5">
-      <div className=" mx-auto bg-white">
-        {/* Comment Cards */}
-        <div className="flex gap-8 mb-5">
-          <button
-            onClick={() => router.back()}
-            className={`pb-2 text-lg font-medium hover:border-b-2 border-black`}
-          >
-            Question & Answer
-          </button>
-          <button
-            className={`pb-2 text-lg font-medium border-b-2 border-black`}
-          >
-            Assessment
-          </button>
-        </div>
-        <div className="space-y-6">
-          {comments.map((comment) => {
-            const isEditing: boolean = editingId === comment.id;
-            const currentData: Comment = isEditing ? editData : comment;
+  // Generate title based on range
+  const generateTitle = (range: string): string => {
+    const rangeNumbers = range.split("-").map((num) => parseInt(num.trim()));
+    const minRange = rangeNumbers[0] || 0;
 
-            return (
-              <Card key={comment.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <Badge
-                        variant="secondary"
-                        className="bg-white shadow rounded-md border text-sm text-foreground hover:bg-muted"
-                      >
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={currentData.range}
-                            onChange={(e) => handleInputFieldChange(e, "range")}
-                            className="bg-transparent border-none outline-none text-sm w-24"
-                          />
-                        ) : (
-                          currentData.range
-                        )}
-                      </Badge>
+    if (minRange >= 0 && minRange <= 5) {
+      return "Minor Tweaks";
+    } else if (minRange >= 6 && minRange <= 10) {
+      return "Growth Solution";
+    } else {
+      return "End-to-End Solution";
+    }
+  };
+
+  // Loading state
+  // if (isLoading) {
+  //   return (
+  //     <div className="space-y-5">
+  //       <div className="flex justify-center items-center h-64">
+  //         <div className="text-lg">Loading assessments...</div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-5">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-lg text-red-500">
+            Error loading assessments. Please try again.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-10 mt-5">
+      <div className="mx-auto bg-white">
+        {/* Navigation Tabs */}
+
+        <BackButtons backTitle="Question" title={"Answer"} />
+
+        {/* Assessment Cards */}
+        <div className="space-y-6 mt-5">
+          {isLoading ? (
+            <>
+              <AssessmentCardSkeleton />
+              <AssessmentCardSkeleton />
+              <AssessmentCardSkeleton />
+            </>
+          ) : (
+            assessments.map((assessment) => {
+              const isEditing: boolean = editingId === assessment._id;
+              const currentData = isEditing ? editData : assessment;
+              const title = generateTitle(assessment.range);
+
+              return (
+                <Card key={assessment._id}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <Badge
+                          variant="secondary"
+                          className="bg-white shadow rounded-md border text-sm text-foreground hover:bg-muted"
+                        >
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={currentData.range}
+                              onChange={(e) =>
+                                handleInputFieldChange(e, "range")
+                              }
+                              className="bg-transparent border-none outline-none text-sm w-24"
+                              placeholder="0-5"
+                            />
+                          ) : (
+                            `Range - ${currentData.range}`
+                          )}
+                        </Badge>
+                      </div>
+
+                      {isEditing ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleSave(assessment._id)}
+                            className="hover:bg-green-100 cursor-pointer p-3 rounded-full disabled:opacity-50"
+                            type="button"
+                            disabled={isUpdating}
+                          >
+                            <PiCheckBold className="text-2xl font-bold text-green-600" />
+                          </button>
+                          <button
+                            onClick={handleCancel}
+                            className="hover:bg-red-100 cursor-pointer p-3 rounded-full"
+                            type="button"
+                            disabled={isUpdating}
+                          >
+                            <PiXBold className="text-2xl font-bold text-red-600" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(assessment._id)}
+                            className="hover:bg-gray-100 cursor-pointer p-3 rounded-full"
+                            type="button"
+                          >
+                            <PiPencilFill className="text-2xl font-bold" />
+                          </button>
+                        </div>
+                      )}
                     </div>
 
+                    <h1 className="text-2xl font-bold">{title}</h1>
+
                     {isEditing ? (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleSave(comment.id)}
-                          className="hover:bg-green-100 cursor-pointer p-3 rounded-full"
-                          type="button"
-                        >
-                          <PiCheckBold className="text-2xl font-bold text-green-600" />
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          className="hover:bg-red-100 cursor-pointer p-3 rounded-full"
-                          type="button"
-                        >
-                          <PiXBold className="text-2xl font-bold text-red-600" />
-                        </button>
-                      </div>
+                      <textarea
+                        value={currentData.description}
+                        onChange={(e) => handleTextareaChange(e, "description")}
+                        className="leading-relaxed border rounded-lg border-gray-300 px-2 py-1 w-full min-h-[80px] resize-y"
+                        placeholder="Enter assessment description..."
+                      />
                     ) : (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(comment.id)}
-                          className="hover:bg-gray-100 cursor-pointer p-3 rounded-full"
-                          type="button"
-                        >
-                          <PiPencilFill className="text-2xl font-bold " />
-                        </button>
-
-                        <button
-                          onClick={() => handleDelete(comment.id)}
-                          className="hover:bg-red-100 cursor-pointer p-3 rounded-full"
-                          type="button"
-                        >
-                          <Trash className="text-2xl font-bold text-red-500 " />
-                        </button>
-                      </div>
+                      <p className="leading-relaxed">
+                        {currentData.description}
+                      </p>
                     )}
-                  </div>
 
-                  <h1 className="text-2xl font-bold">{currentData.title}</h1>
-
-                  {isEditing ? (
-                    <textarea
-                      value={currentData.content}
-                      onChange={(e) => handleTextareaChange(e, "content")}
-                      className="leading-relaxed border rounded-lg border-gray-300 px-2 py-1 w-full min-h-[80px] resize-y"
-                    />
-                  ) : (
-                    <p className="leading-relaxed">{currentData.content}</p>
-                  )}
-
-                  {currentData.recommend && (
+                    {/* Recommended Service Section */}
                     <div className="">
-                      <h4 className="text-lg font-semibold">
-                        {currentData.recommend.title}
-                      </h4>
+                      <h4 className="text-lg font-semibold">We recommend</h4>
 
                       <div className="flex flex-col">
                         {isEditing ? (
                           <textarea
-                            value={currentData.recommend.options}
+                            value={currentData.recommendedService}
                             onChange={(e) =>
-                              handleOptionsChange(e.target.value)
+                              handleTextareaChange(e, "recommendedService")
                             }
-                            placeholder="Enter options separated by periods (e.g., option 1. option 2. option 3)"
+                            placeholder="Enter recommended services separated by periods (e.g., service 1. service 2. service 3)"
                             className="border border-gray-300 capitalize rounded-lg px-2 py-2 w-full min-h-[80px] resize-y"
                           />
                         ) : (
-                          currentData.recommend.options
+                          currentData.recommendedService
                             .split(".")
-                            .filter((option: string) => option.trim() !== "")
-                            .map((option: string, index: number) => (
+                            .filter((service: string) => service.trim() !== "")
+                            .map((service: string, index: number) => (
                               <ol
                                 key={index}
                                 className="list-disc list-inside capitalize"
                               >
-                                <li>{option.trim()}</li>
+                                <li>{service.trim()}</li>
                               </ol>
                             ))
                         )}
                       </div>
                     </div>
-                  )}
-                </CardHeader>
-              </Card>
-            );
-          })}
+                  </CardHeader>
+                </Card>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

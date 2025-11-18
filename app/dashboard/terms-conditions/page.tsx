@@ -3,7 +3,7 @@ import TermsConditions from "@/components/pages/Dashboard/TermsConditions/TermsC
 const page = () => {
   return (
     <>
-      <title>TechAdvantage - Terms and Conditions</title>
+      <title>Terms and Conditions - TechAdvantage</title>
       <TermsConditions />
     </>
   );

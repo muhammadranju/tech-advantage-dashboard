@@ -3,7 +3,7 @@ import AssessmentPage from "@/components/pages/Dashboard/SmallBusiness/Assessmen
 const page = () => {
   return (
     <div>
-      <title>TechAdvantage - Small Business Assessment</title>
+      <title>Small Business Assessment - TechAdvantage</title>
       <AssessmentPage />
     </div>
   );

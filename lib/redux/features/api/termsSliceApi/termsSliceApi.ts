@@ -5,7 +5,7 @@ export const termsSliceApi = apiSlice.injectEndpoints({
     // GET All Terms & Conditions
     getTerms: builder.query({
       query: () => ({
-        url: `terms-conditions`,
+        url: `terms-condition`,
         method: "GET",
       }),
       providesTags: ["Terms-conditions"],
@@ -18,9 +18,9 @@ export const termsSliceApi = apiSlice.injectEndpoints({
     // POST Terms & Conditions
     createTerms: builder.mutation({
       query: ({ body }) => ({
-        url: `terms-conditions`,
+        url: `terms-condition`,
         method: "POST",
-        body: body,
+        body: { content: body.content },
       }),
       invalidatesTags: ["Terms-conditions"],
       // Transform response to handle different response structures
@@ -29,14 +29,13 @@ export const termsSliceApi = apiSlice.injectEndpoints({
       },
     }),
 
-    // update Terms & Conditions
-    updateTerms: builder.mutation({
-      query: ({ body }) => ({
-        url: `terms-conditions`,
-        method: "PATCH",
-        body: body,
+    // GET feedback
+    getFeedback: builder.query({
+      query: () => ({
+        url: `feedback`,
+        method: "GET",
       }),
-      invalidatesTags: ["Terms-conditions"],
+      providesTags: ["Terms-conditions"],
       // Transform response to handle different response structures
       transformResponse: (response) => {
         return response;
@@ -48,5 +47,6 @@ export const termsSliceApi = apiSlice.injectEndpoints({
 export const {
   useGetTermsQuery,
   useCreateTermsMutation,
-  useUpdateTermsMutation,
+
+  useGetFeedbackQuery,
 } = termsSliceApi;

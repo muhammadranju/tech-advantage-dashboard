@@ -1,308 +1,199 @@
 "use client";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Save, Eye, Edit } from "lucide-react";
+import { Save, Eye, Edit } from "lucide-react";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "react-quill-new/dist/quill.snow.css";
+
 import TermsConditionsSkeleton from "@/components/skeletons/TermsConditionsSkeleton";
 import {
-  useCreateTermsMutation,
   useGetTermsQuery,
+  useCreateTermsMutation,
 } from "@/lib/redux/features/api/termsSliceApi/termsSliceApi";
 import { toast } from "sonner";
 
+// Safe HTML Renderer
+import parse from "html-react-parser";
+import DOMPurify from "dompurify";
+
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
-const TermsConditions = () => {
-  const [terms, setTerms] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState("January 15, 2024");
-  const [showEditor, setShowEditor] = useState(true);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+export default function TermsConditions() {
+  const [content, setContent] = useState<string>("");
+  const [isPreview, setIsPreview] = useState(false);
 
-  const { data: termsData } = useGetTermsQuery(null);
+  const { data, isLoading } = useGetTermsQuery({});
+  const [createTerms, { isLoading: isSaving }] = useCreateTermsMutation();
 
+  // Load content from API
   useEffect(() => {
-    if (termsData?.data?.length > 0) {
-      setTerms(termsData?.data[0]?.terms);
+    if (data?.success && data?.data?.content) {
+      setContent(data.data.content);
     }
-  }, [termsData]);
-
-  const [createTerms] = useCreateTermsMutation();
+  }, [data]);
 
   const handleSave = async () => {
-    const currentDate = new Date();
-    setLastUpdated(
-      currentDate.toLocaleDateString("en-US", {
+    if (!content.trim()) {
+      toast.error("Content cannot be empty");
+      return;
+    }
+
+    try {
+      await createTerms({ body: { content } }).unwrap();
+      toast.success("Terms & Conditions saved successfully!");
+    } catch (err) {
+      toast.error("Failed to save. Please try again");
+      console.error(err);
+    }
+  };
+
+  // Safe HTML sanitizer
+  const sanitizeAndParse = (html: string) => {
+    const clean = DOMPurify.sanitize(html, {
+      USE_PROFILES: { html: true },
+      ADD_TAGS: ["iframe"], // if you allow videos
+      ADD_ATTR: ["target", "allowfullscreen"],
+    });
+    return parse(clean);
+  };
+
+  if (isLoading) return <TermsConditionsSkeleton />;
+
+  const lastUpdated = data?.data?.updatedAt
+    ? new Date(data.data.updatedAt).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       })
-    );
-
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 5000);
-
-    try {
-      const result = await createTerms({
-        body: {
-          terms,
-        },
-      }).unwrap();
-
-      if (result.success) {
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 5000);
-        toast.success("Terms & Conditions saved successfully");
-      }
-    } catch (error) {
-      console.error("Error saving Terms & Conditions:", error);
-      setShowSuccess(false);
-      setTimeout(() => setShowSuccess(true), 5000);
-      toast.error("Error saving Terms & Conditions. Please try again.");
-    }
-  };
-
-  const togglePreview = () => {
-    setIsPreviewMode(!isPreviewMode);
-  };
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShowEditor(false);
-    }, 300);
-  }, []);
+    : "Never";
 
   return (
-    <>
-      {showEditor ? (
-        <TermsConditionsSkeleton />
-      ) : (
-        <div className="px-10 mt-5">
-          <h1 className="text-2xl sm:text-3xl font-bold text-black">
-            Manage Your Terms & Conditions
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 max-w-5xl">
-            Use this section to write or update the Terms and Conditions for
-            your website. These terms will be displayed to users within the
-            website and must be accepted during registration or major updates.
-          </p>
+    <div className="mx-auto p-6 space-y-2">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold">Terms & Conditions</h1>
+        <p className="text-muted-foreground mt-2">
+          Manage your platform&apos;s legal terms and conditions.
+        </p>
+      </div>
 
-          {showSuccess && (
-            <Alert className="mt-4 flex items-center gap-2 bg-green-100 border-none rounded-lg">
-              <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-              <AlertDescription className="text-green-800">
-                Your Terms & Conditions have been successfully updated and will
-                now appear in the Website.
-              </AlertDescription>
-            </Alert>
-          )}
+      {/* Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h2 className="text-xl font-semibold">
+          {isPreview ? "Preview Mode" : "Editor Mode"}
+        </h2>
 
-          <div className="mt-6 flex items-center justify-between">
-            <h2 className="text-lg sm:text-xl font-semibold text-black">
-              {isPreviewMode ? "Preview Mode" : "Terms & Conditions Editor"}
-            </h2>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsPreview(!isPreview)}
+          >
+            {isPreview ? (
+              <>
+                <Edit className="w-4 h-4 mr-2" /> Edit
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4 mr-2" /> Preview
+              </>
+            )}
+          </Button>
+
+          {!isPreview && (
             <Button
-              onClick={togglePreview}
-              variant="outline"
-              className="flex items-center gap-2"
-              disabled={!terms.trim() || terms.length === 11}
+              onClick={handleSave}
+              disabled={isSaving || !content.trim()}
+              className="bg-black hover:bg-black/90 text-white"
             >
-              {isPreviewMode ? (
-                <>
-                  <Edit className="h-4 w-4" />
-                  <span className="hidden sm:inline">Edit</span>
-                </>
+              {isSaving ? (
+                "Saving..."
               ) : (
                 <>
-                  <Eye className="h-4 w-4" />
-                  <span className="hidden sm:inline">Preview</span>
+                  {" "}
+                  <Save className="w-4 h-4 mr-2" /> Save Changes
                 </>
               )}
             </Button>
-          </div>
+          )}
+        </div>
+      </div>
 
-          {/* Editor or Preview Container */}
-          <div className="mt-3 mb-5 border border-gray-300 rounded-lg overflow-hidden bg-white">
-            {isPreviewMode ? (
-              <div className="preview-content p-6 sm:p-8 min-h-[250px] sm:min-h-[300px] lg:min-h-[400px] max-h-[300px] sm:max-h-[500px] lg:max-h-[400px] overflow-y-auto">
-                {terms.trim() && terms.length > 11 ? (
-                  <div
-                    className="ql-editor"
-                    dangerouslySetInnerHTML={{ __html: terms }}
-                  />
-                ) : (
-                  <p className="text-gray-400 text-center mt-20">
-                    No content to preview. Start writing in the editor.
-                  </p>
-                )}
-              </div>
+      {/* Editor or Safe Preview */}
+      <div className="border rounded-xl overflow-hidden bg-card shadow-lg">
+        {isPreview ? (
+          <div className="p-8 bg-white min-h-96 prose prose-lg max-w-none">
+            {content ? (
+              sanitizeAndParse(content)
             ) : (
-              <ReactQuill
-                theme="snow"
-                value={terms}
-                onChange={setTerms}
-                placeholder="Write or paste your Terms & Conditions here..."
-                className="quill-editor-custom"
-                modules={{
-                  toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ["bold", "italic", "underline", "strike"],
-                    [{ list: "ordered" }, { list: "bullet" }],
-                    [{ indent: "-1" }, { indent: "+1" }],
-                    ["link"],
-                    ["clean"],
-                  ],
-                }}
-              />
+              <p className="text-center text-muted-foreground">
+                No content yet. Switch to editor mode.
+              </p>
             )}
           </div>
+        ) : (
+          <ReactQuill
+            theme="snow"
+            value={content}
+            onChange={setContent}
+            placeholder="Start writing your Terms & Conditions..."
+            className="h-[600px]"
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ["bold", "italic", "underline", "strike"],
+                [{ list: "ordered" }, { list: "bullet" }],
+                [{ indent: "-1" }, { indent: "+1" }],
+                ["link"],
+                ["clean"],
+              ],
+            }}
+          />
+        )}
+      </div>
+      <p className="text-sm text-muted-foreground">
+        <strong>Last updated:</strong> {lastUpdated}
+      </p>
 
-          <p className="text-sm text-gray-600">
-            Last Updated On: {lastUpdated}
-          </p>
-
-          <Button
-            onClick={handleSave}
-            className="mt-4 w-full sm:w-64 py-6 bg-black text-white hover:bg-black/90 rounded-md"
-            disabled={!terms.trim() || terms.length === 11}
-          >
-            <Save className="mr-2" /> Save
-          </Button>
-        </div>
-      )}
-
+      {/* Clean & Safe Quill Styles */}
       <style jsx global>{`
-        .quill-editor-custom {
-          border: none;
+        .ql-toolbar {
+          border: none !important;
+          border-bottom: 1px solid #e2e8f0 !important;
+          background: #f9fafb;
+          padding: 12px 16px;
         }
-
-        .quill-editor-custom .ql-container {
-          border: none;
-          min-height: 250px;
-          max-height: 300px;
-          overflow-y: auto;
-          font-size: 15px;
+        .ql-container {
+          border: none !important;
         }
-
-        .quill-editor-custom .ql-editor {
-          min-height: 250px;
-          padding: 16px;
+        .ql-editor {
+          min-height: 360px;
+          font-size: 16px;
+          line-height: 1.8;
+          padding: 20px;
         }
-
-        .quill-editor-custom .ql-toolbar {
-          border: none;
-          border-bottom: 1px solid #e5e7eb;
-          background-color: #f9fafb;
-          padding: 12px 8px;
-        }
-
-        /* Preview mode styles */
-        .preview-content .ql-editor {
-          padding: 0;
-          border: none;
-          min-height: auto;
-        }
-
-        .preview-content h1 {
-          font-size: 2em;
-          font-weight: bold;
-          margin-bottom: 0.5em;
-        }
-
-        .preview-content h2 {
-          font-size: 1.5em;
-          font-weight: bold;
-          margin-bottom: 0.5em;
-        }
-
-        .preview-content h3 {
-          font-size: 1.17em;
-          font-weight: bold;
-          margin-bottom: 0.5em;
-        }
-
-        .preview-content p {
-          margin-bottom: 1em;
-          line-height: 1.6;
-        }
-
-        .preview-content ul,
-        .preview-content ol {
-          margin-bottom: 1em;
-          padding-left: 2em;
-        }
-
-        .preview-content li {
-          margin-bottom: 0.5em;
-        }
-
-        .preview-content strong {
-          font-weight: bold;
-        }
-
-        .preview-content em {
+        .ql-editor.ql-blank::before {
+          color: #94a3b8;
           font-style: italic;
         }
-
-        .preview-content u {
-          text-decoration: underline;
+        .prose {
+          color: #1f2937;
         }
-
-        .preview-content s {
-          text-decoration: line-through;
-        }
-
-        .preview-content a {
+        .prose a {
           color: #3b82f6;
           text-decoration: underline;
         }
-
-        /* Responsive adjustments */
-        @media (min-width: 640px) {
-          .quill-editor-custom .ql-container {
-            min-height: 300px;
-            max-height: 500px;
-          }
-
-          .quill-editor-custom .ql-editor {
-            min-height: 300px;
-            padding: 20px;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .quill-editor-custom .ql-container {
-            min-height: 400px;
-            max-height: 400px;
-          }
-
-          .quill-editor-custom .ql-editor {
-            min-height: 400px;
-          }
-        }
-
-        /* Toolbar button responsiveness */
-        @media (max-width: 400px) {
-          .quill-editor-custom .ql-toolbar {
-            padding: 8px 6px;
-          }
-
-          .quill-editor-custom .ql-toolbar button {
-            width: 24px;
-            height: 24px;
-          }
-        }
-
-        /* Focus state */
-        .quill-editor-custom:focus-within {
-          outline: 2px solid #3b82f6;
-          outline-offset: 2px;
+        .prose h1,
+        .prose h2,
+        .prose h3 {
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          font-weight: 700;
         }
       `}</style>
-    </>
+    </div>
   );
-};
-
-export default TermsConditions;
+}

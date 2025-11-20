@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/lib/redux/features/api/authApiSlice";
 import { logout } from "@/lib/redux/features/auth/authSlice";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,14 +29,14 @@ export function LoginPage() {
   const router = useRouter();
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const token = Cookies.get("token");
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (token) {
       router.replace("/dashboard/overview");
       window.location.href = "/dashboard/overview";
     }
-  }, [isAuthenticated, router]);
+  }, [router, token]);
 
   const validateForm = () => {
     let isValid = true;
@@ -80,8 +81,8 @@ export function LoginPage() {
 
       // user successfully logged in
       if (result.role === process.env.NEXT_PUBLIC_ROLE) {
-        // window.location.href = "/dashboard/overview";
-        router.refresh();
+        window.location.href = "/dashboard/overview";
+        // router.refresh();
         toast.success("Login successful");
       }
     } catch (error: any) {

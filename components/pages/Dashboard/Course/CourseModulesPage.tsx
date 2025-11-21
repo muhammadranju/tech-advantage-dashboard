@@ -271,62 +271,160 @@ export default function CourseContentPage() {
           </div>
         </div>
 
-        {/* Add/Edit Dialog */}
+        {/* Add/Edit Dialog - Super Stylish */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>
-                {dialogMode === "edit"
-                  ? "Edit Title"
-                  : dialogMode === "add-video"
-                  ? "Add New Video"
-                  : "Add New PDF"}
+              <DialogTitle className="text-2xl font-bold text-center">
+                {dialogMode === "edit" ? (
+                  <>Edit Content Title</>
+                ) : dialogMode === "add-video" ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <Play className="w-8 h-8 text-blue-600" />
+                    <span>Add New Video</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-3">
+                    <FileText className="w-8 h-8 text-red-600" />
+                    <span>Add New PDF</span>
+                  </div>
+                )}
               </DialogTitle>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div>
-                  <Label>Title</Label>
-                  <Input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter title"
-                    required
-                  />
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Title Input */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="title"
+                  className="text-base font-medium flex items-center gap-2"
+                >
+                  <div className="w-2 h-2 bg-black rounded-full" />
+                  Content Title
+                </Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter a descriptive title..."
+                  className="text-base h-12 border-2 focus:border-black transition-all"
+                  required
+                />
+              </div>
 
-                {dialogMode !== "edit" && (
-                  <div>
-                    <Label>
-                      Upload {dialogMode === "add-video" ? "Video" : "PDF"}
-                    </Label>
+              {/* File Upload - Only for Add Mode */}
+              {dialogMode !== "edit" && (
+                <div className="space-y-3">
+                  <Label className="text-base font-medium flex items-center gap-2">
+                    <div className="w-2 h-2 bg-black rounded-full" />
+                    Upload{" "}
+                    {dialogMode === "add-video" ? "Video File" : "PDF Document"}
+                  </Label>
+
+                  <div className="relative">
                     <Input
+                      id="file-upload"
                       type="file"
                       accept={dialogMode === "add-video" ? "video/*" : ".pdf"}
                       onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      className="hidden"
                       required
                     />
-                    {file && (
-                      <p className="text-sm text-gray-500 mt-1">
-                        Selected: {file.name}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
+                    <label
+                      htmlFor="file-upload"
+                      className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl cursor-pointer transition-all
+                ${
+                  file
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                }
+              `}
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        {dialogMode === "add-video" ? (
+                          <Play
+                            className={`w-16 h-16 mb-4 ${
+                              file ? "text-green-600" : "text-gray-400"
+                            }`}
+                          />
+                        ) : (
+                          <FileText
+                            className={`w-16 h-16 mb-4 ${
+                              file ? "text-green-600" : "text-gray-400"
+                            }`}
+                          />
+                        )}
 
-              <DialogFooter className="mt-6">
+                        {file ? (
+                          <>
+                            <p className="mb-2 text-sm text-green-700 font-medium">
+                              <span className="font-semibold">{file.name}</span>
+                            </p>
+                            <p className="text-xs text-green-600">
+                              File selected ✓
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="mb-2 text-sm text-gray-600">
+                              <span className="font-semibold">
+                                Click to upload
+                              </span>{" "}
+                              or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {dialogMode === "add-video"
+                                ? "MP4, AVI, MOV up to 500MB"
+                                : "PDF files only"}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                  </div>
+
+                  {file && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setFile(null)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <X className="w-4 h-4 mr-1" /> Remove file
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {/* Edit Mode Info */}
+              {dialogMode === "edit" && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-sm text-amber-800 flex items-center gap-2">
+                    <span className="text-lg">ℹ️</span>
+                    Only the title will be updated. The file remains unchanged.
+                  </p>
+                </div>
+              )}
+
+              <DialogFooter className="flex gap-3 sm:justify-center">
                 <Button
                   type="button"
                   variant="outline"
+                  size="lg"
                   onClick={() => setIsDialogOpen(false)}
+                  className="px-8"
                 >
-                  <X className="w-4 h-4 mr-2" /> Cancel
+                  <X className="w-5 h-5 mr-2" />
+                  Cancel
                 </Button>
-                <Button type="submit">
-                  <Save className="w-4 h-4 mr-2" />
-                  {dialogMode === "edit" ? "Update" : "Save"}
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="px-10 bg-black hover:bg-gray-800"
+                >
+                  <Save className="w-5 h-5 mr-2" />
+                  {dialogMode === "edit" ? "Update Title" : "Upload & Save"}
                 </Button>
               </DialogFooter>
             </form>

@@ -21,7 +21,7 @@ export const notificationApiSlice = apiSlice.injectEndpoints({
 
     getNotifications: builder.query({
       query: () => ({
-        url: `/notification`,
+        url: `/notification/admin`,
         method: "GET",
       }),
       // Transform response to handle different response structures

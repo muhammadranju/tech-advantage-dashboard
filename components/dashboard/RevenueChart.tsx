@@ -26,13 +26,7 @@ export function RevenueChart() {
     useDashboardApplicationRateQuery(null);
   const date = new Date();
   const years = ["2021", "2022", "2023", "2024", `${date.getFullYear()}`];
-  const applicantsData = [
-    { month: "January", value: 3 },
-    { month: "February", value: 2 },
-    { month: "March", value: 4 },
-    { month: "April", value: 2 },
-    ...(dashboardApplicationRate?.data || []),
-  ];
+  const applicantsData = [...(dashboardApplicationRate?.data || [])];
 
   return (
     <Card className="bg-white ">

@@ -19,7 +19,7 @@ import {
   useGetNotificationsQuery,
   useSendNotificationMutation,
 } from "@/lib/redux/features/api/notification/notificationApiSlice";
-import { Bell, Search, Send, X } from "lucide-react";
+import { Bell, RotateCcw, Search, Send, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { NotificationEmpty } from "./NotificationEmpty";
@@ -163,6 +163,7 @@ const NotificationsPage = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const {
@@ -216,11 +217,41 @@ const NotificationsPage = () => {
     currentPage * itemsPerPage
   );
 
+  const handelRefresh = async () => {
+    setIsLoading(true);
+    try {
+      // Wait for the query refetch to complete
+      await refetch();
+      toast.success("Notifications refreshed");
+    } catch (err) {
+      console.error("Refresh failed", err);
+      toast.error("Failed to refresh notifications");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="px-10 mt-5 min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Notifications</h1>
+        <Button
+          size={"sm"}
+          onClick={handelRefresh}
+          disabled={isSending || isLoading || isLoadingNotifications}
+        >
+          {isLoading || isLoadingNotifications ? (
+            <>
+              <Spinner className="h-5 w-5" /> Loading...
+            </>
+          ) : (
+            <>
+              <RotateCcw className="h-5 w-5" /> Refresh
+            </>
+          )}
+        </Button>
+        {/* <h1 className="text-lg font-bold">Refresh</h1> */}
       </div>
 
       <div className="flex justify-between">

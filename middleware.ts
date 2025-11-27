@@ -14,11 +14,11 @@ export async function middleware(req: NextRequest) {
   // Retrieve the authentication token from cookies
   const token = req.cookies.get("token");
 
+  console.log(token);
+
   // If no token is found, redirect to the login page
   if (!token) {
-    return NextResponse.redirect(
-      new URL(`/login`, req.url)
-    );
+    return NextResponse.redirect(new URL(`/login`, req.url));
   }
   // If token exists, allow the request to proceed
   return NextResponse.next();

@@ -34,7 +34,7 @@ export function LoginPage() {
   useEffect(() => {
     if (token) {
       router.replace("/dashboard/overview");
-      window.location.href = "/dashboard/overview";
+      // window.location.href = "/dashboard/overview";
     }
   }, [router, token]);
 
@@ -81,7 +81,7 @@ export function LoginPage() {
 
       // user successfully logged in
       if (result.role === process.env.NEXT_PUBLIC_ROLE) {
-        window.location.href = "/dashboard/overview";
+        // window.location.href = "/dashboard/overview";
         // router.refresh();
         toast.success("Login successful");
       }

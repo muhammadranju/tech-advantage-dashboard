@@ -1,10 +1,7 @@
 import { IconBell } from "@tabler/icons-react";
-import { RefreshCcwIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   Empty,
-  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -23,12 +20,6 @@ export function NotificationEmpty() {
           You&apos;re all caught up. New notifications will appear here.
         </EmptyDescription>
       </EmptyHeader>
-      <EmptyContent>
-        <Button variant="outline" size="sm">
-          <RefreshCcwIcon />
-          Refresh
-        </Button>
-      </EmptyContent>
     </Empty>
   );
 }

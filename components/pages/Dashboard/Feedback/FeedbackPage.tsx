@@ -49,11 +49,11 @@ export default function FeedbackPage() {
   // Search filter
   const filteredFeedbacks = feedbacks.filter((feedback) =>
     [
-      feedback.userId.name,
-      feedback.userId.email,
-      feedback.category,
-      feedback.comments,
-    ].some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()))
+      feedback.userId?.name,
+      feedback.userId?.email,
+      feedback?.category,
+      feedback?.comments,
+    ].some((field) => field?.toLowerCase().includes(searchTerm?.toLowerCase()))
   );
 
   const itemsPerPage = 6;
@@ -148,15 +148,15 @@ export default function FeedbackPage() {
           {!isLoading &&
             paginatedFeedbacks.map((feedback) => (
               <Card
-                key={feedback._id}
+                key={feedback?._id}
                 className="p-6 hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-transparent hover:border-l-primary"
                 onClick={() => handleFeedbackClick(feedback)}
               >
                 <div className="flex gap-6 items-start">
                   <Avatar className="w-16 h-16 ring-4 ring-background shadow-lg">
-                    <AvatarImage src={getImageUrl(feedback.userId.image)} />
+                    <AvatarImage src={getImageUrl(feedback?.userId?.image)} />
                     <AvatarFallback className="text-xl font-bold bg-primary/10">
-                      {feedback.userId.name
+                      {feedback?.userId?.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")
@@ -168,25 +168,25 @@ export default function FeedbackPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="text-xl font-semibold">
-                          {feedback.userId.name}
+                          {feedback?.userId?.name}
                         </h3>
                         <p className="text-muted-foreground">
-                          {feedback.userId.email}
+                          {feedback?.userId?.email}
                         </p>
                       </div>
                       <Badge variant="secondary" className="text-sm ">
-                        {feedback.category}
+                        {feedback?.category}
                       </Badge>
                     </div>
 
                     <p className="text-foreground leading-relaxed line-clamp-2">
-                      {feedback.comments}
+                      {feedback?.comments}
                     </p>
 
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
                       {format(
-                        new Date(feedback.createdAt),
+                        new Date(feedback?.createdAt),
                         "dd MMMM yyyy 'at' h:mm a"
                       )}
                     </div>
@@ -210,29 +210,29 @@ export default function FeedbackPage() {
               <div className="flex gap-6 items-start">
                 <Avatar className="w-24 h-24">
                   <AvatarImage
-                    src={getImageUrl(selectedFeedback.userId.image)}
+                    src={getImageUrl(selectedFeedback?.userId?.image)}
                   />
                   <AvatarFallback className="text-3xl">
-                    {selectedFeedback.userId.name.charAt(0)}
+                    {selectedFeedback?.userId?.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
 
                 <div className="flex-1">
                   <h2 className="text-3xl font-bold">
-                    {selectedFeedback.userId.name}
+                    {selectedFeedback?.userId?.name}
                   </h2>
                   <p className="text-lg text-muted-foreground mt-1">
-                    {selectedFeedback.userId.email}
+                    {selectedFeedback?.userId?.email}
                   </p>
 
                   <div className="flex flex-wrap gap-4 mt-4">
                     <Badge variant="outline" className="text-sm px-4 py-2">
-                      {selectedFeedback.category}
+                      {selectedFeedback?.category}
                     </Badge>
                     <span className="text-sm text-muted-foreground flex items-center gap-2">
                       <Calendar className="w-5 h-5" />
                       {format(
-                        new Date(selectedFeedback.createdAt),
+                        new Date(selectedFeedback?.createdAt),
                         "EEEE, MMMM d, yyyy 'at' h:mm a"
                       )}
                     </span>
@@ -243,7 +243,7 @@ export default function FeedbackPage() {
               <div className="border-t pt-8">
                 <h3 className="text-xl font-semibold mb-4">Full Comment</h3>
                 <div className="bg-muted/50 rounded-lg p-6 text-foreground leading-relaxed whitespace-pre-wrap">
-                  {selectedFeedback.comments}
+                  {selectedFeedback?.comments}
                 </div>
               </div>
             </div>

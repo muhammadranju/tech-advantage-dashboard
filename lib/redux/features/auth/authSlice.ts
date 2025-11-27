@@ -12,8 +12,6 @@ const loadAuthFromStorage = (): Partial<AuthState> => {
     const accessToken = Cookies.get("token");
     const user = localStorage.getItem("user");
 
-    console.log(token);
-
     if (token || user || accessToken) {
       return {
         token,

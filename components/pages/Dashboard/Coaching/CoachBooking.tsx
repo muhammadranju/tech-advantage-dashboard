@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,16 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  useAddDateMutation,
   useCreateCoachMutation,
   useGetAllCoachesQuery,
   useGetSlotsByIdWithDateQuery,
-  useUpdateSlotMutation,
-  useAddDateMutation,
 } from "@/lib/redux/features/api/coaching/coachsApiSlice";
 import {
   AlertCircle,
   Calendar,
-  CalendarCheck,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -35,7 +32,6 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import BackButtons from "../BootCamp/BackButtons";
-import { Spinner } from "@/components/ui/spinner";
 
 type Coach = {
   _id: string;
@@ -64,7 +60,7 @@ export default function CoachBooking() {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newCoachName, setNewCoachName] = useState("");
   const [newCoachDesc, setNewCoachDesc] = useState("");
-  const [mockMode] = useState(true);
+
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
   const [bookingPreview, setBookingPreview] = useState<string | null>(null);
 
@@ -74,7 +70,7 @@ export default function CoachBooking() {
 
   const { data: coachesData, isLoading, refetch } = useGetAllCoachesQuery({});
   const [createCoach] = useCreateCoachMutation();
-  const [updateSlot] = useUpdateSlotMutation();
+
   const [addDate] = useAddDateMutation();
 
   // FIXED + IMPROVED DateSlots - Only change needed!
@@ -281,43 +277,6 @@ export default function CoachBooking() {
         ? prev[dateKey].filter((s) => s._id !== slot._id)
         : [...(prev[dateKey] || []), slot],
     }));
-  };
-
-  const confirmBooking = async () => {
-    if (!selectedCoach || selectedDates.length === 0) return;
-
-    const totalSelected = Object.values(selectedSlots).flat().length;
-    if (totalSelected === 0) {
-      toast.error("Please select at least one time slot");
-      return;
-    }
-
-    try {
-      if (mockMode) {
-        const details = selectedDates
-          .map((date) => ({
-            date,
-            slots: (selectedSlots[date] || []).map((s) => ({
-              slotId: s._id,
-              value: s.value,
-            })),
-          }))
-          .filter((d) => d.slots.length > 0);
-        const payload = {
-          coachId: selectedCoach._id,
-          coachName: selectedCoach.name,
-          details,
-          totalSlots: totalSelected,
-          createdAt: new Date().toISOString(),
-        };
-        setBookingPreview(JSON.stringify(payload, null, 2));
-        setOpenPreviewDialog(true);
-        return;
-      }
-    } catch (err) {
-      toast.error("Booking failed. Please try again.");
-      console.error(err);
-    }
   };
 
   const days = getDaysInMonth(currentMonth);

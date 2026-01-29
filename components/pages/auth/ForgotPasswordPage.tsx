@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import RedirectIfAuthenticated from "@/components/auth/RedirectIfAuthenticated";
 import LogoComponent from "@/components/logo/Logo";
@@ -75,10 +76,14 @@ export default function ForgotPassword() {
           }, 2000);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.data.message);
       // Handle error if needed
       if (typeof window !== "undefined") {
-        toast.error((error as string) || "Failed to send password reset link");
+        toast.error(
+          (error.data.message as string) ||
+            "Failed to send password reset link",
+        );
       }
     }
   };

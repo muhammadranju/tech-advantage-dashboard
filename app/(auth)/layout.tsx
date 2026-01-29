@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: "Auth - TechAdvantage",
@@ -26,11 +27,13 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen grid place-items-center">
-      <div className="w-full  bg-white ">
-        <Toaster position="bottom-right" />
-        {children}
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <div className="min-h-screen grid place-items-center bg-black">
+        <div className="w-full">
+          <Toaster />
+          {children}
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

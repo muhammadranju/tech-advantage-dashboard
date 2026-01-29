@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import RedirectIfAuthenticated from "@/components/auth/RedirectIfAuthenticated";
 import LogoComponent from "@/components/logo/Logo";
@@ -75,8 +76,12 @@ export default function VerifyOTPPage() {
           router.push("/reset-password");
         }
       }
-    } catch (error) {
-      toast.error((error as string) || "Failed to verify OTP");
+    } catch (error: any) {
+      console.log(error.data.message);
+      // Handle error if needed
+      if (typeof window !== "undefined") {
+        toast.error((error.data.message as string) || "Failed to verify OTP");
+      }
 
       // Only show toast notifications in browser environment
       if (typeof window !== "undefined") {

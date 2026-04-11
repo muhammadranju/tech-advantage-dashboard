@@ -1,0 +1,318 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/dashboard/boot-camp/playlist/[playlistID]",
+      "regex": "^/dashboard/boot\\-camp/playlist/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPplaylistID": "nxtPplaylistID"
+      },
+      "namedRegex": "^/dashboard/boot\\-camp/playlist/(?<nxtPplaylistID>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/community/[community]",
+      "regex": "^/dashboard/community/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPcommunity": "nxtPcommunity"
+      },
+      "namedRegex": "^/dashboard/community/(?<nxtPcommunity>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/community/[community]/[replyID]",
+      "regex": "^/dashboard/community/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPcommunity": "nxtPcommunity",
+        "nxtPreplyID": "nxtPreplyID"
+      },
+      "namedRegex": "^/dashboard/community/(?<nxtPcommunity>[^/]+?)/(?<nxtPreplyID>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/courses/[modules]",
+      "regex": "^/dashboard/courses/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPmodules": "nxtPmodules"
+      },
+      "namedRegex": "^/dashboard/courses/(?<nxtPmodules>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/courses/[modules]/[videoID]",
+      "regex": "^/dashboard/courses/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPmodules": "nxtPmodules",
+        "nxtPvideoID": "nxtPvideoID"
+      },
+      "namedRegex": "^/dashboard/courses/(?<nxtPmodules>[^/]+?)/(?<nxtPvideoID>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/contact",
+      "regex": "^/contact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/dashboard/boot-camp",
+      "regex": "^/dashboard/boot\\-camp(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/boot\\-camp(?:/)?$"
+    },
+    {
+      "page": "/dashboard/boot-camp/playlist",
+      "regex": "^/dashboard/boot\\-camp/playlist(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/boot\\-camp/playlist(?:/)?$"
+    },
+    {
+      "page": "/dashboard/business-planning",
+      "regex": "^/dashboard/business\\-planning(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/business\\-planning(?:/)?$"
+    },
+    {
+      "page": "/dashboard/business-planning/view-answers",
+      "regex": "^/dashboard/business\\-planning/view\\-answers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/business\\-planning/view\\-answers(?:/)?$"
+    },
+    {
+      "page": "/dashboard/business-planning/view-long-answers",
+      "regex": "^/dashboard/business\\-planning/view\\-long\\-answers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/business\\-planning/view\\-long\\-answers(?:/)?$"
+    },
+    {
+      "page": "/dashboard/coaching",
+      "regex": "^/dashboard/coaching(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/coaching(?:/)?$"
+    },
+    {
+      "page": "/dashboard/coaching/coach",
+      "regex": "^/dashboard/coaching/coach(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/coaching/coach(?:/)?$"
+    },
+    {
+      "page": "/dashboard/community",
+      "regex": "^/dashboard/community(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/community(?:/)?$"
+    },
+    {
+      "page": "/dashboard/courses",
+      "regex": "^/dashboard/courses(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/courses(?:/)?$"
+    },
+    {
+      "page": "/dashboard/feedback",
+      "regex": "^/dashboard/feedback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/feedback(?:/)?$"
+    },
+    {
+      "page": "/dashboard/mock-interview",
+      "regex": "^/dashboard/mock\\-interview(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/mock\\-interview(?:/)?$"
+    },
+    {
+      "page": "/dashboard/mock-interview/view-answers",
+      "regex": "^/dashboard/mock\\-interview/view\\-answers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/mock\\-interview/view\\-answers(?:/)?$"
+    },
+    {
+      "page": "/dashboard/notification",
+      "regex": "^/dashboard/notification(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/notification(?:/)?$"
+    },
+    {
+      "page": "/dashboard/overview",
+      "regex": "^/dashboard/overview(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/overview(?:/)?$"
+    },
+    {
+      "page": "/dashboard/small-business",
+      "regex": "^/dashboard/small\\-business(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/small\\-business(?:/)?$"
+    },
+    {
+      "page": "/dashboard/small-business/assessment",
+      "regex": "^/dashboard/small\\-business/assessment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/small\\-business/assessment(?:/)?$"
+    },
+    {
+      "page": "/dashboard/small-business/view-answers",
+      "regex": "^/dashboard/small\\-business/view\\-answers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/small\\-business/view\\-answers(?:/)?$"
+    },
+    {
+      "page": "/dashboard/success-path",
+      "regex": "^/dashboard/success\\-path(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/success\\-path(?:/)?$"
+    },
+    {
+      "page": "/dashboard/success-path/assessment",
+      "regex": "^/dashboard/success\\-path/assessment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/success\\-path/assessment(?:/)?$"
+    },
+    {
+      "page": "/dashboard/success-path/view-quizzes",
+      "regex": "^/dashboard/success\\-path/view\\-quizzes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/success\\-path/view\\-quizzes(?:/)?$"
+    },
+    {
+      "page": "/dashboard/terms-conditions",
+      "regex": "^/dashboard/terms\\-conditions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/terms\\-conditions(?:/)?$"
+    },
+    {
+      "page": "/dashboard/users",
+      "regex": "^/dashboard/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/users(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/forgot-password",
+      "regex": "^/forgot\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/forgot\\-password(?:/)?$"
+    },
+    {
+      "page": "/index",
+      "regex": "^/index(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/index(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/privacy-policy",
+      "regex": "^/privacy\\-policy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy\\-policy(?:/)?$"
+    },
+    {
+      "page": "/profile",
+      "regex": "^/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile(?:/)?$"
+    },
+    {
+      "page": "/profile/change-name",
+      "regex": "^/profile/change\\-name(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile/change\\-name(?:/)?$"
+    },
+    {
+      "page": "/profile/change-password",
+      "regex": "^/profile/change\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile/change\\-password(?:/)?$"
+    },
+    {
+      "page": "/profile/change-photo",
+      "regex": "^/profile/change\\-photo(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/profile/change\\-photo(?:/)?$"
+    },
+    {
+      "page": "/reset-password",
+      "regex": "^/reset\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/reset\\-password(?:/)?$"
+    },
+    {
+      "page": "/terms-and-conditions",
+      "regex": "^/terms\\-and\\-conditions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms\\-and\\-conditions(?:/)?$"
+    },
+    {
+      "page": "/verify-otp",
+      "regex": "^/verify\\-otp(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/verify\\-otp(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

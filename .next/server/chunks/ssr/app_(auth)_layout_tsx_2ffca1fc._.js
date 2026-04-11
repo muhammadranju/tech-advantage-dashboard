@@ -1,0 +1,3 @@
+module.exports=[12498,a=>{"use strict";a.s(["default",()=>f,"metadata",()=>e]);var b=a.i(7997),c=a.i(5968),d=a.i(31421);let e={title:"Auth - TechAdvantage",description:"Auth",openGraph:{title:"Auth - TechAdvantage",description:"Auth",url:"https://www.techadvantage.com/auth",images:[{url:"https://www.techadvantage.com/images/auth/auth.png",width:1200,height:630,alt:"Auth"}],siteName:"TechAdvantage"}};function f({children:a}){return(0,b.jsx)(d.ThemeProvider,{attribute:"class",defaultTheme:"dark",enableSystem:!0,children:(0,b.jsx)("div",{className:"min-h-screen grid place-items-center bg-black",children:(0,b.jsxs)("div",{className:"w-full",children:[(0,b.jsx)(c.Toaster,{}),a]})})})}}];
+
+//# sourceMappingURL=app_%28auth%29_layout_tsx_2ffca1fc._.js.map

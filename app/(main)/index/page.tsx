@@ -84,16 +84,7 @@ export default function HomePage() {
             >
               Community
             </a>
-            <a
-              href="#download"
-              className="text-muted-foreground hover:text-foreground transition"
-            >
-              Download
-            </a>
           </div>
-          <Button className="bg-transparent text-black border border-gray-600 rounded-full  shadow-none hover:bg-gray-600/5">
-            Download App
-          </Button>
         </div>
       </nav>
 
@@ -125,7 +116,7 @@ export default function HomePage() {
                   </p>
                   <div className="flex gap-4">
                     <a
-                      href="https://www.apple.com/app-store/"
+                      href="https://apps.apple.com/au/app/t3chadvantage/id6758638626"
                       target="_blank"
                       className="group transform hover:scale-105 transition-transform duration-300"
                     >
@@ -417,7 +408,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="px-6 md:px-12 py-20 bg-secondary">
+      <section className="px-6 md:px-12 py-20 bg-secondary sr-only">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground animate-slide-up">
             Ready to Transform Your Business?
@@ -434,128 +425,6 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border px-6 md:px-12 py-12 bg-background">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 rounded flex items-center justify-center">
-                  <img src="/logo-2.png" alt="" />
-                </div>
-                <span className="font-semibold text-foreground">
-                  TechAdvantage
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Empowering entrepreneurs with personalized solutions.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link
-                    href="/about"
-                    className="hover:text-foreground transition"
-                  >
-                    About
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    href="/contact"
-                    className="hover:text-foreground transition"
-                  >
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link
-                    href="/privacy-policy"
-                    className="hover:text-foreground transition"
-                  >
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms-and-conditions"
-                    className="hover:text-foreground transition"
-                  >
-                    Terms
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Socail </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a
-                    href="https://www.facebook.com/"
-                    target="_blank"
-                    className="hover:text-foreground transition"
-                  >
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.linkedin.com/"
-                    target="_blank"
-                    className="hover:text-foreground transition"
-                  >
-                    LinkedIn
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://twitter.com/"
-                    target="_blank"
-                    className="hover:text-foreground transition"
-                  >
-                    Twitter
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              © 2025 TechAdvantage. All rights reserved.
-            </p>
-            <div className="flex gap-6 mt-4 md:mt-0 sr-only">
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-foreground transition"
-              >
-                Twitter
-              </a>
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-foreground transition"
-              >
-                LinkedIn
-              </a>
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-foreground transition"
-              >
-                Discord
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

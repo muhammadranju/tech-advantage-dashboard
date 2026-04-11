@@ -127,7 +127,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "E:\\Office Work\\Projects\\Ericka -TechAdvantage\\TechAdvantage - Dashboard - API",
+    "outputFileTracingRoot": "C:\\Users\\mdran\\Documents\\Office Work\\Projects\\Ericka -TechAdvantage\\TechAdvantage - Dashboard - API",
     "experimental": {
       "useSkewCookie": false,
       "cacheLife": {
@@ -186,7 +186,7 @@
       "middlewarePrefetch": "flexible",
       "optimisticClientCache": true,
       "manualClientBasePath": false,
-      "cpus": 7,
+      "cpus": 11,
       "memoryBasedWorkersCount": false,
       "imgOptConcurrency": null,
       "imgOptTimeoutInSeconds": 7,
@@ -317,10 +317,10 @@
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.ts",
     "turbopack": {
-      "root": "E:\\Office Work\\Projects\\Ericka -TechAdvantage\\TechAdvantage - Dashboard - API"
+      "root": "C:\\Users\\mdran\\Documents\\Office Work\\Projects\\Ericka -TechAdvantage\\TechAdvantage - Dashboard - API"
     }
   },
-  "appDir": "E:\\Office Work\\Projects\\Ericka -TechAdvantage\\TechAdvantage - Dashboard - API",
+  "appDir": "C:\\Users\\mdran\\Documents\\Office Work\\Projects\\Ericka -TechAdvantage\\TechAdvantage - Dashboard - API",
   "relativeAppDir": "",
   "files": [
     ".next\\routes-manifest.json",

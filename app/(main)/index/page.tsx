@@ -354,7 +354,7 @@ export default function HomePage() {
       </section>
 
       {/* Community Section */}
-      <section id="community" className="px-6 md:px-12 py-20 bg-background">
+      <section id="community" className="px-6 md:px-12 pt-20 bg-background">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-foreground animate-slide-up">
             Join a Thriving Community
@@ -408,7 +408,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="px-6 md:px-12 py-20 bg-secondary sr-only">
+      <section className="px-6 md:px-12 py-20 bg-secondary hidden">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground animate-slide-up">
             Ready to Transform Your Business?

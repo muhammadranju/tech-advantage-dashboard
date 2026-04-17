@@ -62,7 +62,7 @@ export default function HomePage() {
               <img src="/logo-2.png" alt="" />
             </div>
             <span className="font-semibold text-foreground animate-fade-in">
-              TechAdvantage
+              T3chAdvantage
             </span>
           </div>
           <div className="hidden md:flex items-center gap-8">
@@ -97,22 +97,26 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="flex flex-col justify-center animate-slide-up">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-tight italic">
-                Build Your Tech-Driven Business,{" "}
-                <span className="font-light">Your Way</span>
+              <h1 className="text-5xl md:text-6xl lg:text-6xl font-bold text-foreground mb-8 leading-tight">
+                <span className="block">Stop Guessing.</span>
+                <span className="block">
+                  {" "}
+                  Start Building the Right Business the
+                </span>{" "}
+                <span className="font-light">Right Way.</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl leading-relaxed animate-slide-up [animation-delay:100ms]">
-                Get personalized guidance, custom solutions, and expert coaching
-                designed specifically for your entrepreneurial journey. No
-                generic tools. Just what works for you.
+                T3chAdvantage helps you turn your ideas into structured,
+                scalable systems whether you&apos;re starting a business,
+                growing one, or breaking into tech.
               </p>
 
               <div className="flex flex-col gap-6 animate-slide-up [animation-delay:200ms]">
                 {/* App Store Badges */}
                 <div className="flex flex-col gap-3">
                   <p className="text-sm font-semibold text-muted-foreground">
-                    The mobile app is available now
+                    Mobile App will be available soon
                   </p>
                   <div className="flex gap-4">
                     <a
@@ -198,12 +202,11 @@ export default function HomePage() {
       <section id="download" className="px-6 md:px-16 py-20 bg-secondary mt-10">
         <div className="max-w-none mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-foreground animate-slide-up">
-            See TechAdvantage in Action
+            Feeling stuck, overwhelmed, or unsure what to do next?
           </h2>
 
           <p className="text-center text-muted-foreground mb-10 max-w-3xl mx-auto animate-slide-up [animation-delay:100ms]">
-            Explore the key features that make TechAdvantage your ideal business
-            companion
+            This is where T3chAdvantage changes everything
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-0 ">
@@ -246,25 +249,25 @@ export default function HomePage() {
                 step: "01",
                 title: "Assessment",
                 description:
-                  "Take our guided assessment to uncover your strengths and business potential",
+                  "Take a quick assessment to understand your current stage and direction",
               },
               {
                 step: "02",
                 title: "Personalize",
                 description:
-                  "Receive custom recommendations tailored to your unique business needs",
+                  "Receive personalized recommendations tailored to your goals",
               },
               {
                 step: "03",
                 title: "Build",
                 description:
-                  "Access tools, templates, and resources to build your tech-driven solution",
+                  "Access tools, templates and strategic resources designed to scale your business or personal growth with a customized solution.",
               },
               {
                 step: "04",
                 title: "Launch",
                 description:
-                  "Get expert coaching and community support to bring your idea to life",
+                  "Execute with clarity with your personal business coach to bring your customize solution or idea to life",
               },
             ].map((item, i) => (
               <div

@@ -9,6 +9,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -59,7 +60,13 @@ export default function HomePage() {
         <div className=" max-w-7xl mx-auto flex items-center justify-between ">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded flex items-center justify-center animate-fade-in">
-              <img src="/logo-2.png" alt="" />
+              <Image
+                width={100}
+                height={100}
+                src="/main-logo.png"
+                className="w-full"
+                alt=""
+              />
             </div>
             <span className="font-semibold text-foreground animate-fade-in">
               T3chAdvantage
